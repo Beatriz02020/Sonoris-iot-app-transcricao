@@ -1,20 +1,62 @@
-<<<<<<< HEAD
-# sonoris
+![Logo](assets/images/Banner.png)
 
-A new Flutter project.
+### 🤔 Sobre o projeto
 
-## Getting Started
+Sonoris é um aplicativo e dispositivo inovador, desenvolvido ao longo de 2025 em parceria com uma empresa, como parte do Trabalho de Conclusão de Curso (TCC) do curso de Desenvolvimento de Sistemas AMS da Etec da Zona Leste.
 
-This project is a starting point for a Flutter application.
+<b> Dispositivo: </b> https://github.com/Chrb09/Sonoris-RaspberryPi <br>
+<b> Documentação: </b> https://github.com/Amanda093/PORTIFOLIO-2025-3DS
 
-A few resources to get you started if this is your first Flutter project:
+### 💻 Tecnologias
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+![dart](https://img.shields.io/badge/dart-0175C2?style=for-the-badge&logo=dart&logoColor=white)
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
-=======
-# Sonoris-app
->>>>>>> 6f47415bf85072b0e2e9b6d0392793ce2528c6bc
+![flutter](https://img.shields.io/badge/flutter-02569B?style=for-the-badge&logo=flutter&logoColor=white)
+
+![python](https://img.shields.io/badge/python-3776AB?style=for-the-badge&logo=python&logoColor=white)
+
+### 🚀 Como rodar o projeto
+
+```sh
+git clone https://github.com/Beatriz02020/Sonoris-app.git
+
+cd sonoris-app
+
+flutter pub get
+```
+
+### 😀 Contribuidores
+
+<table>
+  <tr>
+    <td align="center">
+      <a href="https://github.com/Amanda093">
+        <img src="https://avatars.githubusercontent.com/u/138123400?v=4" width="100px;" alt="Amanda - Github"/><br>
+        <sub>
+          <b>Amanda</b>
+        </sub> <br>
+      </a>
+    </td>
+    <td align="center">
+      <a href="https://github.com/Beatriz02020">
+        <img src="https://avatars.githubusercontent.com/u/133404301?v=4" width="100px;" alt="Beatriz - Github"/><br>
+        <sub>
+          <b>Beatriz</b>
+        </sub> <br>
+      </a>
+    </td>
+    </td>
+    <td align="center">
+      <a href="https://github.com/Chrb09">
+        <img src="https://avatars.githubusercontent.com/u/132484542?v=4" width="100px;" alt="Carlos - Github"/><br>
+        <sub>
+            <b>Carlos</b>
+          </sub> <br>
+      </a>
+    </td>
+  </tr>
+</table>
+
+<br>
+
+> Feito com ❤️ usando Flutter.
