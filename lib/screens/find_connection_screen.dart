@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import '../components/text.dart';
+import 'package:flutter/services.dart';
+import 'package:sonoris/theme/colors.dart';
+import 'package:sonoris/theme/text_styles.dart';
 
 // TODO arrumar essa página
 
@@ -13,6 +15,13 @@ class FindConnectionScreen extends StatefulWidget {
 class _FindConnectionScreenState extends State<FindConnectionScreen> {
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setSystemUIOverlayStyle(
+      SystemUiOverlayStyle.dark.copyWith(
+        statusBarColor: AppColors.white100,
+        systemNavigationBarColor: AppColors.blue500,
+      ),
+    );
+
     return Scaffold(
       appBar: AppBar(),
       body: Padding(
@@ -29,9 +38,13 @@ class _FindConnectionScreenState extends State<FindConnectionScreen> {
                 child: ClipRRect(child: Image.asset('assets/images/Logo.png')),
               ),
             ),
-            CustomTitle(text: 'Paremento'),
-            CustomSubtitle(text: 'Selecione seu dispositivo:'),
-            Container(color: Colors.black12, width: 330, height: 330),
+            Text('Pareamento',
+              style: AppTextStyles.h3.copyWith(color: AppColors.blue500),
+            ),
+            Text('Selecione seu dispositivo:',
+              style: AppTextStyles.bold,
+            ),
+            Container(color: Colors.black12, width: 330, height: 100),
           ],
         ),
       ),

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:sonoris/components/button.dart';
-import 'package:sonoris/components/text.dart';
 import 'package:sonoris/screens/find_connection_screen.dart';
+import 'package:sonoris/theme/colors.dart';
+import 'package:sonoris/theme/text_styles.dart';
 
 // TODO arrumar essa página
 
@@ -15,6 +17,13 @@ class ConectionScreen extends StatefulWidget {
 class _ConectionScreenState extends State<ConectionScreen> {
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setSystemUIOverlayStyle(
+      SystemUiOverlayStyle.dark.copyWith(
+        statusBarColor: AppColors.white100,
+        systemNavigationBarColor: AppColors.blue500,
+      ),
+    );
+
     return Scaffold(
       appBar: AppBar(),
       body: Center(
@@ -50,13 +59,15 @@ class _ConectionScreenState extends State<ConectionScreen> {
                       ),
                       Padding(
                         padding: const EdgeInsets.only(top: 15),
-                        child: CustomTitle(text: 'Ative o Bluetooth'),
+                        child:
+                        Text('Ative o Bluetooth',
+                        style: AppTextStyles.h3.copyWith(color: AppColors.blue500),
+                      ),
                       ),
                       SizedBox(
                         width: 290,
-                        child: CustomSubtitle(
-                          text:
-                              'O dispositivo requer uma conexão Bluetooth com seu celular',
+                        child: Text('O dispositivo requer uma conexão Bluetooth com seu celular',
+                          style: AppTextStyles.bold,
                         ),
                       ),
                     ],
