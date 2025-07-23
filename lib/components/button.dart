@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../theme/colors.dart';
+
 class CustomButton extends StatelessWidget {
   final String text;
   final VoidCallback onPressed;
@@ -14,6 +16,8 @@ class CustomButton extends StatelessWidget {
     this.color,
   });
 
+  // TODO Fazer os outros botoes
+
   @override
   Widget build(BuildContext context) {
     final Color mainColor = color ?? Colors.blue.shade600;
@@ -23,7 +27,7 @@ class CustomButton extends StatelessWidget {
           ? OutlinedButton(
         style: OutlinedButton.styleFrom(
           side: BorderSide(color: mainColor, width: 2),
-          backgroundColor: Colors.white,
+          backgroundColor: AppColors.white100,
         ),
         onPressed: onPressed,
         child: Text(
@@ -38,7 +42,7 @@ class CustomButton extends StatelessWidget {
         onPressed: onPressed,
         child: Text(
           text,
-          style: const TextStyle(color: Colors.white, fontSize: 18),
+          style: const TextStyle(color: AppColors.white100, fontSize: 18),
         ),
       ),
     );

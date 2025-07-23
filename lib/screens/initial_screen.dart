@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:sonoris/screens/connection_screen.dart';
 import 'package:sonoris/components/button.dart';
 import 'package:sonoris/components/text.dart';
+import 'package:sonoris/screens/connection_screen.dart';
 
 class InitialScreen extends StatelessWidget {
   const InitialScreen({super.key});
@@ -39,9 +39,9 @@ class InitialScreen extends StatelessWidget {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        CustomTitle(text: 'Bem-vindo ao app da sonoris.'),
+                        CustomTitle(text: 'Bem-vindo ao aplicativo'),
                         CustomSubtitle(
-                          text: 'Vamos configurar sua experiência.',
+                          text: 'Escolha como deseja começar',
                         ),
                       ],
                     ),

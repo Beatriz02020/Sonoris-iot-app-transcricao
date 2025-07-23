@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:sonoris/components/button.dart';
 import 'package:sonoris/components/text.dart';
 
+// TODO arrumar essa página
+
 class SelectModeScreen extends StatelessWidget {
   const SelectModeScreen({super.key});
 

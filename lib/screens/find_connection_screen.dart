@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../components/text.dart';
 
+// TODO arrumar essa página
+
 class FindConnectionScreen extends StatefulWidget {
   const FindConnectionScreen({super.key});
 

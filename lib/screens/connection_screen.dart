@@ -3,6 +3,8 @@ import 'package:sonoris/components/button.dart';
 import 'package:sonoris/components/text.dart';
 import 'package:sonoris/screens/find_connection_screen.dart';
 
+// TODO arrumar essa página
+
 class ConectionScreen extends StatefulWidget {
   const ConectionScreen({super.key});
 
