@@ -1,4 +1,10 @@
+<div align=center>
+  
 ![Logo](assets/images/Banner.png)
+
+</div>
+
+<br>
 
 ### 🤔 Sobre o projeto
 
@@ -13,8 +19,6 @@ Sonoris é um aplicativo e dispositivo inovador, desenvolvido ao longo de 2025 e
 
 ![flutter](https://img.shields.io/badge/flutter-02569B?style=for-the-badge&logo=flutter&logoColor=white)
 
-![python](https://img.shields.io/badge/python-3776AB?style=for-the-badge&logo=python&logoColor=white)
-
 ### 🚀 Como rodar o projeto
 
 ```sh
@@ -27,6 +31,7 @@ flutter pub get
 
 ### 😀 Contribuidores
 
+<div align=center>
 <table>
   <tr>
     <td align="center">
@@ -56,7 +61,7 @@ flutter pub get
     </td>
   </tr>
 </table>
-
+</div>
 <br>
 
 > Feito com ❤️ usando Flutter.
