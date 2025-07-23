@@ -18,21 +18,20 @@ class InitialScreen extends StatelessWidget {
     );
 
     return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+      backgroundColor: AppColors.white100,
+      body:
+      Center(
+        child:
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 55.0, horizontal: 50),
+          child:
+        Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Padding(
-              padding: const EdgeInsets.only(top: 150),
-              child: Column(
+            SizedBox(height: 1),
+            Column(
+              spacing: 14,
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 0,
-                      vertical: 20,
-                    ),
-                    child: Column(
-                      children: [
                         SizedBox(
                           width: 250,
                           height: 250,
@@ -40,12 +39,7 @@ class InitialScreen extends StatelessWidget {
                             child: Image.asset('assets/images/Logo.png'),
                           ),
                         ),
-                      ],
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 4.0, bottom: 80),
-                    child: Column(
+                  Column(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text('Bem-vindo ao aplicativo',
@@ -56,18 +50,10 @@ class InitialScreen extends StatelessWidget {
                         ),
                       ],
                     ),
-                  ),
                 ],
-              ),
-            ),
-            SizedBox(height: 60),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  CustomButton(
+              ), CustomButton(
                     text: 'Conectar dispositivo',
+                    fullWidth: true,
                     onPressed: () {
                       Navigator.push(
                         context,
@@ -77,10 +63,8 @@ class InitialScreen extends StatelessWidget {
                       );
                     },
                   ),
-                ],
-              ),
-            ),
           ],
+        ),
         ),
       ),
     );
