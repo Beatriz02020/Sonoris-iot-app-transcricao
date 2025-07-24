@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sonoris/components/button.dart';
-import 'package:sonoris/screens/find_connection_screen.dart';
+import 'package:sonoris/screens/select_mode_screen.dart';
 import 'package:sonoris/theme/colors.dart';
 import 'package:sonoris/theme/text_styles.dart';
 
 // TODO arrumar essa página
 
-class ConectionScreen extends StatefulWidget {
-  const ConectionScreen({super.key});
+class ConnectionScreen extends StatefulWidget {
+  const ConnectionScreen({super.key});
 
   @override
-  State<ConectionScreen> createState() => _ConectionScreenState();
+  State<ConnectionScreen> createState() => _ConnectionScreenState();
 }
 
-class _ConectionScreenState extends State<ConectionScreen> {
+class _ConnectionScreenState extends State<ConnectionScreen> {
   @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(
@@ -33,55 +33,178 @@ class _ConectionScreenState extends State<ConectionScreen> {
         ),
         titleTextStyle: AppTextStyles.h3.copyWith(color: AppColors.blue500),
         title: const Text(
-          'Minha Tela'
+            ''
         ),
       ),
       body:
-      Center(
-        child:
         Padding(
-          padding: const EdgeInsets.symmetric(vertical: 55.0, horizontal: 50),
+          padding: const EdgeInsets.symmetric(vertical: 45.0, horizontal: 20),
           child:
           Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            spacing: 20,
             children: [
-              SizedBox(height: 1),
-              Column(
-                spacing: 8,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  SizedBox(
-                    width: 120,
-                    height: 120,
-                    child: ClipRRect(
-                      child: Image.asset('assets/images/Bluetooth.png'),
+              SizedBox(
+                width: double.infinity,
+                child: Image.asset(
+                  'assets/images/SonorisFisico.png',
+                  fit: BoxFit.contain, // mantém o aspecto original
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 18),
+                child:
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  spacing: 2,
+                  children: [Text('Pareamento', style: AppTextStyles.h3.copyWith(color: AppColors.blue500),), Text('Selecione seu dispositivo:', style: AppTextStyles.bold,),
+                  ],
+                ),
+              ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            spacing: 10,
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
+                decoration: BoxDecoration(
+                  color: AppColors.white100,
+                  borderRadius: BorderRadius.circular(14),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      blurRadius: 18.5,
+                      spreadRadius: 1,
+                      offset: const Offset(0, 6),
                     ),
-                  ),
-                  Text('Ative o Bluetooth',
-                    style: AppTextStyles.h3.copyWith(color: AppColors.blue500),
-                  ),
-                  Text('O dispositivo requer uma conexão Bluetooth com seu celular',
-                    textAlign: TextAlign.center,
-                    style: AppTextStyles.bold,
-                  ),
-                ],
+                  ],
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      spacing: 6,
+                      children: [
+                        // Avatar circular
+                        SizedBox(
+                          width: 30,
+                          child: Image.asset(
+                            'assets/images/Icon.png',
+                            fit: BoxFit.contain,
+                          ),
+                        ),
+                        Text(
+                          'Dispositivo Sonoris',
+                          style: AppTextStyles.body,
+                        ),
+                      ],
+                    ),
+                    Icon(
+                      Icons.circle_outlined,
+                      color: AppColors.blue500,
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
+                decoration: BoxDecoration(
+                  color: AppColors.white100,
+                  borderRadius: BorderRadius.circular(14),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      blurRadius: 18.5,
+                      spreadRadius: 1,
+                      offset: const Offset(0, 6),
+                    ),
+                  ],
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      spacing: 6,
+                      children: [
+                        // Avatar circular
+                        SizedBox(
+                          width: 30,
+                          child: Image.asset(
+                            'assets/images/Icon.png',
+                            fit: BoxFit.contain,
+                          ),
+                        ),
+                        Text(
+                          'Dispositivo Sonoris',
+                          style: AppTextStyles.body,
+                        ),
+                      ],
+                    ),
+                    Icon(
+                      Icons.circle_outlined,
+                      color: AppColors.blue500,
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
+                decoration: BoxDecoration(
+                  color: AppColors.white100,
+                  borderRadius: BorderRadius.circular(14),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      blurRadius: 18.5,
+                      spreadRadius: 1,
+                      offset: const Offset(0, 6),
+                    ),
+                  ],
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      spacing: 6,
+                      children: [
+                        // Avatar circular
+                        SizedBox(
+                          width: 30,
+                          child: Image.asset(
+                            'assets/images/Icon.png',
+                            fit: BoxFit.contain,
+                          ),
+                        ),
+                        Text(
+                          'Dispositivo Sonoris',
+                          style: AppTextStyles.body,
+                        ),
+                      ],
+                    ),
+                    Icon(
+                      Icons.circle_outlined,
+                      color: AppColors.blue500,
+                    ),
+                  ],
+                ),
               ),
               CustomButton(
-                text: 'Habilitar o Bluetooth',
+                text: 'Proxima tela (placeholder)',
                 fullWidth: true,
                 onPressed: () {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => FindConnectionScreen(),
+                      builder: (context) => SelectModeScreen(),
                     ),
                   );
-                  },
+                },
               ),
             ],
           ),
+            ],
+          ),
         ),
-      ),
     );
   }
 }

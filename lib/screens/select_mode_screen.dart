@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sonoris/components/button.dart';
+import 'package:sonoris/screens/bluetooth_screen.dart';
 import 'package:sonoris/theme/colors.dart';
 import 'package:sonoris/theme/text_styles.dart';
 
@@ -19,22 +20,82 @@ class SelectModeScreen extends StatelessWidget {
     );
 
     return Scaffold(
-      appBar: AppBar(),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+      backgroundColor: AppColors.white100,
+      appBar: AppBar(
+        backgroundColor: AppColors.white100, // cor de fundo da AppBar
+        iconTheme: const IconThemeData(
+          color: AppColors.blue500, // cor dos ícones (ex: seta de voltar)
+        ),
+        titleTextStyle: AppTextStyles.h3.copyWith(color: AppColors.blue500),
+        title: const Text(
+            ''
+        ),
+      ),
+      body:
+      Padding(
+        padding: const EdgeInsets.symmetric(vertical: 55.0, horizontal: 38),
+        child:
+        Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text('Modo de funcionamento',
-              style: AppTextStyles.h3.copyWith(color: AppColors.blue500),
+            SizedBox(height: 1),
+            Column(
+              spacing: 20,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SizedBox(
+                  width: 120,
+                  child: Image.asset(
+                    'assets/images/Choice.png',
+                    fit: BoxFit.contain, // mantém o aspecto original
+                  ),
+                ),
+                Column(
+                  spacing: 2,
+                  children: [
+                    Text('Modo de funcionamento',
+                      style: AppTextStyles.h3.copyWith(color: AppColors.blue500),
+                    ),
+                    Text('Qual o modo de operação do dispositivo?',
+                      textAlign: TextAlign.center,
+                      style: AppTextStyles.bold,
+                    ),
+                  ],
+                ),
+              ],
             ),
-            Text('Qual o modo de operação do dispositivo?',
-              style: AppTextStyles.bold,
+        Column(
+          spacing: 2,
+          children: [
+            CustomButton(
+              text: 'Transcrição + Respostas Rápidas',
+              fullWidth: true,
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => BluetoothScreen(),
+                  ),
+                );
+              },
             ),
-            SizedBox(width: 350, child: CustomButton(text: 'Transcrição + Respostas Rápidas', onPressed: (){})),
-            SizedBox(width: 350, child: CustomButton(text: 'Apenas Transcrição', onPressed: (){})),
+            CustomButton(
+              text: 'Apenas transcrição',
+              fullWidth: true,
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => BluetoothScreen(),
+                  ),
+                );
+              },
+            ),
           ],
         ),
-      )
+          ],
+        ),
+      ),
     );
   }
 }
