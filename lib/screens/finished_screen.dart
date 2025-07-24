@@ -8,14 +8,9 @@ import 'package:sonoris/theme/text_styles.dart';
 
 // TODO arrumar essa página
 
-class SelectModeScreen extends StatefulWidget {
-  const SelectModeScreen({super.key});
+class FinishedScreen extends StatelessWidget {
+  const FinishedScreen({super.key});
 
-  @override
-  State<SelectModeScreen> createState() => _SelectModeScreenState();
-}
-
-class _SelectModeScreenState extends State<SelectModeScreen> {
   @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(
@@ -27,16 +22,6 @@ class _SelectModeScreenState extends State<SelectModeScreen> {
 
     return Scaffold(
       backgroundColor: AppColors.white100,
-      appBar: AppBar(
-        backgroundColor: AppColors.white100, // cor de fundo da AppBar
-        iconTheme: const IconThemeData(
-          color: AppColors.blue500, // cor dos ícones (ex: seta de voltar)
-        ),
-        titleTextStyle: AppTextStyles.h3.copyWith(color: AppColors.blue500),
-        title: const Text(
-            ''
-        ),
-      ),
       body:
       Padding(
         padding: const EdgeInsets.symmetric(vertical: 55.0, horizontal: 38),
@@ -52,17 +37,17 @@ class _SelectModeScreenState extends State<SelectModeScreen> {
                 SizedBox(
                   width: 120,
                   child: Image.asset(
-                    'assets/images/Choice.png',
+                    'assets/images/Checkmark.png',
                     fit: BoxFit.contain, // mantém o aspecto original
                   ),
                 ),
                 Column(
                   spacing: 2,
                   children: [
-                    Text('Modo de funcionamento',
+                    Text('Dispositivo Configurado',
                       style: AppTextStyles.h3.copyWith(color: AppColors.blue500),
                     ),
-                    Text('Qual o modo de operação do dispositivo?',
+                    Text('Para utilizar o dispositivo é necessario uma conta Sonoris',
                       textAlign: TextAlign.center,
                       style: AppTextStyles.bold,
                     ),
@@ -74,7 +59,7 @@ class _SelectModeScreenState extends State<SelectModeScreen> {
           spacing: 2,
           children: [
             CustomButton(
-              text: 'Transcrição + Respostas Rápidas',
+              text: 'Cadastro',
               fullWidth: true,
               onPressed: () {
                 Navigator.push(
@@ -86,7 +71,8 @@ class _SelectModeScreenState extends State<SelectModeScreen> {
               },
             ),
             CustomButton(
-              text: 'Apenas transcrição',
+              text: 'Login',
+              outlined: true,
               fullWidth: true,
               onPressed: () {
                 Navigator.push(
