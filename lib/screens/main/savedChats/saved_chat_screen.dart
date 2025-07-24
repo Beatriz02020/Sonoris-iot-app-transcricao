@@ -6,14 +6,15 @@ import 'package:sonoris/screens/initial/language_screen.dart';
 import 'package:sonoris/theme/colors.dart';
 import 'package:sonoris/theme/text_styles.dart';
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+class SavedChatScreen extends StatefulWidget {
+  const SavedChatScreen({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  State<SavedChatScreen> createState() => _SavedChatScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _SavedChatScreenState extends State<SavedChatScreen> {
+  // TODO mudar para branco quando tiver nessa página ( e mudar de volta qnd voltar )
   @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(
@@ -25,16 +26,16 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return Scaffold(
       backgroundColor: AppColors.background,
-      /*appBar: AppBar(
+      appBar: AppBar(
         backgroundColor: AppColors.white100,
         iconTheme: const IconThemeData(
           color: AppColors.blue500,
         ),
         titleTextStyle: AppTextStyles.h3.copyWith(color: AppColors.blue500),
         title: const Text(
-            'Titulo da pagina'
+            'Conversa Salva'
         ),
-      ),*/
+      ),
       body:
       Padding(
         padding: const EdgeInsets.only(left: 30, right: 30, top: 55, bottom: 30),
@@ -44,7 +45,7 @@ class _HomeScreenState extends State<HomeScreen> {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Página Principal', style: AppTextStyles.body,)
+            Text('Conversa Salva', style: AppTextStyles.body,)
 
           ],
         ),

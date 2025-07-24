@@ -6,14 +6,14 @@ import 'package:sonoris/screens/initial/language_screen.dart';
 import 'package:sonoris/theme/colors.dart';
 import 'package:sonoris/theme/text_styles.dart';
 
-class SavedChatsScreen extends StatefulWidget {
-  const SavedChatsScreen({super.key});
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
 
   @override
-  State<SavedChatsScreen> createState() => _SavedChatsScreenState();
+  State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _SavedChatsScreenState extends State<SavedChatsScreen> {
+class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(
@@ -44,8 +44,28 @@ class _SavedChatsScreenState extends State<SavedChatsScreen> {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Conversas Salvas', style: AppTextStyles.body,)
-
+            Text('Página Principal', style: AppTextStyles.body,),
+            CustomButton(
+              text: 'Conversas Não Salvas',
+              fullWidth: true,
+              onPressed: () {
+                Navigator.of(context).pushNamed('/unsavedchats');
+              },
+            ),
+            CustomButton(
+              text: 'Legenda',
+              fullWidth: true,
+              onPressed: () {
+                Navigator.of(context).pushNamed('/captions');
+              },
+            ),
+            CustomButton(
+              text: 'Respostas Rápidas',
+              fullWidth: true,
+              onPressed: () {
+                Navigator.of(context).pushNamed('/answers');
+              },
+            ),
           ],
         ),
       ),
