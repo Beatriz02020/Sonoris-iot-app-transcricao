@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sonoris/components/button.dart';
-import 'package:sonoris/screens/bluetooth_screen.dart';
-import 'package:sonoris/screens/language_screen.dart';
+import 'package:sonoris/screens/initial/bluetooth_screen.dart';
+import 'package:sonoris/screens/initial/finished_screen.dart';
 import 'package:sonoris/theme/colors.dart';
 import 'package:sonoris/theme/text_styles.dart';
 
-class SelectModeScreen extends StatefulWidget {
-  const SelectModeScreen({super.key});
+class LanguageScreen extends StatefulWidget {
+  const LanguageScreen({super.key});
 
   @override
-  State<SelectModeScreen> createState() => _SelectModeScreenState();
+  State<LanguageScreen> createState() => _LanguageScreenState();
 }
 
-class _SelectModeScreenState extends State<SelectModeScreen> {
+class _LanguageScreenState extends State<LanguageScreen> {
   @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(
@@ -50,53 +50,70 @@ class _SelectModeScreenState extends State<SelectModeScreen> {
                 SizedBox(
                   width: 120,
                   child: Image.asset(
-                    'assets/images/Choice.png',
+                    'assets/images/Language.png',
                     fit: BoxFit.contain, // mantém o aspecto original
                   ),
                 ),
                 Column(
                   spacing: 2,
                   children: [
-                    Text('Modo de funcionamento',
+                    Text('Línguas',
                       style: AppTextStyles.h3.copyWith(color: AppColors.blue500),
                     ),
-                    Text('Qual o modo de operação do dispositivo?',
+                    Text('Quais línguas o dispositivo deve reconhecer?',
                       textAlign: TextAlign.center,
                       style: AppTextStyles.bold,
                     ),
                   ],
                 ),
+                Column(
+                  spacing: 0,
+                  children: [
+                    Row(
+                        spacing: 0,
+                        children: [
+                          Checkbox(
+                            value: true,
+                            onChanged: (value) {},
+                            activeColor: AppColors.blue500,      // cor da bolinha marcada
+                            checkColor: AppColors.white100,      // cor do check (✓)
+                          ),
+                          Text('Português (Brasileiro)',
+                            style: AppTextStyles.bold,
+                          ),
+                        ],
+                  ),
+                    Row(
+                      spacing: 0,
+                      children: [
+                        Checkbox(
+                          value: false,
+                          onChanged: (value) {},
+                          activeColor: AppColors.blue500,      // cor da bolinha marcada
+                          checkColor: AppColors.white100,
+                        ),
+                        Text('Inglês',
+                          style: AppTextStyles.bold,
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ],
             ),
-        Column(
-          spacing: 2,
-          children: [
+
             CustomButton(
-              text: 'Transcrição + Respostas Rápidas',
+              text: 'Finalizar configuração',
               fullWidth: true,
               onPressed: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => LanguageScreen(),
+                    builder: (context) => FinishedScreen(),
                   ),
                 );
               },
             ),
-            CustomButton(
-              text: 'Apenas transcrição',
-              fullWidth: true,
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => LanguageScreen(),
-                  ),
-                );
-              },
-            ),
-          ],
-        ),
           ],
         ),
       ),

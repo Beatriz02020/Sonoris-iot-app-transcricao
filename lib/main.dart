@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:sonoris/screens/initial_screen.dart';
+import 'package:sonoris/screens/initial/initial_screen.dart';
+import 'package:sonoris/components/bottomNavigationBar.dart';
 import 'package:sonoris/screens/test_screen.dart';
 
 
@@ -14,7 +15,7 @@ class SonorisApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Sonoris App',
-      home:  InitialScreen(),
+      home:  BottomNav(),
     );
   }
 }

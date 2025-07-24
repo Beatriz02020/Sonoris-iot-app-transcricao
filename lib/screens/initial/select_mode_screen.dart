@@ -1,14 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sonoris/components/button.dart';
-import 'package:sonoris/screens/bluetooth_screen.dart';
-import 'package:sonoris/screens/language_screen.dart';
+import 'package:sonoris/screens/initial/bluetooth_screen.dart';
+import 'package:sonoris/screens/initial/language_screen.dart';
 import 'package:sonoris/theme/colors.dart';
 import 'package:sonoris/theme/text_styles.dart';
 
-class FinishedScreen extends StatelessWidget {
-  const FinishedScreen({super.key});
+class SelectModeScreen extends StatefulWidget {
+  const SelectModeScreen({super.key});
 
+  @override
+  State<SelectModeScreen> createState() => _SelectModeScreenState();
+}
+
+class _SelectModeScreenState extends State<SelectModeScreen> {
   @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(
@@ -20,6 +25,16 @@ class FinishedScreen extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: AppColors.white100,
+      appBar: AppBar(
+        backgroundColor: AppColors.white100, // cor de fundo da AppBar
+        iconTheme: const IconThemeData(
+          color: AppColors.blue500, // cor dos ícones (ex: seta de voltar)
+        ),
+        titleTextStyle: AppTextStyles.h3.copyWith(color: AppColors.blue500),
+        title: const Text(
+            ''
+        ),
+      ),
       body:
       Padding(
         padding: const EdgeInsets.symmetric(vertical: 55.0, horizontal: 38),
@@ -35,17 +50,17 @@ class FinishedScreen extends StatelessWidget {
                 SizedBox(
                   width: 120,
                   child: Image.asset(
-                    'assets/images/Checkmark.png',
+                    'assets/images/Choice.png',
                     fit: BoxFit.contain, // mantém o aspecto original
                   ),
                 ),
                 Column(
                   spacing: 2,
                   children: [
-                    Text('Dispositivo Configurado',
+                    Text('Modo de funcionamento',
                       style: AppTextStyles.h3.copyWith(color: AppColors.blue500),
                     ),
-                    Text('Para utilizar o dispositivo é necessario uma conta Sonoris',
+                    Text('Qual o modo de operação do dispositivo?',
                       textAlign: TextAlign.center,
                       style: AppTextStyles.bold,
                     ),
@@ -57,7 +72,7 @@ class FinishedScreen extends StatelessWidget {
           spacing: 2,
           children: [
             CustomButton(
-              text: 'Cadastro',
+              text: 'Transcrição + Respostas Rápidas',
               fullWidth: true,
               onPressed: () {
                 Navigator.push(
@@ -69,8 +84,7 @@ class FinishedScreen extends StatelessWidget {
               },
             ),
             CustomButton(
-              text: 'Login',
-              outlined: true,
+              text: 'Apenas transcrição',
               fullWidth: true,
               onPressed: () {
                 Navigator.push(
