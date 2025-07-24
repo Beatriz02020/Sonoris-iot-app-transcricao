@@ -5,8 +5,6 @@ import 'package:sonoris/screens/select_mode_screen.dart';
 import 'package:sonoris/theme/colors.dart';
 import 'package:sonoris/theme/text_styles.dart';
 
-// TODO arrumar essa página
-
 class ConnectionScreen extends StatefulWidget {
   const ConnectionScreen({super.key});
 

@@ -3,8 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:sonoris/components/button.dart';
 import 'package:sonoris/theme/colors.dart';
 
-// TODO arrumar essa página
-
 class TestScreen extends StatelessWidget {
   const TestScreen({super.key});
 

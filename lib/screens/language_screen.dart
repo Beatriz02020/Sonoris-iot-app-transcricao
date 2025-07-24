@@ -6,8 +6,6 @@ import 'package:sonoris/screens/finished_screen.dart';
 import 'package:sonoris/theme/colors.dart';
 import 'package:sonoris/theme/text_styles.dart';
 
-// TODO arrumar essa página
-
 class LanguageScreen extends StatefulWidget {
   const LanguageScreen({super.key});
 

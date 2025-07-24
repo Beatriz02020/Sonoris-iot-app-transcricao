@@ -5,8 +5,6 @@ import 'package:sonoris/screens/connection_screen.dart';
 import 'package:sonoris/theme/colors.dart';
 import 'package:sonoris/theme/text_styles.dart';
 
-// TODO arrumar essa página
-
 class BluetoothScreen extends StatefulWidget {
   const BluetoothScreen({super.key});
 
