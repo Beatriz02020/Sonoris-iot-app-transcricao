@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sonoris/screens/initial/initial_screen.dart';
 import 'package:sonoris/components/bottomNavigationBar.dart';
+import 'package:sonoris/screens/main/home/home_screen.dart';
 import 'package:sonoris/screens/test_screen.dart';
 
 // TODO arrumar botão de voltar saindo do aplicativo
