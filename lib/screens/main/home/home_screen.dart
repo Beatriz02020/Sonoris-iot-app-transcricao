@@ -4,6 +4,7 @@ import 'package:sonoris/components/button.dart';
 import 'package:sonoris/components/customBottomNav.dart';
 import 'package:sonoris/screens/initial/bluetooth_screen.dart';
 import 'package:sonoris/screens/initial/language_screen.dart';
+import 'package:sonoris/screens/main/home/answer_screen.dart';
 import 'package:sonoris/theme/colors.dart';
 import 'package:sonoris/theme/text_styles.dart';
 
@@ -123,6 +124,59 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
 
             // ações rápidas
+            Column(
+              spacing: 10,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('Ações rápidas', style: AppTextStyles.body,),
+
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    // navegação utilizando container
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => AnswerScreen()),
+                        );
+                      },
+
+                      // respostas rápidas
+                      child: Container(
+                        width: 115,
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: AppColors.white100,
+                          borderRadius: BorderRadius.circular(16),
+                          boxShadow: [
+                            BoxShadow(
+                              color: AppColors.gray900.withOpacity(0.1),
+                              spreadRadius: 1,
+                              blurRadius: 10,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                        ),
+
+                        // icon e titulo
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Image.asset('assets/images/IconRespostasRapidas.png'),
+                            const SizedBox(height: 8),
+                            Text('Respostas \n rápidas', style: AppTextStyles.bodySmall),
+                          ],
+                        ),
+                    ),
+                    ),
+                  ],
+                )
+              ],
+            ),
+
+
+
 
 
             // conversas não salvas
