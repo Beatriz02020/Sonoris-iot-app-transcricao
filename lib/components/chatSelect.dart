@@ -7,11 +7,13 @@ import '../theme/text_styles.dart';
 
 class ChatSelect extends StatelessWidget {
   final String nome;
+  final String? descricao;
   final String data;
   final String horarioInicial;
   final String horarioFinal;
   final String? image;
-  final Widget? overlayIcon;
+  final bool favorito;
+
 
   const ChatSelect({
     super.key,
@@ -19,13 +21,19 @@ class ChatSelect extends StatelessWidget {
     required this.data,
     required this.horarioInicial,
     required this.horarioFinal,
-    required this.image,
-    required this.overlayIcon,
+    this.descricao,
+    this.image,
+    this.favorito = false,
+
   });
 
   @override
   Widget build(BuildContext context) {
     final String imagePath = 'assets/images/icons/$image.png';
+
+    String limitarDescricao(String text, [int maxLength = 18]) {
+      return (text.length <= maxLength) ? text : '${text.substring(0, maxLength)}...';
+    }
 
     return GestureDetector(
       onTap: () {
@@ -62,28 +70,43 @@ class ChatSelect extends StatelessWidget {
                 children: [
                   Image.asset(
                     imagePath,
-                    height: 40,
-                    width: 40,
                     fit: BoxFit.cover,
                   ),
-                  // TODO arrumar os icones
-                  Icon(
-                    Icons.star,
-                    color: AppColors.white100, // cor do contorno
-                    size: 20,
-                  ),
-                  Icon(
-                    Icons.star,
-                    color: AppColors.amber500, // cor do preenchimento
-                    size: 16,
-                  ),
+                  // TODO colocar limite de caracteres no titulo
+
+                  if (favorito != false)
+                    Positioned(
+                      bottom: -4,
+                      left: 25,
+                      child: Container(
+                        padding: const EdgeInsets.all(2),
+                        decoration: BoxDecoration(
+                        ),
+                        child:  Image.asset(
+                          'assets/images/icons/Estrela.png',
+                        ),
+                      ),
+                    ),
                 ],
               ),
 
-            if (image != null) const SizedBox(width: 10),
-            Text(
-              nome,
-              style: AppTextStyles.bold.copyWith(color: AppColors.gray900),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  nome,
+                  style: AppTextStyles.bold.copyWith(color: AppColors.gray900),
+                ),
+
+                // Se tiver descrição, mostra
+                if (descricao != null)
+                  Text(
+                    limitarDescricao(descricao!),
+                    style: AppTextStyles.bodySmall,
+                    maxLines: 1,                        // Limita a 1 linha
+                    overflow: TextOverflow.ellipsis,   // Adiciona "..."
+                  ),
+              ],
             ),
             Column(
               crossAxisAlignment: CrossAxisAlignment.end,
@@ -93,6 +116,8 @@ class ChatSelect extends StatelessWidget {
                   '$horarioInicial - $horarioFinal',
                   style: AppTextStyles.medium,
                 ),
+
+
               ],
             ),
           ],

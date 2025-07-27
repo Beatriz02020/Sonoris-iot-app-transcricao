@@ -33,45 +33,72 @@ class _SavedChatsScreenState extends State<SavedChatsScreen> {
         backgroundColor: AppColors.background,
         //iconTheme: const IconThemeData(color: AppColors.blue700,),
         titleTextStyle: AppTextStyles.h3.copyWith(color: AppColors.blue700),
-        title: const Text(
-            'Conversas Salvas'
-        ),
+        title: const Text('Conversas Salvas'),
       ),
-      body: Padding(
-        padding: const EdgeInsets.only(
-          left: 30,
-          right: 30,
-          top: 30,  // original (55)
-          bottom: 30,
-        ),
-        child: Column(
-          spacing: 15,
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
 
-            // input de pesquisa
-            CustomTextField(hintText: 'Pesquisar', isSearch: true, fullWidth: true,),
-
-            // filtros
-            Text('Filtrar por', style: AppTextStyles.body),
-
-            // conversas não salvas
-
-            // conversas
-            Text('Conversas', style: AppTextStyles.body),
-
-            ChatSelect(nome: 'Conversa_02_07_25_9h', data: '02/07/2025', horarioInicial: '09:00', horarioFinal: '12:00', image: 'Reuniao', overlayIcon: null,),
-
-            CustomButton(
-              text: 'Conversa Salva',
-              fullWidth: true,
-              onPressed: () {
-                Navigator.of(context).pushNamed('/chat');
-              },
+      body: ListView(
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(
+              left: 30,
+              right: 30,
+              top: 30, // original (55)
+              bottom: 30,
             ),
-          ],
-        ),
+            child: Column(
+              spacing: 15,
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // input de pesquisa
+                CustomTextField(
+                  hintText: 'Pesquisar',
+                  isSearch: true,
+                  fullWidth: true,
+                ),
+
+                // filtros
+                Text('Filtrar por', style: AppTextStyles.body),
+
+                // conversas não salvas
+                Row(
+                  children: [
+                    Row(
+                      children: [
+                        Text('Conversas Não Salvas')
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Text('3'),
+                        Image.asset(
+                          'assets/images/icons/Estrela.png',
+                        ),
+                      ],
+                    )
+                  ],
+                ),
+
+
+                // conversas
+                Text('Conversas', style: AppTextStyles.body),
+
+                ChatSelect(nome: 'Reuniao SoftSkills', data: '02/07/2025', horarioInicial: '09:00', horarioFinal: '12:00', image: 'Teams', favorito: true, descricao: 'DescriçãoDescriçãoDescriçasdsada',),
+                ChatSelect(nome: 'Workshop de Criatividade', data: '02/07/2025', horarioInicial: '09:00', horarioFinal: '12:00', image: 'Reuniao', favorito: true, descricao: 'DescriçãoDescriçãoDescriçasdsada',),
+                ChatSelect(nome: 'Treinamento de Liderança', data: '02/07/2025', horarioInicial: '09:00', horarioFinal: '12:00', image: 'Trabalho', descricao: 'DescriçãoDescriçãoDescriçasdsada',),
+                ChatSelect(nome: 'Conversa_01_07_25_13h', data: '02/07/2025', horarioInicial: '09:00', horarioFinal: '12:00', image: 'Outros',),
+
+                CustomButton(
+                  text: 'Conversa Salva',
+                  fullWidth: true,
+                  onPressed: () {
+                    Navigator.of(context).pushNamed('/chat');
+                  },
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
