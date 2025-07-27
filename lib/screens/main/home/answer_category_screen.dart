@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:sonoris/components/AnswerCategoryButton.dart';
 import 'package:sonoris/components/customButton.dart';
 import 'package:sonoris/screens/initial/bluetooth_screen.dart';
 import 'package:sonoris/screens/initial/language_screen.dart';
@@ -29,22 +30,92 @@ class _AnswerCategoryScreenState extends State<AnswerCategoryScreen> {
         backgroundColor: AppColors.background,
         iconTheme: const IconThemeData(color: AppColors.blue500),
         titleTextStyle: AppTextStyles.h3.copyWith(color: AppColors.blue500),
-        title: const Text('Respostas Rápidas (categoria)'),
+        title: const Text('Positivas'),
       ),
       body: Padding(
         padding: const EdgeInsets.only(
           left: 30,
           right: 30,
-          top: 55,
+          top: 20,
           bottom: 30,
         ),
-        child: Column(
-          spacing: 4,
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('Respostas Rápidas (categoria)', style: AppTextStyles.body),
-          ],
+        child:
+        Column(
+            spacing: 15,
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    CustomButton(
+                        icon: Icons.edit,
+                        iconSize: 20,
+                        text: 'Renomear',
+                        onPressed: (){}),
+                    CustomButton(
+                        icon: Icons.close,
+                        iconSize: 20,
+                        color: AppColors.rose500,
+                        text: 'Deletar Categoria',
+                        onPressed: (){})
+                  ]
+              ),
+              Text(
+                'Respostas',
+                style: AppTextStyles.bold.copyWith(color: AppColors.blue600),
+              ),
+              Column(
+                spacing: 10,
+                children: [
+                  AnswerCategoryButton(
+                    icon: Icons.close,
+                    text: 'Sim',
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => AnswerCategoryScreen()));
+                    },
+                  ),AnswerCategoryButton(
+                    icon: Icons.close,
+                    text: 'Por favor',
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => AnswerCategoryScreen()));
+                    },
+                  ),
+                  AnswerCategoryButton(
+                    icon: Icons.close,
+                    text: 'Adoraria',
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => AnswerCategoryScreen()));
+                    },
+                  ),
+                  AnswerCategoryButton(
+                    icon: Icons.close,
+                    text: 'Claro',
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => AnswerCategoryScreen()));
+                    },
+                  ),
+
+                  CustomButton(
+                    icon: Icons.add,
+                    text:  'Adicionar Categoria',
+                    fullWidth: true,
+                    onPressed: () {
+                      Navigator.of(context).pushNamed('/answers/category');
+                    },
+                  ),
+                ],
+              ),
+
+            ]
         ),
       ),
     );

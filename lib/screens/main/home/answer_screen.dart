@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:sonoris/components/AnswerCategoryButton.dart';
 import 'package:sonoris/components/customButton.dart';
 import 'package:sonoris/screens/initial/bluetooth_screen.dart';
 import 'package:sonoris/screens/initial/language_screen.dart';
+import 'package:sonoris/screens/initial/signup_screen.dart';
+import 'package:sonoris/screens/main/home/answer_category_screen.dart';
 import 'package:sonoris/theme/colors.dart';
 import 'package:sonoris/theme/text_styles.dart';
 
@@ -35,7 +38,7 @@ class _AnswerScreenState extends State<AnswerScreen> {
         padding: const EdgeInsets.only(
           left: 30,
           right: 30,
-          top: 55,
+          top: 25,
           bottom: 30,
         ),
         child: Column(
@@ -43,13 +46,62 @@ class _AnswerScreenState extends State<AnswerScreen> {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Respostas Rápidas', style: AppTextStyles.body),
-            CustomButton(
-              text: 'Respostas Rápidas (categoria)',
-              fullWidth: true,
-              onPressed: () {
-                Navigator.of(context).pushNamed('/answers/category');
-              },
+            Padding(
+              padding: const EdgeInsets.only(bottom: 10),
+              child: Column(
+                spacing: 20,
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Texto explicando como funciona as respostas rápidas',
+                    style: AppTextStyles.body.copyWith(color: AppColors.gray700),
+                  ),
+                  Text(
+                    'Categorias',
+                    style: AppTextStyles.bold.copyWith(color: AppColors.blue600),
+                  ),
+                ],
+              ),
+            ),
+
+            Column(
+              spacing: 10,
+              children: [
+                AnswerCategoryButton(
+                  text: 'Positivas',
+                  text2: '4 respostas',
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => AnswerCategoryScreen()));
+                  },
+                ),
+                AnswerCategoryButton(
+                  text: 'Negativas',
+                  text2: '3 respostas',
+                  onPressed: () {},
+                ),
+                AnswerCategoryButton(
+                  text: 'Neutras',
+                  text2: '5 respostas',
+                  onPressed: () {},
+                ),
+                AnswerCategoryButton(
+                  text: 'Perguntas',
+                  text2: '12 respostas',
+                  onPressed: () {},
+                ),
+
+                CustomButton(
+                  icon: Icons.add,
+                  text:  'Adicionar Categoria',
+                  fullWidth: true,
+                  onPressed: () {
+                    Navigator.of(context).pushNamed('/answers/category');
+                  },
+                ),
+              ],
             ),
           ],
         ),
