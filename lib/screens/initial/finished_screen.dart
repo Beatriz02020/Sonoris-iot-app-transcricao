@@ -3,6 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:sonoris/components/customButton.dart';
 import 'package:sonoris/screens/initial/bluetooth_screen.dart';
 import 'package:sonoris/screens/initial/language_screen.dart';
+import 'package:sonoris/screens/initial/login_screen.dart';
+import 'package:sonoris/screens/initial/signup_screen.dart';
 import 'package:sonoris/theme/colors.dart';
 import 'package:sonoris/theme/text_styles.dart';
 
@@ -64,7 +66,7 @@ class FinishedScreen extends StatelessWidget {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => LanguageScreen()),
+                      MaterialPageRoute(builder: (context) => SignUpScreen()),
                     );
                   },
                 ),
@@ -75,7 +77,7 @@ class FinishedScreen extends StatelessWidget {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => LanguageScreen()),
+                      MaterialPageRoute(builder: (context) => LoginScreen()),
                     );
                   },
                 ),
