@@ -226,7 +226,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       borderRadius: BorderRadius.circular(16),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withAlpha(18),
+                          color: AppColors.gray900.withAlpha(18),
                           blurRadius: 18.5,
                           spreadRadius: 1,
                           offset: const Offset(0, 6),
@@ -258,7 +258,8 @@ class _HomeScreenState extends State<HomeScreen> {
                             children: [
                               Text(
                                 'Conversa_04_07_25_8h',
-                                style: AppTextStyles.bold,
+                                style: AppTextStyles.bold.copyWith(
+                            color: AppColors.gray900)
                               ),
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.end,
@@ -297,7 +298,8 @@ class _HomeScreenState extends State<HomeScreen> {
                             children: [
                               Text(
                                 'Conversa_04_07_25_8h',
-                                style: AppTextStyles.bold,
+                                style: AppTextStyles.bold.copyWith(
+                                    color: AppColors.gray900)
                               ),
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.end,
@@ -329,6 +331,8 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                             );
                           },
+                          // TODO coloca icone (fazer uma variant dele)
+                          // Icon(Icons.circle_outlined, color: AppColors.blue500),
                         ),
                       ],
                     ),

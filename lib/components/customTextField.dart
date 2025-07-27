@@ -5,6 +5,7 @@ import 'package:sonoris/theme/text_styles.dart';
 class CustomTextField extends StatelessWidget {
   final String hintText;
   final bool isDropdown;
+  final bool isSearch;
   final List<String>? dropdownOptions;
   final String? selectedValue;
   final void Function(String?)? onChanged;
@@ -14,6 +15,7 @@ class CustomTextField extends StatelessWidget {
     super.key,
     this.hintText = '',
     this.isDropdown = false,
+    this.isSearch = false,
     this.dropdownOptions,
     this.selectedValue,
     this.onChanged,
@@ -29,7 +31,8 @@ class CustomTextField extends StatelessWidget {
     OutlineInputBorder customBorder() {
       return OutlineInputBorder(
         borderRadius: BorderRadius.circular(15),
-        borderSide: BorderSide(color: AppColors.blue500, width: 1.5),
+        borderSide: BorderSide(color: isSearch ? AppColors.gray500 : AppColors.blue500,
+          width: 1.5,),
       );
     }
 
@@ -64,6 +67,9 @@ class CustomTextField extends StatelessWidget {
                 focusedBorder: customBorder(),
                 hintStyle: AppTextStyles.body,
                 hintText: hintText,
+                  prefixIcon: isSearch // icone do input de pesquisa
+                      ? Icon(Icons.search, color: AppColors.gray500, size: 20)
+                      : null,
                 contentPadding: const EdgeInsets.only(top: 0, left: 15),
               ),
             );

@@ -30,8 +30,8 @@ class QuickActionsButton extends StatelessWidget {
 
       // respostas rápidas
       child: Container(
-        width: 99,
-        height: 99,
+        width: 100,
+        height: 100,
         padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(
           color: AppColors.white100,
