@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:sonoris/components/button.dart';
+import 'package:sonoris/components/customButton.dart';
 import 'package:sonoris/theme/colors.dart';
 import 'package:sonoris/theme/text_styles.dart';
 
@@ -26,24 +26,23 @@ class _UnsavedChatScreenState extends State<UnsavedChatScreen> {
       backgroundColor: AppColors.background,
       appBar: AppBar(
         backgroundColor: AppColors.white100,
-        iconTheme: const IconThemeData(
-          color: AppColors.blue500,
-        ),
+        iconTheme: const IconThemeData(color: AppColors.blue500),
         titleTextStyle: AppTextStyles.h3.copyWith(color: AppColors.blue500),
-        title: const Text(
-            'Conversa Não Salva'
-        ),
+        title: const Text('Conversa Não Salva'),
       ),
-      body:
-      Padding(
-        padding: const EdgeInsets.only(left: 30, right: 30, top: 55, bottom: 30),
-        child:
-        Column(
+      body: Padding(
+        padding: const EdgeInsets.only(
+          left: 30,
+          right: 30,
+          top: 55,
+          bottom: 30,
+        ),
+        child: Column(
           spacing: 4,
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Conversa Não Salva', style: AppTextStyles.body,),
+            Text('Conversa Não Salva', style: AppTextStyles.body),
             CustomButton(
               text: 'Salvar Conversa',
               fullWidth: true,

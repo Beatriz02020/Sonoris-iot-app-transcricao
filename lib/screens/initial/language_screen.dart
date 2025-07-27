@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:sonoris/components/button.dart';
+import 'package:sonoris/components/customButton.dart';
 import 'package:sonoris/screens/initial/bluetooth_screen.dart';
 import 'package:sonoris/screens/initial/finished_screen.dart';
 import 'package:sonoris/theme/colors.dart';
@@ -31,15 +31,11 @@ class _LanguageScreenState extends State<LanguageScreen> {
           color: AppColors.blue500, // cor dos ícones (ex: seta de voltar)
         ),
         titleTextStyle: AppTextStyles.h3.copyWith(color: AppColors.blue500),
-        title: const Text(
-            ''
-        ),
+        title: const Text(''),
       ),
-      body:
-      Padding(
+      body: Padding(
         padding: const EdgeInsets.symmetric(vertical: 55.0, horizontal: 38),
-        child:
-        Column(
+        child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             SizedBox(height: 1),
@@ -57,10 +53,14 @@ class _LanguageScreenState extends State<LanguageScreen> {
                 Column(
                   spacing: 2,
                   children: [
-                    Text('Línguas',
-                      style: AppTextStyles.h3.copyWith(color: AppColors.blue500),
+                    Text(
+                      'Línguas',
+                      style: AppTextStyles.h3.copyWith(
+                        color: AppColors.blue500,
+                      ),
                     ),
-                    Text('Quais línguas o dispositivo deve reconhecer?',
+                    Text(
+                      'Quais línguas o dispositivo deve reconhecer?',
                       textAlign: TextAlign.center,
                       style: AppTextStyles.bold,
                     ),
@@ -70,31 +70,32 @@ class _LanguageScreenState extends State<LanguageScreen> {
                   spacing: 0,
                   children: [
                     Row(
-                        spacing: 0,
-                        children: [
-                          Checkbox(
-                            value: true,
-                            onChanged: (value) {},
-                            activeColor: AppColors.blue500,      // cor da bolinha marcada
-                            checkColor: AppColors.white100,      // cor do check (✓)
-                          ),
-                          Text('Português (Brasileiro)',
-                            style: AppTextStyles.bold,
-                          ),
-                        ],
-                  ),
+                      spacing: 0,
+                      children: [
+                        Checkbox(
+                          value: true,
+                          onChanged: (value) {},
+                          activeColor:
+                              AppColors.blue500, // cor da bolinha marcada
+                          checkColor: AppColors.white100, // cor do check (✓)
+                        ),
+                        Text(
+                          'Português (Brasileiro)',
+                          style: AppTextStyles.bold,
+                        ),
+                      ],
+                    ),
                     Row(
                       spacing: 0,
                       children: [
                         Checkbox(
                           value: false,
                           onChanged: (value) {},
-                          activeColor: AppColors.blue500,      // cor da bolinha marcada
+                          activeColor:
+                              AppColors.blue500, // cor da bolinha marcada
                           checkColor: AppColors.white100,
                         ),
-                        Text('Inglês',
-                          style: AppTextStyles.bold,
-                        ),
+                        Text('Inglês', style: AppTextStyles.bold),
                       ],
                     ),
                   ],
@@ -108,9 +109,7 @@ class _LanguageScreenState extends State<LanguageScreen> {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                    builder: (context) => FinishedScreen(),
-                  ),
+                  MaterialPageRoute(builder: (context) => FinishedScreen()),
                 );
               },
             ),

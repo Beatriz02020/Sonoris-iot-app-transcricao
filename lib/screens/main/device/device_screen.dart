@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:sonoris/components/button.dart';
-import 'package:sonoris/components/text_field.dart';
+import 'package:sonoris/components/customButton.dart';
+import 'package:sonoris/components/customTextField.dart';
 import 'package:sonoris/screens/initial/bluetooth_screen.dart';
 import 'package:sonoris/screens/initial/language_screen.dart';
 import 'package:sonoris/theme/colors.dart';
@@ -36,119 +36,6 @@ class _DeviceScreenState extends State<DeviceScreen> {
       backgroundColor: AppColors.background,
       body: ListView(
         children: [
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              SizedBox(
-                width: 320,
-                height: 230,
-                child: Image.asset('assets/images/SonorisFisico.png'),
-              ),
-              Stack(
-                children: [
-                  Center(
-                    child: Padding(
-                      padding: const EdgeInsets.all(10),
-                      child: Container(
-                        width: 350,
-                        height: 100,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(20),
-                          color: AppColors.blue950,
-                        ),
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
-                    child: Column(
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: [
-                            Text(
-                              'Sonoris v1.23.9',
-                              style: AppTextStyles.bold.copyWith(
-                                color: AppColors.white100,
-                              ),
-                            ),
-                            Text(
-                              'Conectado',
-                              style: AppTextStyles.bold.copyWith(
-                                color: AppColors.green500,
-                              ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: 5),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 15),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    'Bateria',
-                                    style: AppTextStyles.bold.copyWith(
-                                      color: AppColors.blue200,
-                                    ),
-                                  ),
-                                  Text(
-                                    '57%',
-                                    style: AppTextStyles.h4.copyWith(
-                                      color: AppColors.white100,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    'Bateria',
-                                    style: AppTextStyles.bold.copyWith(
-                                      color: AppColors.blue200,
-                                    ),
-                                  ),
-                                  Text(
-                                    '57%',
-                                    style: AppTextStyles.h4.copyWith(
-                                      color: AppColors.white100,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    'Bateria',
-                                    style: AppTextStyles.bold.copyWith(
-                                      color: AppColors.blue200,
-                                    ),
-                                  ),
-                                  Text(
-                                    '57%',
-                                    style: AppTextStyles.h4.copyWith(
-                                      color: AppColors.white100,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-
           Padding(
             padding: const EdgeInsets.only(
               left: 30,
@@ -157,95 +44,220 @@ class _DeviceScreenState extends State<DeviceScreen> {
               bottom: 30,
             ),
             child: Column(
-              spacing: 4,
+              spacing: 18,
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  'Nome do Dispositivo',
-                  style: AppTextStyles.bold.copyWith(color: AppColors.gray900),
-                ),
                 SizedBox(
-                  width: 330,
-                  child: CustomTextField(hintText: 'Sonoris v1.23.9'),
+                  width: 320,
+                  height: 230,
+                  child: Image.asset('assets/images/SonorisFisico.png'),
                 ),
-                SizedBox(height: 15),
-                Text(
-                  'Modo de funcionamento',
-                  style: AppTextStyles.bold.copyWith(color: AppColors.gray900),
-                ),
-                SizedBox(
-                  width: 330,
-                  child: CustomTextField(
-                    isDropdown: true,
-                    dropdownOptions: [
-                      'Transcrição + Respostas Rápidas',
-                      'Apenas Transcrição',
-                      'Apenas Respostas Rápidas',
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 18,
+                    horizontal: 24,
+                  ),
+                  decoration: BoxDecoration(
+                    color: AppColors.blue950,
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Column(
+                    spacing: 8,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          // logo e nome do dispositivo
+                          Row(
+                            spacing: 8,
+                            children: [
+                              Text(
+                                'Sonoris v1.0',
+                                style: AppTextStyles.bold.copyWith(
+                                  color: AppColors.white100,
+                                ),
+                              ),
+                            ],
+                          ),
+
+                          // bateria do dispositivo
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Conectado',
+                                style: AppTextStyles.body.copyWith(
+                                  color: AppColors.teal500,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        spacing: 8,
+                        children: [
+                          // quantidade de conversas
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Bateria',
+                                style: AppTextStyles.body.copyWith(
+                                  color: AppColors.blue200,
+                                  height: 1,
+                                ),
+                              ),
+                              Text(
+                                '57%',
+                                style: AppTextStyles.bold.copyWith(
+                                  color: AppColors.white100,
+                                ),
+                              ),
+                            ],
+                          ),
+
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Conversas',
+                                style: AppTextStyles.body.copyWith(
+                                  color: AppColors.blue200,
+                                  height: 1,
+                                ),
+                              ),
+                              Text(
+                                '185',
+                                style: AppTextStyles.bold.copyWith(
+                                  color: AppColors.white100,
+                                ),
+                              ),
+                            ],
+                          ),
+
+                          // tempo ativo no app
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Tempo Ativo',
+                                style: AppTextStyles.body.copyWith(
+                                  color: AppColors.blue200,
+                                  height: 1,
+                                ),
+                              ),
+                              Text(
+                                '1230h',
+                                style: AppTextStyles.bold.copyWith(
+                                  color: AppColors.white100,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     ],
-                    selectedValue: 'Transcrição + Respostas Rápidas',
-                    onChanged: (value) {
-                      print('Selecionado: $value');
-                    },
                   ),
                 ),
-                SizedBox(height: 10),
-                Text(
-                  'Línguas',
-                  style: AppTextStyles.bold.copyWith(color: AppColors.gray900),
-                ),
-                Row(
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Checkbox(
-                      value: _isCheckedPt,
-                      onChanged: (bool? value) {
-                        setState(() {
-                          _isCheckedPt = value ?? false;
-                        });
-                      },
-                      activeColor: AppColors.blue500,
-                      checkColor: AppColors.white100,
-                      side: BorderSide(
-                        color: AppColors.blue500,
-                        width: 2,
-                      ),
-                    ),
                     Text(
-                      'Português (Brasileiro)',
+                      'Nome do Dispositivo',
                       style: AppTextStyles.bold.copyWith(
-                        color: AppColors.gray700,
+                        color: AppColors.gray900,
                       ),
                     ),
-                  ],
-                ),
-                Row(
-                  children: [
-                    Checkbox(
-                      value: _isCheckedEn,
-                      onChanged: (bool? value) {
-                        setState(() {
-                          _isCheckedEn = value ?? false;
-                        });
-                      },
-                      activeColor: AppColors.blue500,
-                      checkColor: AppColors.white100,
-                      side: BorderSide(
-                        color: AppColors.blue500,
-                        width: 2,
-                      ),
-                    ),
-                    Text(
-                      'Inglês',
-                      style: AppTextStyles.bold.copyWith(
-                        color: AppColors.gray700,
-                      ),
+                    CustomTextField(
+                      hintText: 'Sonoris v1.23.9',
+                      fullWidth: true,
                     ),
                   ],
                 ),
 
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      'Modo de funcionamento',
+                      style: AppTextStyles.bold.copyWith(
+                        color: AppColors.gray900,
+                      ),
+                    ),
+                    CustomTextField(
+                      isDropdown: true,
+                      fullWidth: true,
+                      dropdownOptions: [
+                        'Transcrição + Respostas Rápidas',
+                        'Apenas Transcrição',
+                      ],
+                      selectedValue: 'Transcrição + Respostas Rápidas',
+                      onChanged: (value) {},
+                    ),
+                  ],
+                ),
+
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Línguas',
+                      style: AppTextStyles.bold.copyWith(
+                        color: AppColors.gray900,
+                      ),
+                    ),
+                    Row(
+                      spacing: 0,
+                      children: [
+                        Checkbox(
+                          value: _isCheckedPt,
+                          onChanged: (bool? value) {
+                            setState(() {
+                              _isCheckedPt = value ?? false;
+                            });
+                          },
+                          activeColor: AppColors.blue500,
+                          checkColor: AppColors.white100,
+                          side: BorderSide(color: AppColors.blue500, width: 2),
+                        ),
+                        Text(
+                          'Português (Brasileiro)',
+                          style: AppTextStyles.bold.copyWith(
+                            color: AppColors.gray700,
+                          ),
+                        ),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Checkbox(
+                          value: _isCheckedEn,
+                          onChanged: (bool? value) {
+                            setState(() {
+                              _isCheckedEn = value ?? false;
+                            });
+                          },
+                          activeColor: AppColors.blue500,
+                          checkColor: AppColors.white100,
+                          side: BorderSide(color: AppColors.blue500, width: 2),
+                        ),
+                        Text(
+                          'Inglês',
+                          style: AppTextStyles.bold.copyWith(
+                            color: AppColors.gray700,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       'Entrar em Standby após',
@@ -253,36 +265,35 @@ class _DeviceScreenState extends State<DeviceScreen> {
                         color: AppColors.gray900,
                       ),
                     ),
-                    SizedBox(height: 2),
-                    Slider(
-                      value: _standbyValue,
-                      min: 1,
-                      max: 60,
-                      divisions: 59,
-                      activeColor: AppColors.blue500,
-                      onChanged: (value) {
-                        setState(() {
-                          _standbyValue = value;
-                        });
-                      },
-                    ),
-                    SizedBox(height: 2),
-                    Align(
-                      alignment: Alignment.center,
-                      child: Text(
-                        '${_standbyValue.round()} minutos sem fala',
-                        style: AppTextStyles.medium.copyWith(
-                          color: AppColors.gray700,
+                    Column(
+                      spacing: 0,
+                      children: [
+                        Slider(
+                          value: _standbyValue,
+                          min: 1,
+                          max: 60,
+                          divisions: 59,
+                          activeColor: AppColors.blue500,
+                          inactiveColor: AppColors.white100,
+                          onChanged: (value) {
+                            setState(() {
+                              _standbyValue = value;
+                            });
+                          },
                         ),
-                      ),
+                        Text(
+                          '${_standbyValue.round()} minutos sem fala',
+                          style: AppTextStyles.medium,
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
                     ),
                   ],
                 ),
-                SizedBox(height: 10), // Espaço entre blocos
+
                 // 2. Tempo entre conversas
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
                       'Tempo entre conversas',
@@ -290,37 +301,33 @@ class _DeviceScreenState extends State<DeviceScreen> {
                         color: AppColors.gray900,
                       ),
                     ),
-                    SizedBox(height: 2),
-                    Slider(
-                      value: _conversaValue,
-                      min: 1,
-                      max: 60,
-                      divisions: 59,
-                      activeColor: AppColors.blue500,
-                      onChanged: (value) {
-                        setState(() {
-                          _conversaValue = value;
-                        });
-                      },
-                    ),
-                    SizedBox(height: 2),
-                    Align(
-                      alignment: Alignment.center,
-                      child: Text(
-                        '${_conversaValue.round()} minutos',
-                        style: AppTextStyles.medium.copyWith(
-                          color: AppColors.gray700,
+                    Column(
+                      spacing: 0,
+                      children: [
+                        Slider(
+                          value: _conversaValue,
+                          min: 1,
+                          max: 60,
+                          divisions: 59,
+                          activeColor: AppColors.blue500,
+                          inactiveColor: AppColors.white100,
+                          onChanged: (value) {
+                            setState(() {
+                              _conversaValue = value;
+                            });
+                          },
                         ),
-                      ),
+                        Text(
+                          '${_conversaValue.round()} minutos',
+                          style: AppTextStyles.medium,
+                        ),
+                      ],
                     ),
                   ],
                 ),
 
-                SizedBox(height: 10),
-
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
                       'Deletar conversas não salvas após',
@@ -328,27 +335,27 @@ class _DeviceScreenState extends State<DeviceScreen> {
                         color: AppColors.gray900,
                       ),
                     ),
-                    Slider(
-                      value: _deletarValue,
-                      min: 1,
-                      max: 100,
-                      divisions: 99,
-                      activeColor: AppColors.blue500,
-                      onChanged: (value) {
-                        setState(() {
-                          _deletarValue = value;
-                        });
-                      },
-                    ),
-
-                    Align(
-                      alignment: Alignment.center,
-                      child: Text(
-                        '${_deletarValue.round()} dias',
-                        style: AppTextStyles.medium.copyWith(
-                          color: AppColors.gray700,
+                    Column(
+                      spacing: 0,
+                      children: [
+                        Slider(
+                          value: _deletarValue,
+                          min: 1,
+                          max: 100,
+                          divisions: 99,
+                          activeColor: AppColors.blue500,
+                          inactiveColor: AppColors.white100,
+                          onChanged: (value) {
+                            setState(() {
+                              _deletarValue = value;
+                            });
+                          },
                         ),
-                      ),
+                        Text(
+                          '${_deletarValue.round()} dias',
+                          style: AppTextStyles.medium,
+                        ),
+                      ],
                     ),
                   ],
                 ),

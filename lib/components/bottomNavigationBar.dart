@@ -49,7 +49,6 @@ class _BottomNavState extends State<BottomNav> {
     ]);
   }
 
-
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
@@ -66,18 +65,14 @@ class _BottomNavState extends State<BottomNav> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: IndexedStack(
-        index: _selectedIndex,
-        children: _pages,
-      ),
-      bottomNavigationBar: _showBottomNav
-          ? CustomBottomNavBar(
-        selectedIndex: _selectedIndex,
-        onItemTapped: _onItemTapped,
-      )
-          : null,
+      body: IndexedStack(index: _selectedIndex, children: _pages),
+      bottomNavigationBar:
+          _showBottomNav
+              ? CustomBottomNavBar(
+                selectedIndex: _selectedIndex,
+                onItemTapped: _onItemTapped,
+              )
+              : null,
     );
   }
 }
-
-

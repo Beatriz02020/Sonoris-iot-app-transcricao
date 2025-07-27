@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:sonoris/components/button.dart';
+import 'package:sonoris/components/customButton.dart';
 import 'package:sonoris/screens/initial/bluetooth_screen.dart';
 import 'package:sonoris/screens/initial/language_screen.dart';
 import 'package:sonoris/theme/colors.dart';
@@ -31,15 +31,11 @@ class _SelectModeScreenState extends State<SelectModeScreen> {
           color: AppColors.blue500, // cor dos ícones (ex: seta de voltar)
         ),
         titleTextStyle: AppTextStyles.h3.copyWith(color: AppColors.blue500),
-        title: const Text(
-            ''
-        ),
+        title: const Text(''),
       ),
-      body:
-      Padding(
+      body: Padding(
         padding: const EdgeInsets.symmetric(vertical: 55.0, horizontal: 38),
-        child:
-        Column(
+        child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             SizedBox(height: 1),
@@ -57,10 +53,14 @@ class _SelectModeScreenState extends State<SelectModeScreen> {
                 Column(
                   spacing: 2,
                   children: [
-                    Text('Modo de funcionamento',
-                      style: AppTextStyles.h3.copyWith(color: AppColors.blue500),
+                    Text(
+                      'Modo de funcionamento',
+                      style: AppTextStyles.h3.copyWith(
+                        color: AppColors.blue500,
+                      ),
                     ),
-                    Text('Qual o modo de operação do dispositivo?',
+                    Text(
+                      'Qual o modo de operação do dispositivo?',
                       textAlign: TextAlign.center,
                       style: AppTextStyles.bold,
                     ),
@@ -68,35 +68,31 @@ class _SelectModeScreenState extends State<SelectModeScreen> {
                 ),
               ],
             ),
-        Column(
-          spacing: 2,
-          children: [
-            CustomButton(
-              text: 'Transcrição + Respostas Rápidas',
-              fullWidth: true,
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => LanguageScreen(),
-                  ),
-                );
-              },
+            Column(
+              spacing: 2,
+              children: [
+                CustomButton(
+                  text: 'Transcrição + Respostas Rápidas',
+                  fullWidth: true,
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => LanguageScreen()),
+                    );
+                  },
+                ),
+                CustomButton(
+                  text: 'Apenas transcrição',
+                  fullWidth: true,
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => LanguageScreen()),
+                    );
+                  },
+                ),
+              ],
             ),
-            CustomButton(
-              text: 'Apenas transcrição',
-              fullWidth: true,
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => LanguageScreen(),
-                  ),
-                );
-              },
-            ),
-          ],
-        ),
           ],
         ),
       ),

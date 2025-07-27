@@ -17,17 +17,31 @@ class CustomBottomNavBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final items = [
-      {'icon': 'assets/images/HomeOutlined.svg', 'selected': 'assets/images/HomeFill.svg', 'label': 'Home'},
-      {'icon': 'assets/images/SavedOutlined.svg', 'selected': 'assets/images/SavedFill.svg', 'label': 'Salvos'},
-      {'icon': 'assets/images/DeviceOutlined.svg', 'selected': 'assets/images/DeviceFill.svg', 'label': 'Dispositivo'},
-      {'icon': 'assets/images/UserOutlined.svg', 'selected': 'assets/images/UserFill.svg', 'label': 'Perfil'},
+      {
+        'icon': 'assets/images/HomeOutlined.svg',
+        'selected': 'assets/images/HomeFill.svg',
+        'label': 'Home',
+      },
+      {
+        'icon': 'assets/images/SavedOutlined.svg',
+        'selected': 'assets/images/SavedFill.svg',
+        'label': 'Salvos',
+      },
+      {
+        'icon': 'assets/images/DeviceOutlined.svg',
+        'selected': 'assets/images/DeviceFill.svg',
+        'label': 'Dispositivo',
+      },
+      {
+        'icon': 'assets/images/UserOutlined.svg',
+        'selected': 'assets/images/UserFill.svg',
+        'label': 'Perfil',
+      },
     ];
 
     return Container(
       padding: const EdgeInsets.only(left: 24, top: 20, right: 24, bottom: 20),
-      decoration: BoxDecoration(
-        color: AppColors.blue500,
-      ),
+      decoration: BoxDecoration(color: AppColors.blue500),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: List.generate(items.length, (index) {
@@ -39,8 +53,7 @@ class CustomBottomNavBar extends StatelessWidget {
           return GestureDetector(
             onTap: () => onItemTapped(index),
             behavior: HitTestBehavior.opaque,
-            child:
-            SizedBox(
+            child: SizedBox(
               width: 80,
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -50,21 +63,27 @@ class CustomBottomNavBar extends StatelessWidget {
                     iconPath,
                     height: 24,
                     colorFilter: ColorFilter.mode(
-                      isSelected ? AppColors.white100 : AppColors.white100.withValues(alpha: 0.7),
+                      isSelected
+                          ? AppColors.white100
+                          : AppColors.white100.withValues(alpha: 0.7),
                       BlendMode.srcIn,
                     ),
                   ),
                   const SizedBox(height: 6),
                   Text(
                     label,
-                    style: isSelected
-                        ? AppTextStyles.boldSmall.copyWith(color: AppColors.white100)
-                        : AppTextStyles.bodySmall.copyWith(color: AppColors.white100.withValues(alpha: 0.7)),
+                    style:
+                        isSelected
+                            ? AppTextStyles.boldSmall.copyWith(
+                              color: AppColors.white100,
+                            )
+                            : AppTextStyles.bodySmall.copyWith(
+                              color: AppColors.white100.withValues(alpha: 0.7),
+                            ),
                   ),
                 ],
               ),
-            )
-
+            ),
           );
         }),
       ),

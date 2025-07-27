@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:sonoris/components/button.dart';
+import 'package:sonoris/components/customButton.dart';
 import 'package:sonoris/screens/initial/bluetooth_screen.dart';
 import 'package:sonoris/screens/initial/language_screen.dart';
 import 'package:sonoris/theme/colors.dart';
@@ -28,26 +28,22 @@ class _SavedChatScreenState extends State<SavedChatScreen> {
       backgroundColor: AppColors.background,
       appBar: AppBar(
         backgroundColor: AppColors.white100,
-        iconTheme: const IconThemeData(
-          color: AppColors.blue500,
-        ),
+        iconTheme: const IconThemeData(color: AppColors.blue500),
         titleTextStyle: AppTextStyles.h3.copyWith(color: AppColors.blue500),
-        title: const Text(
-            'Conversa Salva'
-        ),
+        title: const Text('Conversa Salva'),
       ),
-      body:
-      Padding(
-        padding: const EdgeInsets.only(left: 30, right: 30, top: 55, bottom: 30),
-        child:
-        Column(
+      body: Padding(
+        padding: const EdgeInsets.only(
+          left: 30,
+          right: 30,
+          top: 55,
+          bottom: 30,
+        ),
+        child: Column(
           spacing: 4,
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('Conversa Salva', style: AppTextStyles.body,)
-
-          ],
+          children: [Text('Conversa Salva', style: AppTextStyles.body)],
         ),
       ),
     );

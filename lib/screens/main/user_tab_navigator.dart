@@ -41,12 +41,8 @@ class UserTabNavigator extends StatelessWidget {
             page = const UserScreen();
         }
 
-        return MaterialPageRoute(
-          builder: (_) => page,
-          settings: settings,
-        );
+        return MaterialPageRoute(builder: (_) => page, settings: settings);
       },
     );
   }
 }
-

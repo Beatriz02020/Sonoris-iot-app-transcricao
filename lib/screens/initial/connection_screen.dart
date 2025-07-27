@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:sonoris/components/button.dart';
+import 'package:sonoris/components/customButton.dart';
 import 'package:sonoris/screens/initial/select_mode_screen.dart';
 import 'package:sonoris/theme/colors.dart';
 import 'package:sonoris/theme/text_styles.dart';
@@ -30,179 +30,179 @@ class _ConnectionScreenState extends State<ConnectionScreen> {
           color: AppColors.blue500, // cor dos ícones (ex: seta de voltar)
         ),
         titleTextStyle: AppTextStyles.h3.copyWith(color: AppColors.blue500),
-        title: const Text(
-            ''
+        title: const Text(''),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 45.0, horizontal: 20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          spacing: 20,
+          children: [
+            SizedBox(
+              width: double.infinity,
+              child: Image.asset(
+                'assets/images/SonorisFisico.png',
+                fit: BoxFit.contain, // mantém o aspecto original
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 18),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                spacing: 2,
+                children: [
+                  Text(
+                    'Pareamento',
+                    style: AppTextStyles.h3.copyWith(color: AppColors.blue500),
+                  ),
+                  Text('Selecione seu dispositivo:', style: AppTextStyles.bold),
+                ],
+              ),
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              spacing: 10,
+              children: [
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 12,
+                  ),
+                  decoration: BoxDecoration(
+                    color: AppColors.white100,
+                    borderRadius: BorderRadius.circular(14),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withAlpha(18),
+                        blurRadius: 18.5,
+                        spreadRadius: 1,
+                        offset: const Offset(0, 6),
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        spacing: 6,
+                        children: [
+                          // Avatar circular
+                          SizedBox(
+                            width: 30,
+                            child: Image.asset(
+                              'assets/images/Icon.png',
+                              fit: BoxFit.contain,
+                            ),
+                          ),
+                          Text(
+                            'Dispositivo Sonoris',
+                            style: AppTextStyles.body,
+                          ),
+                        ],
+                      ),
+                      Icon(Icons.circle_outlined, color: AppColors.blue500),
+                    ],
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 12,
+                  ),
+                  decoration: BoxDecoration(
+                    color: AppColors.white100,
+                    borderRadius: BorderRadius.circular(14),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withAlpha(18),
+                        blurRadius: 18.5,
+                        spreadRadius: 1,
+                        offset: const Offset(0, 6),
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        spacing: 6,
+                        children: [
+                          // Avatar circular
+                          SizedBox(
+                            width: 30,
+                            child: Image.asset(
+                              'assets/images/Icon.png',
+                              fit: BoxFit.contain,
+                            ),
+                          ),
+                          Text(
+                            'Dispositivo Sonoris',
+                            style: AppTextStyles.body,
+                          ),
+                        ],
+                      ),
+                      Icon(Icons.circle_outlined, color: AppColors.blue500),
+                    ],
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 12,
+                  ),
+                  decoration: BoxDecoration(
+                    color: AppColors.white100,
+                    borderRadius: BorderRadius.circular(14),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withAlpha(18),
+                        blurRadius: 18.5,
+                        spreadRadius: 1,
+                        offset: const Offset(0, 6),
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        spacing: 6,
+                        children: [
+                          // Avatar circular
+                          SizedBox(
+                            width: 30,
+                            child: Image.asset(
+                              'assets/images/Icon.png',
+                              fit: BoxFit.contain,
+                            ),
+                          ),
+                          Text(
+                            'Dispositivo Sonoris',
+                            style: AppTextStyles.body,
+                          ),
+                        ],
+                      ),
+                      Icon(Icons.circle_outlined, color: AppColors.blue500),
+                    ],
+                  ),
+                ),
+                CustomButton(
+                  text: '(Botão placeholder)',
+                  fullWidth: true,
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => SelectModeScreen(),
+                      ),
+                    );
+                  },
+                ),
+              ],
+            ),
+          ],
         ),
       ),
-      body:
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 45.0, horizontal: 20),
-          child:
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            spacing: 20,
-            children: [
-              SizedBox(
-                width: double.infinity,
-                child: Image.asset(
-                  'assets/images/SonorisFisico.png',
-                  fit: BoxFit.contain, // mantém o aspecto original
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 18),
-                child:
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  spacing: 2,
-                  children: [Text('Pareamento', style: AppTextStyles.h3.copyWith(color: AppColors.blue500),), Text('Selecione seu dispositivo:', style: AppTextStyles.bold,),
-                  ],
-                ),
-              ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            spacing: 10,
-            children: [
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
-                decoration: BoxDecoration(
-                  color: AppColors.white100,
-                  borderRadius: BorderRadius.circular(14),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
-                      blurRadius: 18.5,
-                      spreadRadius: 1,
-                      offset: const Offset(0, 6),
-                    ),
-                  ],
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      spacing: 6,
-                      children: [
-                        // Avatar circular
-                        SizedBox(
-                          width: 30,
-                          child: Image.asset(
-                            'assets/images/Icon.png',
-                            fit: BoxFit.contain,
-                          ),
-                        ),
-                        Text(
-                          'Dispositivo Sonoris',
-                          style: AppTextStyles.body,
-                        ),
-                      ],
-                    ),
-                    Icon(
-                      Icons.circle_outlined,
-                      color: AppColors.blue500,
-                    ),
-                  ],
-                ),
-              ),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
-                decoration: BoxDecoration(
-                  color: AppColors.white100,
-                  borderRadius: BorderRadius.circular(14),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
-                      blurRadius: 18.5,
-                      spreadRadius: 1,
-                      offset: const Offset(0, 6),
-                    ),
-                  ],
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      spacing: 6,
-                      children: [
-                        // Avatar circular
-                        SizedBox(
-                          width: 30,
-                          child: Image.asset(
-                            'assets/images/Icon.png',
-                            fit: BoxFit.contain,
-                          ),
-                        ),
-                        Text(
-                          'Dispositivo Sonoris',
-                          style: AppTextStyles.body,
-                        ),
-                      ],
-                    ),
-                    Icon(
-                      Icons.circle_outlined,
-                      color: AppColors.blue500,
-                    ),
-                  ],
-                ),
-              ),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
-                decoration: BoxDecoration(
-                  color: AppColors.white100,
-                  borderRadius: BorderRadius.circular(14),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
-                      blurRadius: 18.5,
-                      spreadRadius: 1,
-                      offset: const Offset(0, 6),
-                    ),
-                  ],
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      spacing: 6,
-                      children: [
-                        // Avatar circular
-                        SizedBox(
-                          width: 30,
-                          child: Image.asset(
-                            'assets/images/Icon.png',
-                            fit: BoxFit.contain,
-                          ),
-                        ),
-                        Text(
-                          'Dispositivo Sonoris',
-                          style: AppTextStyles.body,
-                        ),
-                      ],
-                    ),
-                    Icon(
-                      Icons.circle_outlined,
-                      color: AppColors.blue500,
-                    ),
-                  ],
-                ),
-              ),
-              CustomButton(
-                text: 'Proxima tela (placeholder)',
-                fullWidth: true,
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => SelectModeScreen(),
-                    ),
-                  );
-                },
-              ),
-            ],
-          ),
-            ],
-          ),
-        ),
     );
   }
 }

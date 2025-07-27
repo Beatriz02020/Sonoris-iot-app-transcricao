@@ -69,12 +69,8 @@ class HomeTabNavigator extends StatelessWidget {
             page = const HomeScreen();
         }
 
-        return MaterialPageRoute(
-          builder: (_) => page,
-          settings: settings,
-        );
+        return MaterialPageRoute(builder: (_) => page, settings: settings);
       },
     );
   }
 }
-

@@ -21,40 +21,44 @@ class QuickActionsButton extends StatelessWidget {
     final String iconPath = 'assets/images/icons/$icon.png';
 
     return GestureDetector(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => onPressed),
-                );
-              },
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => onPressed),
+        );
+      },
 
-              // respostas rápidas
-              child: Container(
-                width: 110,
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: AppColors.white100,
-                  borderRadius: BorderRadius.circular(16),
-                  boxShadow: [
-                    BoxShadow(
-                      color: AppColors.gray900.withOpacity(0.1),
-                      spreadRadius: 1,
-                      blurRadius: 10,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),
+      // respostas rápidas
+      child: Container(
+        width: 99,
+        height: 99,
+        padding: const EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          color: AppColors.white100,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.gray900.withOpacity(0.1),
+              spreadRadius: 1,
+              blurRadius: 10,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
 
-                // icon e titulo
-                child: Column(
-                  spacing: 5,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Image.asset(iconPath), // icone
-                    Text(text, style: AppTextStyles.bodySmall), // texto
-                  ],
-                ),
-              ),
-            );
+        // icon e titulo
+        child: Column(
+          spacing: 6,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Image.asset(iconPath), // icone
+            Text(
+              text,
+              style: AppTextStyles.bodySmall.copyWith(height: 1.2),
+            ), // texto
+          ],
+        ),
+      ),
+    );
   }
 }

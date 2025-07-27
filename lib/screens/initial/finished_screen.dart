@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:sonoris/components/button.dart';
+import 'package:sonoris/components/customButton.dart';
 import 'package:sonoris/screens/initial/bluetooth_screen.dart';
 import 'package:sonoris/screens/initial/language_screen.dart';
 import 'package:sonoris/theme/colors.dart';
@@ -20,11 +20,9 @@ class FinishedScreen extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: AppColors.white100,
-      body:
-      Padding(
+      body: Padding(
         padding: const EdgeInsets.symmetric(vertical: 55.0, horizontal: 38),
-        child:
-        Column(
+        child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             SizedBox(height: 1),
@@ -42,10 +40,14 @@ class FinishedScreen extends StatelessWidget {
                 Column(
                   spacing: 2,
                   children: [
-                    Text('Dispositivo Configurado',
-                      style: AppTextStyles.h3.copyWith(color: AppColors.blue500),
+                    Text(
+                      'Dispositivo Configurado',
+                      style: AppTextStyles.h3.copyWith(
+                        color: AppColors.blue500,
+                      ),
                     ),
-                    Text('Para utilizar o dispositivo é necessario uma conta Sonoris',
+                    Text(
+                      'Para utilizar o dispositivo é necessario uma conta Sonoris',
                       textAlign: TextAlign.center,
                       style: AppTextStyles.bold,
                     ),
@@ -53,36 +55,32 @@ class FinishedScreen extends StatelessWidget {
                 ),
               ],
             ),
-        Column(
-          spacing: 2,
-          children: [
-            CustomButton(
-              text: 'Cadastro',
-              fullWidth: true,
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => LanguageScreen(),
-                  ),
-                );
-              },
+            Column(
+              spacing: 2,
+              children: [
+                CustomButton(
+                  text: 'Cadastro',
+                  fullWidth: true,
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => LanguageScreen()),
+                    );
+                  },
+                ),
+                CustomButton(
+                  text: 'Login',
+                  outlined: true,
+                  fullWidth: true,
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => LanguageScreen()),
+                    );
+                  },
+                ),
+              ],
             ),
-            CustomButton(
-              text: 'Login',
-              outlined: true,
-              fullWidth: true,
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => LanguageScreen(),
-                  ),
-                );
-              },
-            ),
-          ],
-        ),
           ],
         ),
       ),

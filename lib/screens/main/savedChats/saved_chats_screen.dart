@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:sonoris/components/button.dart';
+import 'package:sonoris/components/customButton.dart';
 import 'package:sonoris/screens/initial/bluetooth_screen.dart';
 import 'package:sonoris/screens/initial/language_screen.dart';
 import 'package:sonoris/screens/main/savedChats/saved_chat_screen.dart';
@@ -36,16 +36,19 @@ class _SavedChatsScreenState extends State<SavedChatsScreen> {
             'Titulo da pagina'
         ),
       ),*/
-      body:
-      Padding(
-        padding: const EdgeInsets.only(left: 30, right: 30, top: 55, bottom: 30),
-        child:
-        Column(
+      body: Padding(
+        padding: const EdgeInsets.only(
+          left: 30,
+          right: 30,
+          top: 55,
+          bottom: 30,
+        ),
+        child: Column(
           spacing: 4,
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Conversas Salvas', style: AppTextStyles.body,),
+            Text('Conversas Salvas', style: AppTextStyles.body),
             CustomButton(
               text: 'Conversa Salva',
               fullWidth: true,

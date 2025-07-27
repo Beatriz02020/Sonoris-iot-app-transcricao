@@ -41,10 +41,7 @@ class DeviceTabNavigator extends StatelessWidget {
             page = const DeviceScreen();
         }
 
-        return MaterialPageRoute(
-          builder: (_) => page,
-          settings: settings,
-        );
+        return MaterialPageRoute(builder: (_) => page, settings: settings);
       },
     );
   }

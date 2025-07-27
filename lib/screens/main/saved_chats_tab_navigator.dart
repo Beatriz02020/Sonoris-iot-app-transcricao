@@ -47,13 +47,8 @@ class SavedChatsTabNavigator extends StatelessWidget {
             page = const SavedChatsScreen();
         }
 
-        return MaterialPageRoute(
-          builder: (_) => page,
-          settings: settings,
-        );
+        return MaterialPageRoute(builder: (_) => page, settings: settings);
       },
     );
   }
 }
-
-

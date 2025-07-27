@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:sonoris/components/button.dart';
-import 'package:sonoris/components/text_field.dart';
+import 'package:sonoris/components/customButton.dart';
+import 'package:sonoris/components/customTextField.dart';
 import 'package:sonoris/theme/colors.dart';
 import 'package:sonoris/theme/text_styles.dart';
 
@@ -30,107 +30,111 @@ class _UserScreenState extends State<UserScreen> {
             Stack(
               clipBehavior: Clip.none,
               children: [
-                Padding(
-                  padding: const EdgeInsets.only(top: 43),
-                  child: Container(
-                    color: AppColors.blue200,
-                    width: double.infinity,
-                    height: 150,
-                    child: ClipRRect(
-                      child: Image.asset(
-                        'assets/images/Banner.png',
-                        fit: BoxFit.fill,
-                      ),
+                Container(
+                  color: AppColors.blue200,
+                  width: double.infinity,
+                  height: 180,
+                  child: ClipRRect(
+                    child: Image.asset(
+                      'assets/images/BannerPerfil.jpg',
+                      fit: BoxFit.cover,
                     ),
                   ),
                 ),
                 Positioned(
                   bottom: -50,
-                  left: (MediaQuery.of(context).size.width / 2) - 50,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(100),
-                      color: AppColors.blue300,
-                      border: Border.all(color: AppColors.gray900, width: 2),
-                    ),
-                    width: 100,
-                    height: 100,
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(100),
-                      child: Image.asset(
-                        'assets/images/Logo.png',
-                        fit: BoxFit.cover,
-                      ),
-                    ),
+                  left: MediaQuery.of(context).size.width / 2 - 50,
+                  child: CircleAvatar(
+                    radius: 50,
+                    backgroundImage: AssetImage('assets/images/Avatar.jpg'),
                   ),
                 ),
               ],
-            ),
-            SizedBox(height: 50),
-            Text(
-              'Nome da Pessoa',
-              style: AppTextStyles.h3.copyWith(color: AppColors.blue950),
             ),
             Padding(
               padding: const EdgeInsets.only(
                 left: 30,
                 right: 30,
-                top: 33,
+                top: 55,
                 bottom: 30,
               ),
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
+                spacing: 38,
                 children: [
-                  Text(
-                    'Nome',
-                    style: AppTextStyles.bold.copyWith(
-                      color: AppColors.gray900,
-                    ),
-                  ),
-                  SizedBox(width: 330, child: CustomTextField()),
-
-                  SizedBox(height: 15),
-
-                  Text(
-                    'Data de Nascimento',
-                    style: AppTextStyles.bold.copyWith(
-                      color: AppColors.gray900,
-                    ),
-                  ),
-                  SizedBox(width: 330, child: CustomTextField()),
-
-                  SizedBox(height: 15),
-
-                  Text(
-                    'Email',
-                    style: AppTextStyles.bold.copyWith(
-                      color: AppColors.gray500,
-                    ),
-                  ),
-                  SizedBox(
-                    width: 330,
-                    child: CustomTextField(hintText: 'Nicole@Rodrigues.com'),
-                  ),
-
-                  Padding(
-                    padding: const EdgeInsets.only(top: 100),
-                    child: Column(
-                      children: [
-                        CustomButton(
-                          width: 330,
-                          text: 'Salvar',
-                          onPressed: () {},
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    spacing: 12,
+                    children: [
+                      Text(
+                        'Nicole Rodrigues',
+                        style: AppTextStyles.h3.copyWith(
+                          color: AppColors.blue950,
                         ),
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Nome',
+                            style: AppTextStyles.bold.copyWith(
+                              color: AppColors.gray900,
+                            ),
+                          ),
+                          CustomTextField(
+                            hintText: 'Nicole Rodrigues',
+                            fullWidth: true,
+                          ),
+                        ],
+                      ),
 
-                        CustomButton(
-                          color: AppColors.rose600,
-                          text: 'Sair',
-                          width: 330,
-                          onPressed: () {},
-                        ),
-                      ],
-                    ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Data de Nascimento',
+                            style: AppTextStyles.bold.copyWith(
+                              color: AppColors.gray900,
+                            ),
+                          ),
+                          CustomTextField(
+                            hintText: '09/11/2006',
+                            fullWidth: true,
+                          ),
+                        ],
+                      ),
+
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Email',
+                            style: AppTextStyles.bold.copyWith(
+                              color: AppColors.gray900,
+                            ),
+                          ),
+                          CustomTextField(
+                            hintText: 'Nicole@Rodrigues.com',
+                            fullWidth: true,
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  Column(
+                    children: [
+                      CustomButton(
+                        text: 'Salvar',
+                        fullWidth: true,
+                        onPressed: () {},
+                      ),
+
+                      CustomButton(
+                        color: AppColors.rose500,
+                        text: 'Sair',
+                        fullWidth: true,
+                        onPressed: () {},
+                      ),
+                    ],
                   ),
                 ],
               ),

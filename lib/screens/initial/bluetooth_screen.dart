@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:sonoris/components/button.dart';
+import 'package:sonoris/components/customButton.dart';
 import 'package:sonoris/screens/initial/connection_screen.dart';
 import 'package:sonoris/theme/colors.dart';
 import 'package:sonoris/theme/text_styles.dart';
@@ -30,58 +30,56 @@ class _BluetoothScreenState extends State<BluetoothScreen> {
           color: AppColors.blue500, // cor dos ícones (ex: seta de voltar)
         ),
         titleTextStyle: AppTextStyles.h3.copyWith(color: AppColors.blue500),
-        title: const Text(
-          ''
+        title: const Text(''),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 55.0, horizontal: 38),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            SizedBox(height: 1),
+            Column(
+              spacing: 20,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SizedBox(
+                  width: 120,
+                  child: Image.asset(
+                    'assets/images/Bluetooth.png',
+                    fit: BoxFit.contain, // mantém o aspecto original
+                  ),
+                ),
+                Column(
+                  spacing: 2,
+                  children: [
+                    Text(
+                      'Ative o Bluetooth',
+                      style: AppTextStyles.h3.copyWith(
+                        color: AppColors.blue500,
+                      ),
+                    ),
+                    Text(
+                      'O dispositivo requer uma conexão Bluetooth com seu celular',
+                      textAlign: TextAlign.center,
+                      style: AppTextStyles.bold,
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            CustomButton(
+              text: 'Habilitar o Bluetooth',
+              fullWidth: true,
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => ConnectionScreen()),
+                );
+              },
+            ),
+          ],
         ),
       ),
-      body:
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 55.0, horizontal: 38),
-          child:
-          Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              SizedBox(height: 1),
-              Column(
-                spacing: 20,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  SizedBox(
-                    width: 120,
-                    child: Image.asset(
-                      'assets/images/Bluetooth.png',
-                      fit: BoxFit.contain, // mantém o aspecto original
-                    ),
-                  ),
-                  Column(
-                    spacing: 2,
-                    children: [
-                  Text('Ative o Bluetooth',
-                    style: AppTextStyles.h3.copyWith(color: AppColors.blue500),
-                  ),
-                  Text('O dispositivo requer uma conexão Bluetooth com seu celular',
-                    textAlign: TextAlign.center,
-                    style: AppTextStyles.bold,
-                  ),
-                    ],
-                  ),
-                ],
-              ),
-              CustomButton(
-                text: 'Habilitar o Bluetooth',
-                fullWidth: true,
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ConnectionScreen(),
-                    ),
-                  );
-                  },
-              ),
-            ],
-          ),
-        ),
     );
   }
 }
