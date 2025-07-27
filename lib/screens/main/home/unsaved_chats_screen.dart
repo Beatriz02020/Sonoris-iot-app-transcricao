@@ -38,7 +38,7 @@ class _UnsavedChatsScreenState extends State<UnsavedChatsScreen> {
             padding: const EdgeInsets.only(
               left: 30,
               right: 30,
-              top: 30,
+              top: 30, // original (55)
               bottom: 30,
             ),
             child: Column(
@@ -57,15 +57,15 @@ class _UnsavedChatsScreenState extends State<UnsavedChatsScreen> {
                 Column(
                   spacing: 12,
                   children: [
-                    ChatSelect(nome: 'Conversa_04_07_25_8h', data: '04/07/2025', horarioInicial: '08:30', horarioFinal: '11:30'),
-                    ChatSelect(nome: 'Conversa_03_07_25_10h', data: '03/07/2025', horarioInicial: '10:00', horarioFinal: '13:00'),
-                    ChatSelect(nome: 'Conversa_02_07_25_9h', data: '02/07/2025', horarioInicial: '09:00', horarioFinal: '12:00'),
-                    ChatSelect(nome: 'Conversa_04_07_25_8h', data: '04/07/2025', horarioInicial: '08:30', horarioFinal: '11:30'),
-                    ChatSelect(nome: 'Conversa_03_07_25_10h', data: '03/07/2025', horarioInicial: '10:00', horarioFinal: '13:00'),
-                    ChatSelect(nome: 'Conversa_02_07_25_9h', data: '02/07/2025', horarioInicial: '09:00', horarioFinal: '12:00'),
-                    ChatSelect(nome: 'Conversa_04_07_25_8h', data: '04/07/2025', horarioInicial: '08:30', horarioFinal: '11:30'),
-                    ChatSelect(nome: 'Conversa_03_07_25_10h', data: '03/07/2025', horarioInicial: '10:00', horarioFinal: '13:00'),
-                    ChatSelect(nome: 'Conversa_02_07_25_9h', data: '02/07/2025', horarioInicial: '09:00', horarioFinal: '12:00'),
+                    ChatSelect(nome: 'Conversa_04_07_25_8h', data: '04/07/2025', horarioInicial: '08:30', horarioFinal: '11:30', image: null, overlayIcon: null,),
+                    ChatSelect(nome: 'Conversa_03_07_25_10h', data: '03/07/2025', horarioInicial: '10:00', horarioFinal: '13:00', image: null, overlayIcon: null,),
+                    ChatSelect(nome: 'Conversa_02_07_25_9h', data: '02/07/2025', horarioInicial: '09:00', horarioFinal: '12:00', image: null, overlayIcon: null,),
+                    ChatSelect(nome: 'Conversa_04_07_25_8h', data: '04/07/2025', horarioInicial: '08:30', horarioFinal: '11:30', image: null, overlayIcon: null,),
+                    ChatSelect(nome: 'Conversa_03_07_25_10h', data: '03/07/2025', horarioInicial: '10:00', horarioFinal: '13:00', image: null, overlayIcon: null,),
+                    ChatSelect(nome: 'Conversa_02_07_25_9h', data: '02/07/2025', horarioInicial: '09:00', horarioFinal: '12:00', image: null, overlayIcon: null,),
+                    ChatSelect(nome: 'Conversa_04_07_25_8h', data: '04/07/2025', horarioInicial: '08:30', horarioFinal: '11:30', image: null, overlayIcon: null,),
+                    ChatSelect(nome: 'Conversa_03_07_25_10h', data: '03/07/2025', horarioInicial: '10:00', horarioFinal: '13:00', image: null, overlayIcon: null,),
+                    ChatSelect(nome: 'Conversa_02_07_25_9h', data: '02/07/2025', horarioInicial: '09:00', horarioFinal: '12:00', image: null, overlayIcon: null,),
                   ],
                 ),
               ],

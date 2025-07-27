@@ -10,7 +10,8 @@ class ChatSelect extends StatelessWidget {
   final String data;
   final String horarioInicial;
   final String horarioFinal;
-  // final Widget onPressed;  TODO adicionar quando tiver backend
+  final String? image;
+  final Widget? overlayIcon;
 
   const ChatSelect({
     super.key,
@@ -18,11 +19,14 @@ class ChatSelect extends StatelessWidget {
     required this.data,
     required this.horarioInicial,
     required this.horarioFinal,
-    // required this.onPressed,
+    required this.image,
+    required this.overlayIcon,
   });
 
   @override
   Widget build(BuildContext context) {
+    final String imagePath = 'assets/images/icons/$image.png';
+
     return GestureDetector(
       onTap: () {
         Navigator.push(
@@ -50,6 +54,33 @@ class ChatSelect extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
+
+            //caso tenha imagem
+            if (image != null)
+
+              Stack(
+                children: [
+                  Image.asset(
+                    imagePath,
+                    height: 40,
+                    width: 40,
+                    fit: BoxFit.cover,
+                  ),
+                  // TODO arrumar os icones
+                  Icon(
+                    Icons.star,
+                    color: AppColors.white100, // cor do contorno
+                    size: 20,
+                  ),
+                  Icon(
+                    Icons.star,
+                    color: AppColors.amber500, // cor do preenchimento
+                    size: 16,
+                  ),
+                ],
+              ),
+
+            if (image != null) const SizedBox(width: 10),
             Text(
               nome,
               style: AppTextStyles.bold.copyWith(color: AppColors.gray900),

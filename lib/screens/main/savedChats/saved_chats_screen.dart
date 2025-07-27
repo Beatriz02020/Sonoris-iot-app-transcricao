@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:sonoris/components/chatSelect.dart';
 import 'package:sonoris/components/customButton.dart';
 import 'package:sonoris/screens/initial/bluetooth_screen.dart';
 import 'package:sonoris/screens/initial/language_screen.dart';
 import 'package:sonoris/screens/main/savedChats/saved_chat_screen.dart';
 import 'package:sonoris/theme/colors.dart';
 import 'package:sonoris/theme/text_styles.dart';
+
+import '../../../components/customTextField.dart';
 
 class SavedChatsScreen extends StatefulWidget {
   const SavedChatsScreen({super.key});
@@ -26,29 +29,40 @@ class _SavedChatsScreenState extends State<SavedChatsScreen> {
 
     return Scaffold(
       backgroundColor: AppColors.background,
-      /*appBar: AppBar(
-        backgroundColor: AppColors.white100,
-        iconTheme: const IconThemeData(
-          color: AppColors.blue500,
-        ),
-        titleTextStyle: AppTextStyles.h3.copyWith(color: AppColors.blue500),
+      appBar: AppBar(
+        backgroundColor: AppColors.background,
+        //iconTheme: const IconThemeData(color: AppColors.blue700,),
+        titleTextStyle: AppTextStyles.h3.copyWith(color: AppColors.blue700),
         title: const Text(
-            'Titulo da pagina'
+            'Conversas Salvas'
         ),
-      ),*/
+      ),
       body: Padding(
         padding: const EdgeInsets.only(
           left: 30,
           right: 30,
-          top: 55,
+          top: 30,  // original (55)
           bottom: 30,
         ),
         child: Column(
-          spacing: 4,
+          spacing: 15,
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Conversas Salvas', style: AppTextStyles.body),
+
+            // input de pesquisa
+            CustomTextField(hintText: 'Pesquisar', isSearch: true, fullWidth: true,),
+
+            // filtros
+            Text('Filtrar por', style: AppTextStyles.body),
+
+            // conversas não salvas
+
+            // conversas
+            Text('Conversas', style: AppTextStyles.body),
+
+            ChatSelect(nome: 'Conversa_02_07_25_9h', data: '02/07/2025', horarioInicial: '09:00', horarioFinal: '12:00', image: 'Reuniao', overlayIcon: null,),
+
             CustomButton(
               text: 'Conversa Salva',
               fullWidth: true,
