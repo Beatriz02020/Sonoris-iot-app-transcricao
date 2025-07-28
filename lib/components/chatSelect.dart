@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:sonoris/screens/main/home/unsaved_chat_screen.dart';
 
+import '../screens/main/savedChats/saved_chat_screen.dart';
 import '../theme/colors.dart';
 import '../theme/text_styles.dart';
 
@@ -12,8 +13,8 @@ class ChatSelect extends StatelessWidget {
   final String horarioInicial;
   final String horarioFinal;
   final String? image;
+  final bool salvas;
   final bool favorito;
-
 
   const ChatSelect({
     super.key,
@@ -23,15 +24,16 @@ class ChatSelect extends StatelessWidget {
     required this.horarioFinal,
     this.descricao,
     this.image,
+    this.salvas = false,
     this.favorito = false,
-
   });
+
 
   @override
   Widget build(BuildContext context) {
     final String imagePath = 'assets/images/icons/$image.png';
 
-    String limitarDescricao(String text, [int maxLength = 18]) {
+    String limitarTexto(String text, {int maxLength = 18}) {
       return (text.length <= maxLength) ? text : '${text.substring(0, maxLength)}...';
     }
 
@@ -39,7 +41,9 @@ class ChatSelect extends StatelessWidget {
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => UnsavedChatScreen()),
+          MaterialPageRoute(builder: (context) => salvas != false
+              ? SavedChatScreen()
+              : UnsavedChatScreen()),
         );
       },
 
@@ -69,10 +73,11 @@ class ChatSelect extends StatelessWidget {
               Stack(
                 children: [
                   Image.asset(
+                    height: 53,
+                    width: 53,
                     imagePath,
                     fit: BoxFit.cover,
                   ),
-                  // TODO colocar limite de caracteres no titulo
 
                   if (favorito != false)
                     Positioned(
@@ -94,14 +99,14 @@ class ChatSelect extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  nome,
+                  limitarTexto(nome, maxLength: 15),
                   style: AppTextStyles.bold.copyWith(color: AppColors.gray900),
                 ),
 
                 // Se tiver descrição, mostra
                 if (descricao != null)
                   Text(
-                    limitarDescricao(descricao!),
+                    limitarTexto(descricao!),
                     style: AppTextStyles.bodySmall,
                     maxLines: 1,                        // Limita a 1 linha
                     overflow: TextOverflow.ellipsis,   // Adiciona "..."
