@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sonoris/components/chatSelect.dart';
 import 'package:sonoris/components/customButton.dart';
+import 'package:sonoris/components/customDivider.dart';
 import 'package:sonoris/screens/initial/bluetooth_screen.dart';
 import 'package:sonoris/screens/initial/language_screen.dart';
 import 'package:sonoris/screens/main/savedChats/saved_chat_screen.dart';
@@ -158,14 +159,7 @@ class _SavedChatsScreenState extends State<SavedChatsScreen> {
 
 
                 // conversas não salvas
-                Container(
-                  height: 2,
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    color: AppColors.blue500,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
+                CustomDivider(),
 
                 GestureDetector(
                   onTap: () {
