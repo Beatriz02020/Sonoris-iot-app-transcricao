@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:sonoris/components/bottomNavigationBar.dart';
 import 'package:sonoris/components/customButton.dart';
 import 'package:sonoris/components/customBottomNav.dart';
 import 'package:sonoris/components/quickActionsButton.dart';
@@ -192,17 +193,29 @@ class _HomeScreenState extends State<HomeScreen> {
                       QuickActionsButton(
                         icon: 'RespostasRapidas',
                         text: 'Respostas rápidas',
-                        onPressed: AnswerScreen(),
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => AnswerScreen()),
+                          );
+                        }
                       ),
                       QuickActionsButton(
                         icon: 'CustomizarLegendas',
                         text: 'Customizar legendas',
-                        onPressed: CaptionsScreen(),
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => CaptionsScreen()),
+                          );
+                        }
                       ),
                       QuickActionsButton(
                         icon: 'ConfigurarDispositivo',
                         text: 'Configurar dispositivo',
-                        onPressed: DeviceScreen(),
+                        onPressed: () {
+                          BottomNav.of(context)?.switchTab(2);
+                        }
                       ),
                     ],
                   ),
@@ -217,7 +230,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   Text('Conversas não salvas', style: AppTextStyles.body),
 
                   // card com as conversas
-                  // TODO arrumar o padding
+
                   // TODO fazer as conversas serem clicaveis
                   Container(
                     padding: const EdgeInsets.all(8),
@@ -319,19 +332,14 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
 
                         // button de veja mais
+                        // TODO colocar icone (fazer uma variant dele)
                         CustomButton(
                           text: 'Ver todas',
                           outlined: true,
                           fullWidth: false,
                           onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => UnsavedChatsScreen(),
-                              ),
-                            );
+                            Navigator.of(context).pushNamed('/unsavedchats');
                           },
-                          // TODO coloca icone (fazer uma variant dele)
                           // Icon(Icons.circle_outlined, color: AppColors.blue500),
                         ),
                       ],

@@ -7,7 +7,7 @@ import '../theme/text_styles.dart';
 class QuickActionsButton extends StatelessWidget {
   final String icon;
   final String text;
-  final Widget onPressed;
+  final Function onPressed;
 
   const QuickActionsButton({
     super.key,
@@ -21,12 +21,7 @@ class QuickActionsButton extends StatelessWidget {
     final String iconPath = 'assets/images/icons/$icon.png';
 
     return GestureDetector(
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => onPressed),
-        );
-      },
+      onTap: () => onPressed(),
 
       // respostas rápidas
       child: Container(

@@ -34,9 +34,9 @@ class _AnswerCategoryScreenState extends State<AnswerCategoryScreen> {
       ),
       body: Padding(
         padding: const EdgeInsets.only(
-          left: 30,
-          right: 30,
-          top: 20,
+          left: 15,
+          right: 15,
+          top: 10, // original (55)
           bottom: 30,
         ),
         child:
@@ -50,12 +50,12 @@ class _AnswerCategoryScreenState extends State<AnswerCategoryScreen> {
                   children: [
                     CustomButton(
                         icon: Icons.edit,
-                        iconSize: 20,
+                        iconSize: 16,
                         text: 'Renomear',
                         onPressed: (){}),
                     CustomButton(
                         icon: Icons.close,
-                        iconSize: 20,
+                        iconSize: 16,
                         color: AppColors.rose500,
                         text: 'Deletar Categoria',
                         onPressed: (){})
@@ -70,37 +70,25 @@ class _AnswerCategoryScreenState extends State<AnswerCategoryScreen> {
                 children: [
                   AnswerCategoryButton(
                     icon: Icons.close,
-                    text: 'Sim',
+                    title: 'Sim',
                     onPressed: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => AnswerCategoryScreen()));
                     },
                   ),AnswerCategoryButton(
                     icon: Icons.close,
-                    text: 'Por favor',
+                    title: 'Por favor',
                     onPressed: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => AnswerCategoryScreen()));
                     },
                   ),
                   AnswerCategoryButton(
                     icon: Icons.close,
-                    text: 'Adoraria',
+                    title: 'Adoraria',
                     onPressed: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => AnswerCategoryScreen()));
                     },
                   ),
                   AnswerCategoryButton(
                     icon: Icons.close,
-                    text: 'Claro',
+                    title: 'Claro',
                     onPressed: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => AnswerCategoryScreen()));
                     },
                   ),
 
@@ -109,7 +97,6 @@ class _AnswerCategoryScreenState extends State<AnswerCategoryScreen> {
                     text:  'Adicionar Categoria',
                     fullWidth: true,
                     onPressed: () {
-                      Navigator.of(context).pushNamed('/answers/category');
                     },
                   ),
                 ],

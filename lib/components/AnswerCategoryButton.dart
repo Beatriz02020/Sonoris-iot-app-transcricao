@@ -3,31 +3,27 @@ import 'package:sonoris/theme/colors.dart';
 import 'package:sonoris/theme/text_styles.dart';
 
 class AnswerCategoryButton extends StatelessWidget {
-  final String text;
-  final String? text2;
+  final String title;
+  final String? answerAmount;
   final VoidCallback onPressed;
   final IconData? icon;
   final bool outlined;
   final double? width;
-  final bool fullWidth;
 
   const AnswerCategoryButton({
     super.key,
-    required this.text,
-    this.text2,
+    required this.title,
+    this.answerAmount,
     required this.onPressed,
     this.icon,
     this.outlined = false,
     this.width,
-    this.fullWidth = false,
    });
 
+  // TODO Arrumar esse código porco
   @override
   Widget build(BuildContext context) {
-    Widget button = SizedBox(
-      height: 50,
-      width: double.infinity,
-      child: ElevatedButton(
+    Widget button = ElevatedButton(
           style: ElevatedButton.styleFrom(
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(15),
@@ -45,15 +41,15 @@ class AnswerCategoryButton extends StatelessWidget {
                       padding: const EdgeInsets.only(right: 8.0),
                       child: Icon(icon, color: AppColors.gray900, size: 20),
                     ),
-                  Text(text, style: AppTextStyles.bold.copyWith(color: AppColors.gray900)),
+                  Text(title, style: AppTextStyles.bold.copyWith(color: AppColors.gray900)),
                 ],
               ),
               Row(
                 spacing: 10,
                 children: <Widget>[
-                  if (text2 != null)
+                  if (answerAmount != null)
                     Text(
-                        text2!,
+                        answerAmount!,
                         style: AppTextStyles.medium.copyWith(color: AppColors.gray500)),
                   const Icon(Icons.drag_indicator_rounded,
                       color: AppColors.gray500, size: 25),
@@ -61,14 +57,11 @@ class AnswerCategoryButton extends StatelessWidget {
                 ],
               ),
             ],
-          )),
-    );
-    if (fullWidth) {
-      return SizedBox(width: double.infinity, child: button);
-    } else if (width != null) {
-      return SizedBox(width: width, child: button);
+          ));
+     if (width != null) {
+      return SizedBox(height: 50, width: width, child: button);
     } else {
-      return button; // tamanho natural do texto
+      return SizedBox(height: 50, width: double.infinity, child: button);
     }
   }
 }

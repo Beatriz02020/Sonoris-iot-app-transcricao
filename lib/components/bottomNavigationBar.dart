@@ -8,6 +8,10 @@ import 'package:sonoris/screens/main/user_tab_navigator.dart';
 class BottomNav extends StatefulWidget {
   const BottomNav({super.key});
 
+  // Adicione esta linha para permitir acesso ao state de fora
+  static _BottomNavState? of(BuildContext context) =>
+      context.findAncestorStateOfType<_BottomNavState>();
+
   @override
   State<BottomNav> createState() => _BottomNavState();
 }
@@ -24,6 +28,10 @@ class _BottomNavState extends State<BottomNav> {
     GlobalKey<NavigatorState>(),
     GlobalKey<NavigatorState>(),
   ];
+
+  void switchTab(int index) {
+    _onItemTapped(index);
+  }
 
   @override
   void initState() {

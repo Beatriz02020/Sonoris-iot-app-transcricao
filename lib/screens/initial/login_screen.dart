@@ -43,7 +43,12 @@ class _LoginScreenState extends State<LoginScreen> {
                 MediaQuery.of(context).padding.top,
           ),
           child: Padding(
-            padding: const EdgeInsets.only(left: 38, right: 38, top: 0, bottom: 55),
+            padding: const EdgeInsets.only(
+              left: 38,
+              right: 38,
+              top: 0,
+              bottom: 55,
+            ),
             child: IntrinsicHeight(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -60,8 +65,8 @@ class _LoginScreenState extends State<LoginScreen> {
                           fit: BoxFit.contain,
                         ),
                       ),
-                      CustomTextField(hintText: 'Email', fullWidth: true,),
-                      CustomTextField(hintText: 'Senha', fullWidth: true,)
+                      CustomTextField(hintText: 'Email', fullWidth: true),
+                      CustomTextField(hintText: 'Senha', fullWidth: true),
                     ],
                   ),
                   CustomButton(

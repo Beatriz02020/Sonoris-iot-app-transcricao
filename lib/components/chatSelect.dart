@@ -33,27 +33,24 @@ class ChatSelect extends StatelessWidget {
   Widget build(BuildContext context) {
     final String imagePath = 'assets/images/icons/$image.png';
 
-    String limitarTexto(String text, {int maxLength = 18}) {
+    String limitarTexto(String text, {int maxLength = 20}) {
       return (text.length <= maxLength) ? text : '${text.substring(0, maxLength)}...';
     }
 
     return GestureDetector(
       onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => salvas != false
-              ? SavedChatScreen()
-              : UnsavedChatScreen()),
-        );
+            Navigator.of(context).pushNamed(salvas != false
+                ? '/chat'
+                : '/unsavedchats/chat');
       },
 
       // respostas rápidas
       child: Container(
         // borda
-        padding: EdgeInsets.symmetric(vertical: 10, horizontal: 14),
+        padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
         decoration: BoxDecoration(
           color: AppColors.white100,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(18),
           boxShadow: [
             BoxShadow(
               color: AppColors.gray900.withAlpha(18),
@@ -66,60 +63,65 @@ class ChatSelect extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-
-            //caso tenha imagem
-            if (image != null)
-
-              Stack(
-                children: [
-                  Image.asset(
-                    height: 53,
-                    width: 53,
-                    imagePath,
-                    fit: BoxFit.cover,
-                  ),
-
-                  if (favorito != false)
-                    Positioned(
-                      bottom: -4,
-                      left: 25,
-                      child: Container(
-                        padding: const EdgeInsets.all(2),
-                        decoration: BoxDecoration(
-                        ),
-                        child:  Image.asset(
-                          'assets/images/icons/Estrela.png',
-                        ),
-                      ),
-                    ),
-                ],
-              ),
-
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            Row(
+              spacing: 10,
               children: [
-                Text(
-                  limitarTexto(nome, maxLength: 15),
-                  style: AppTextStyles.bold.copyWith(color: AppColors.gray900),
-                ),
+                //caso tenha imagem
+                if (image != null)
 
-                // Se tiver descrição, mostra
-                if (descricao != null)
-                  Text(
-                    limitarTexto(descricao!),
-                    style: AppTextStyles.bodySmall,
-                    maxLines: 1,                        // Limita a 1 linha
-                    overflow: TextOverflow.ellipsis,   // Adiciona "..."
+                  Stack(
+                    children: [
+                      Image.asset(
+                        height: 53,
+                        width: 53,
+                        imagePath,
+                        fit: BoxFit.cover,
+                      ),
+
+                      if (favorito != false)
+                        Positioned(
+                          bottom: -4,
+                          left: 30,
+                          child: Container(
+                            padding: const EdgeInsets.all(2),
+                            decoration: BoxDecoration(
+                            ),
+                            child:  Image.asset(
+                              'assets/images/icons/Estrela.png',
+                            ),
+                          ),
+                        ),
+                    ],
                   ),
+
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      limitarTexto(nome, maxLength: 18),
+                      maxLines: 1,
+                      style: AppTextStyles.bold.copyWith(color: AppColors.gray900),
+                    ),
+
+                    // Se tiver descrição, mostra
+                    if (descricao != null)
+                      Text(
+                        limitarTexto(descricao!),
+                        style: AppTextStyles.bodySmall,
+                        maxLines: 1,                        // Limita a 1 linha
+                        overflow: TextOverflow.ellipsis,   // Adiciona "..."
+                      ),
+                  ],
+                ),
               ],
             ),
             Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                Text(data, style: AppTextStyles.medium),
+                Text(data, style: AppTextStyles.medium.copyWith(color: AppColors.gray500)),
                 Text(
                   '$horarioInicial - $horarioFinal',
-                  style: AppTextStyles.medium,
+                  style: AppTextStyles.medium.copyWith(color: AppColors.gray500),
                 ),
 
 

@@ -36,9 +36,9 @@ class _AnswerScreenState extends State<AnswerScreen> {
       ),
       body: Padding(
         padding: const EdgeInsets.only(
-          left: 30,
-          right: 30,
-          top: 25,
+          left: 15,
+          right: 15,
+          top: 10, // original (55)
           bottom: 30,
         ),
         child: Column(
@@ -69,28 +69,32 @@ class _AnswerScreenState extends State<AnswerScreen> {
               spacing: 10,
               children: [
                 AnswerCategoryButton(
-                  text: 'Positivas',
-                  text2: '4 respostas',
+                  title: 'Positivas',
+                  answerAmount: '4 respostas',
                   onPressed: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => AnswerCategoryScreen()));
+                    Navigator.of(context).pushNamed('/answers/category');
                   },
                 ),
                 AnswerCategoryButton(
-                  text: 'Negativas',
-                  text2: '3 respostas',
-                  onPressed: () {},
+                  title: 'Negativas',
+                  answerAmount: '3 respostas',
+                  onPressed: () {
+                    Navigator.of(context).pushNamed('/answers/category');
+                  },
                 ),
                 AnswerCategoryButton(
-                  text: 'Neutras',
-                  text2: '5 respostas',
-                  onPressed: () {},
+                  title: 'Neutras',
+                  answerAmount: '5 respostas',
+                  onPressed: () {
+                    Navigator.of(context).pushNamed('/answers/category');
+                  },
                 ),
                 AnswerCategoryButton(
-                  text: 'Perguntas',
-                  text2: '12 respostas',
-                  onPressed: () {},
+                  title: 'Perguntas',
+                  answerAmount: '12 respostas',
+                  onPressed: () {
+                    Navigator.of(context).pushNamed('/answers/category');
+                  },
                 ),
 
                 CustomButton(
@@ -98,7 +102,6 @@ class _AnswerScreenState extends State<AnswerScreen> {
                   text:  'Adicionar Categoria',
                   fullWidth: true,
                   onPressed: () {
-                    Navigator.of(context).pushNamed('/answers/category');
                   },
                 ),
               ],

@@ -36,9 +36,9 @@ class _UnsavedChatsScreenState extends State<UnsavedChatsScreen> {
         children: [
           Padding(
             padding: const EdgeInsets.only(
-              left: 30,
-              right: 30,
-              top: 30, // original (55)
+              left: 15,
+              right: 15,
+              top: 10, // original (55)
               bottom: 30,
             ),
             child: Column(

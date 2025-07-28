@@ -38,8 +38,8 @@ class _DeviceScreenState extends State<DeviceScreen> {
         children: [
           Padding(
             padding: const EdgeInsets.only(
-              left: 30,
-              right: 30,
+              left: 25,
+              right: 25,
               top: 15,
               bottom: 30,
             ),
