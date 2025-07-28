@@ -1,8 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:sonoris/screens/main/home/unsaved_chat_screen.dart';
-
-import '../screens/main/savedChats/saved_chat_screen.dart';
 import '../theme/colors.dart';
 import '../theme/text_styles.dart';
 
@@ -28,20 +25,21 @@ class ChatSelect extends StatelessWidget {
     this.favorito = false,
   });
 
-
   @override
   Widget build(BuildContext context) {
     final String imagePath = 'assets/images/icons/$image.png';
 
     String limitarTexto(String text, {int maxLength = 20}) {
-      return (text.length <= maxLength) ? text : '${text.substring(0, maxLength)}...';
+      return (text.length <= maxLength)
+          ? text
+          : '${text.substring(0, maxLength)}...';
     }
 
     return GestureDetector(
       onTap: () {
-            Navigator.of(context).pushNamed(salvas != false
-                ? '/chat'
-                : '/unsavedchats/chat');
+        Navigator.of(
+          context,
+        ).pushNamed(salvas != false ? '/chat' : '/unsavedchats/chat');
       },
 
       // respostas rápidas
@@ -68,7 +66,6 @@ class ChatSelect extends StatelessWidget {
               children: [
                 //caso tenha imagem
                 if (image != null)
-
                   Stack(
                     children: [
                       Image.asset(
@@ -84,9 +81,8 @@ class ChatSelect extends StatelessWidget {
                           left: 30,
                           child: Container(
                             padding: const EdgeInsets.all(2),
-                            decoration: BoxDecoration(
-                            ),
-                            child:  Image.asset(
+                            decoration: BoxDecoration(),
+                            child: Image.asset(
                               'assets/images/icons/Estrela.png',
                             ),
                           ),
@@ -100,7 +96,9 @@ class ChatSelect extends StatelessWidget {
                     Text(
                       limitarTexto(nome, maxLength: 18),
                       maxLines: 1,
-                      style: AppTextStyles.bold.copyWith(color: AppColors.gray900),
+                      style: AppTextStyles.bold.copyWith(
+                        color: AppColors.gray900,
+                      ),
                     ),
 
                     // Se tiver descrição, mostra
@@ -108,8 +106,8 @@ class ChatSelect extends StatelessWidget {
                       Text(
                         limitarTexto(descricao!),
                         style: AppTextStyles.bodySmall,
-                        maxLines: 1,                        // Limita a 1 linha
-                        overflow: TextOverflow.ellipsis,   // Adiciona "..."
+                        maxLines: 1, // Limita a 1 linha
+                        overflow: TextOverflow.ellipsis, // Adiciona "..."
                       ),
                   ],
                 ),
@@ -118,13 +116,18 @@ class ChatSelect extends StatelessWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                Text(data, style: AppTextStyles.medium.copyWith(color: AppColors.gray500)),
+                Text(
+                  data,
+                  style: AppTextStyles.medium.copyWith(
+                    color: AppColors.gray500,
+                  ),
+                ),
                 Text(
                   '$horarioInicial - $horarioFinal',
-                  style: AppTextStyles.medium.copyWith(color: AppColors.gray500),
+                  style: AppTextStyles.medium.copyWith(
+                    color: AppColors.gray500,
+                  ),
                 ),
-
-
               ],
             ),
           ],

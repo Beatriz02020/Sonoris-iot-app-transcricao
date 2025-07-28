@@ -33,46 +33,52 @@ class CustomButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final Color mainColor = color ?? AppColors.blue500;
     Widget button =
-    outlined
-        ? OutlinedButton(
-      style: OutlinedButton.styleFrom(
-        side: BorderSide(color: mainColor, width: 1.5),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
-        backgroundColor: AppColors.blue50,
-      ),
-      onPressed: onPressed,
-      child: Text(
-        text,
-        style: AppTextStyles.bold.copyWith(color: AppColors.blue600),
-      ),
-    )
-        : ElevatedButton(
-      style: ElevatedButton.styleFrom(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
-        backgroundColor: mainColor,
-      ),
-      onPressed: onPressed,
-      child: Row(
-        mainAxisSize: MainAxisSize.min, // Adicionado para ajustar o tamanho ao conteúdo
-        children: <Widget>[
-          if (icon != null)
-            Padding(
-              padding: const EdgeInsets.only(right: 8.0),
-              child: Icon(icon, color: AppColors.white100, size: iconSize ?? 25), // Usa iconSize se fornecido, senão 25
-            ),
-          Text(
-            text,
-            style: AppTextStyles.bold.copyWith(
-              color: AppColors.white100,
-            ),
-          ),
-        ],
-      ),
-    );
+        outlined
+            ? OutlinedButton(
+              style: OutlinedButton.styleFrom(
+                side: BorderSide(color: mainColor, width: 1.5),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                backgroundColor: AppColors.blue50,
+              ),
+              onPressed: onPressed,
+              child: Text(
+                text,
+                style: AppTextStyles.bold.copyWith(color: AppColors.blue600),
+              ),
+            )
+            : ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                backgroundColor: mainColor,
+              ),
+              onPressed: onPressed,
+              child: Row(
+                mainAxisSize:
+                    MainAxisSize
+                        .min, // Adicionado para ajustar o tamanho ao conteúdo
+                children: <Widget>[
+                  if (icon != null)
+                    Padding(
+                      padding: const EdgeInsets.only(right: 8.0),
+                      child: Icon(
+                        icon,
+                        color: AppColors.white100,
+                        size: iconSize ?? 25,
+                      ), // Usa iconSize se fornecido, senão 25
+                    ),
+                  Text(
+                    text,
+                    style: AppTextStyles.bold.copyWith(
+                      color: AppColors.white100,
+                    ),
+                  ),
+                ],
+              ),
+            );
 
     // Agora decidimos o tamanho com base nos parâmetros:
     if (fullWidth) {

@@ -2,10 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sonoris/components/AnswerCategoryButton.dart';
 import 'package:sonoris/components/customButton.dart';
-import 'package:sonoris/screens/initial/bluetooth_screen.dart';
-import 'package:sonoris/screens/initial/language_screen.dart';
-import 'package:sonoris/screens/initial/signup_screen.dart';
-import 'package:sonoris/screens/main/home/answer_category_screen.dart';
 import 'package:sonoris/theme/colors.dart';
 import 'package:sonoris/theme/text_styles.dart';
 
@@ -55,11 +51,15 @@ class _AnswerScreenState extends State<AnswerScreen> {
                 children: [
                   Text(
                     'Texto explicando como funciona as respostas rápidas',
-                    style: AppTextStyles.body.copyWith(color: AppColors.gray700),
+                    style: AppTextStyles.body.copyWith(
+                      color: AppColors.gray700,
+                    ),
                   ),
                   Text(
                     'Categorias',
-                    style: AppTextStyles.bold.copyWith(color: AppColors.blue600),
+                    style: AppTextStyles.bold.copyWith(
+                      color: AppColors.blue600,
+                    ),
                   ),
                 ],
               ),
@@ -99,10 +99,9 @@ class _AnswerScreenState extends State<AnswerScreen> {
 
                 CustomButton(
                   icon: Icons.add,
-                  text:  'Adicionar Categoria',
+                  text: 'Adicionar Categoria',
                   fullWidth: true,
-                  onPressed: () {
-                  },
+                  onPressed: () {},
                 ),
               ],
             ),

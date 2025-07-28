@@ -2,14 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sonoris/components/bottomNavigationBar.dart';
 import 'package:sonoris/components/customButton.dart';
-import 'package:sonoris/components/customBottomNav.dart';
 import 'package:sonoris/components/quickActionsButton.dart';
-import 'package:sonoris/screens/initial/bluetooth_screen.dart';
-import 'package:sonoris/screens/initial/language_screen.dart';
-import 'package:sonoris/screens/main/device/device_screen.dart';
 import 'package:sonoris/screens/main/home/answer_screen.dart';
 import 'package:sonoris/screens/main/home/captions_screen.dart';
-import 'package:sonoris/screens/main/home/unsaved_chats_screen.dart';
 import 'package:sonoris/theme/colors.dart';
 import 'package:sonoris/theme/text_styles.dart';
 
@@ -196,9 +191,11 @@ class _HomeScreenState extends State<HomeScreen> {
                         onPressed: () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => AnswerScreen()),
+                            MaterialPageRoute(
+                              builder: (context) => AnswerScreen(),
+                            ),
                           );
-                        }
+                        },
                       ),
                       QuickActionsButton(
                         icon: 'CustomizarLegendas',
@@ -206,16 +203,18 @@ class _HomeScreenState extends State<HomeScreen> {
                         onPressed: () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => CaptionsScreen()),
+                            MaterialPageRoute(
+                              builder: (context) => CaptionsScreen(),
+                            ),
                           );
-                        }
+                        },
                       ),
                       QuickActionsButton(
                         icon: 'ConfigurarDispositivo',
                         text: 'Configurar dispositivo',
                         onPressed: () {
                           BottomNav.of(context)?.switchTab(2);
-                        }
+                        },
                       ),
                     ],
                   ),
@@ -272,7 +271,8 @@ class _HomeScreenState extends State<HomeScreen> {
                               Text(
                                 'Conversa_04_07_25_8h',
                                 style: AppTextStyles.bold.copyWith(
-                            color: AppColors.gray900)
+                                  color: AppColors.gray900,
+                                ),
                               ),
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.end,
@@ -312,7 +312,8 @@ class _HomeScreenState extends State<HomeScreen> {
                               Text(
                                 'Conversa_04_07_25_8h',
                                 style: AppTextStyles.bold.copyWith(
-                                    color: AppColors.gray900)
+                                  color: AppColors.gray900,
+                                ),
                               ),
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.end,

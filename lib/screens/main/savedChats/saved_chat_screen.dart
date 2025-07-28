@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:sonoris/components/customButton.dart';
 import 'package:sonoris/components/customDivider.dart';
-import 'package:sonoris/screens/initial/bluetooth_screen.dart';
-import 'package:sonoris/screens/initial/language_screen.dart';
 import 'package:sonoris/theme/colors.dart';
 import 'package:sonoris/theme/text_styles.dart';
 
@@ -54,11 +51,8 @@ class _SavedChatScreenState extends State<SavedChatScreen> {
                       left: 25,
                       child: Container(
                         padding: const EdgeInsets.all(2),
-                        decoration: BoxDecoration(
-                        ),
-                        child:  Image.asset(
-                          'assets/images/icons/Estrela.png',
-                        ),
+                        decoration: BoxDecoration(),
+                        child: Image.asset('assets/images/icons/Estrela.png'),
                       ),
                     ),
                   ],
@@ -69,7 +63,9 @@ class _SavedChatScreenState extends State<SavedChatScreen> {
                     const Text('Workshop de Criatividade'),
                     Text(
                       '06/07/2025, 14:00 - 17:30',
-                      style: AppTextStyles.light.copyWith(color: AppColors.gray500),
+                      style: AppTextStyles.light.copyWith(
+                        color: AppColors.gray500,
+                      ),
                     ),
                   ],
                 ),
@@ -96,17 +92,31 @@ class _SavedChatScreenState extends State<SavedChatScreen> {
                 // chat
                 Messagebubble(texto: 'Texto', horario: '17:29:59'),
                 Messagebubble(texto: 'Texto', horario: '17:29:59'),
-                Messagebubble(texto: 'Texto', horario: '17:29:59', isBlue: true),
+                Messagebubble(
+                  texto: 'Texto',
+                  horario: '17:29:59',
+                  isBlue: true,
+                ),
                 Messagebubble(texto: 'Texto', horario: '17:29:59'),
                 Messagebubble(texto: 'Texto', horario: '17:29:59'),
                 Messagebubble(texto: 'Texto', horario: '17:29:59'),
-                Messagebubble(texto: 'Texto', horario: '17:29:59', isBlue: true),
-                Messagebubble(texto: 'Texto', horario: '17:29:59', isBlue: true),
+                Messagebubble(
+                  texto: 'Texto',
+                  horario: '17:29:59',
+                  isBlue: true,
+                ),
+                Messagebubble(
+                  texto: 'Texto',
+                  horario: '17:29:59',
+                  isBlue: true,
+                ),
 
                 // descrição
                 CustomDivider(),
-                Text('DescriçãoDescriçãoDescriçãoDescriçãoDescriçãoDescriçãoDescriçãoDescriçãoDescriçãoDescriçãoDescriçãoDescriçãoDescriçãoDescriçãoDescriçãoDescriçãoDescriçãoDescriçãoDescriçãoDescriçãoDescrição', style: AppTextStyles.body.copyWith(color: AppColors.gray700)),
-
+                Text(
+                  'DescriçãoDescriçãoDescriçãoDescriçãoDescriçãoDescriçãoDescriçãoDescriçãoDescriçãoDescriçãoDescriçãoDescriçãoDescriçãoDescriçãoDescriçãoDescriçãoDescriçãoDescriçãoDescriçãoDescriçãoDescrição',
+                  style: AppTextStyles.body.copyWith(color: AppColors.gray700),
+                ),
               ],
             ),
           ),

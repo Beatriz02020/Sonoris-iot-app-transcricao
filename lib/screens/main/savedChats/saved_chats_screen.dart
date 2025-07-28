@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sonoris/components/chatSelect.dart';
-import 'package:sonoris/components/customButton.dart';
-import 'package:sonoris/screens/initial/bluetooth_screen.dart';
-import 'package:sonoris/screens/initial/language_screen.dart';
-import 'package:sonoris/screens/main/savedChats/saved_chat_screen.dart';
 import 'package:sonoris/theme/colors.dart';
 import 'package:sonoris/theme/text_styles.dart';
 
@@ -67,54 +63,85 @@ class _SavedChatsScreenState extends State<SavedChatsScreen> {
                     SizedBox(
                       height: 95,
                       child:
-                          //TODO: Fazer essa listview sair para fora do padding
+                      //TODO: Fazer essa listview sair para fora do padding
                       ListView(
                         scrollDirection: Axis.horizontal,
                         children: [
                           Row(
                             spacing: 16,
-                            children: [// 1
+                            children: [
+                              // 1
                               Column(
                                 children: [
-                                  Image.asset('assets/images/icons/Favoritos.png'),
-                                  Text('Favoritos', style: AppTextStyles.bold.copyWith(color: AppColors.amber600,),
-                                  )
+                                  Image.asset(
+                                    'assets/images/icons/Favoritos.png',
+                                  ),
+                                  Text(
+                                    'Favoritos',
+                                    style: AppTextStyles.bold.copyWith(
+                                      color: AppColors.amber600,
+                                    ),
+                                  ),
                                 ],
                               ),
 
                               // 2
                               Column(
                                 children: [
-                                  Image.asset('assets/images/icons/Estudos.png'),
-                                  Text('Estudos', style: AppTextStyles.bold.copyWith(color: AppColors.blue600,),
-                                  )
+                                  Image.asset(
+                                    'assets/images/icons/Estudos.png',
+                                  ),
+                                  Text(
+                                    'Estudos',
+                                    style: AppTextStyles.bold.copyWith(
+                                      color: AppColors.blue600,
+                                    ),
+                                  ),
                                 ],
                               ),
 
                               // 3
                               Column(
                                 children: [
-                                  Image.asset('assets/images/icons/Trabalho.png'),
-                                  Text('Trabalhos', style: AppTextStyles.bold.copyWith(color: AppColors.teal600,),
-                                  )
+                                  Image.asset(
+                                    'assets/images/icons/Trabalho.png',
+                                  ),
+                                  Text(
+                                    'Trabalhos',
+                                    style: AppTextStyles.bold.copyWith(
+                                      color: AppColors.teal600,
+                                    ),
+                                  ),
                                 ],
                               ),
 
                               // 4
                               Column(
                                 children: [
-                                  Image.asset('assets/images/icons/Pessoal.png'),
-                                  Text('Pessoal', style: AppTextStyles.bold.copyWith(color: AppColors.rose600,),
-                                  )
+                                  Image.asset(
+                                    'assets/images/icons/Pessoal.png',
+                                  ),
+                                  Text(
+                                    'Pessoal',
+                                    style: AppTextStyles.bold.copyWith(
+                                      color: AppColors.rose600,
+                                    ),
+                                  ),
                                 ],
                               ),
 
                               // 5
                               Column(
                                 children: [
-                                  Image.asset('assets/images/icons/Reuniao.png'),
-                                  Text('Reunião', style: AppTextStyles.bold.copyWith(color: AppColors.green600,),
-                                  )
+                                  Image.asset(
+                                    'assets/images/icons/Reuniao.png',
+                                  ),
+                                  Text(
+                                    'Reunião',
+                                    style: AppTextStyles.bold.copyWith(
+                                      color: AppColors.green600,
+                                    ),
+                                  ),
                                 ],
                               ),
 
@@ -122,8 +149,12 @@ class _SavedChatsScreenState extends State<SavedChatsScreen> {
                               Column(
                                 children: [
                                   Image.asset('assets/images/icons/Teams.png'),
-                                  Text('Teams', style: AppTextStyles.bold.copyWith(color: AppColors.indigo600,),
-                                  )
+                                  Text(
+                                    'Teams',
+                                    style: AppTextStyles.bold.copyWith(
+                                      color: AppColors.indigo600,
+                                    ),
+                                  ),
                                 ],
                               ),
 
@@ -131,19 +162,30 @@ class _SavedChatsScreenState extends State<SavedChatsScreen> {
                               Column(
                                 children: [
                                   Image.asset('assets/images/icons/Outros.png'),
-                                  Text('Outros', style: AppTextStyles.bold.copyWith(color: AppColors.gray700,),
-                                  )
+                                  Text(
+                                    'Outros',
+                                    style: AppTextStyles.bold.copyWith(
+                                      color: AppColors.gray700,
+                                    ),
+                                  ),
                                 ],
                               ),
 
                               // 8
                               Column(
                                 children: [
-                                  Image.asset('assets/images/icons/Customizado.png'),
-                                  Text('Customizado', style: AppTextStyles.bold.copyWith(color: AppColors.gray700,),
-                                  )
+                                  Image.asset(
+                                    'assets/images/icons/Customizado.png',
+                                  ),
+                                  Text(
+                                    'Customizado',
+                                    style: AppTextStyles.bold.copyWith(
+                                      color: AppColors.gray700,
+                                    ),
+                                  ),
                                 ],
-                              ),],
+                              ),
+                            ],
                           ),
                         ],
                       ),
@@ -169,7 +211,10 @@ class _SavedChatsScreenState extends State<SavedChatsScreen> {
                     );
                   },
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 20),
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 6,
+                      horizontal: 20,
+                    ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
