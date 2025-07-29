@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sonoris/components/customButton.dart';
 import 'package:sonoris/components/customTextField.dart';
+import 'package:sonoris/components/custom_slider.dart';
 import 'package:sonoris/screens/initial/bluetooth_screen.dart';
 import 'package:sonoris/screens/initial/language_screen.dart';
 import 'package:sonoris/theme/colors.dart';
@@ -38,8 +39,8 @@ class _DeviceScreenState extends State<DeviceScreen> {
         children: [
           Padding(
             padding: const EdgeInsets.only(
-              left: 25,
-              right: 25,
+              left: 30,
+              right: 30,
               top: 15,
               bottom: 30,
             ),
@@ -256,108 +257,31 @@ class _DeviceScreenState extends State<DeviceScreen> {
                   ],
                 ),
 
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Entrar em Standby após',
-                      style: AppTextStyles.bold.copyWith(
-                        color: AppColors.gray900,
-                      ),
-                    ),
-                    Column(
-                      spacing: 0,
-                      children: [
-                        Slider(
-                          value: _standbyValue,
-                          min: 1,
-                          max: 60,
-                          divisions: 59,
-                          activeColor: AppColors.blue500,
-                          inactiveColor: AppColors.white100,
-                          onChanged: (value) {
-                            setState(() {
-                              _standbyValue = value;
-                            });
-                          },
-                        ),
-                        Text(
-                          '${_standbyValue.round()} minutos sem fala',
-                          style: AppTextStyles.medium,
-                          textAlign: TextAlign.center,
-                        ),
-                      ],
-                    ),
-                  ],
+                CustomSlider(
+                  label: 'Entrar em Standby após',
+                  value: _standbyValue,
+                  min: 1,
+                  max: 60,
+                  onChanged: (value) => setState(() => _standbyValue = value),
+                  valueLabel: '${_standbyValue.round()} minutos sem fala',
                 ),
 
-                // 2. Tempo entre conversas
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Tempo entre conversas',
-                      style: AppTextStyles.bold.copyWith(
-                        color: AppColors.gray900,
-                      ),
-                    ),
-                    Column(
-                      spacing: 0,
-                      children: [
-                        Slider(
-                          value: _conversaValue,
-                          min: 1,
-                          max: 60,
-                          divisions: 59,
-                          activeColor: AppColors.blue500,
-                          inactiveColor: AppColors.white100,
-                          onChanged: (value) {
-                            setState(() {
-                              _conversaValue = value;
-                            });
-                          },
-                        ),
-                        Text(
-                          '${_conversaValue.round()} minutos',
-                          style: AppTextStyles.medium,
-                        ),
-                      ],
-                    ),
-                  ],
+                CustomSlider(
+                  label: 'Tempo entre conversas',
+                  value: _conversaValue,
+                  min: 1,
+                  max: 60,
+                  onChanged: (value) => setState(() => _conversaValue = value),
+                  valueLabel: '${_conversaValue.round()} minutos',
                 ),
 
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Deletar conversas não salvas após',
-                      style: AppTextStyles.bold.copyWith(
-                        color: AppColors.gray900,
-                      ),
-                    ),
-                    Column(
-                      spacing: 0,
-                      children: [
-                        Slider(
-                          value: _deletarValue,
-                          min: 1,
-                          max: 100,
-                          divisions: 99,
-                          activeColor: AppColors.blue500,
-                          inactiveColor: AppColors.white100,
-                          onChanged: (value) {
-                            setState(() {
-                              _deletarValue = value;
-                            });
-                          },
-                        ),
-                        Text(
-                          '${_deletarValue.round()} dias',
-                          style: AppTextStyles.medium,
-                        ),
-                      ],
-                    ),
-                  ],
+                CustomSlider(
+                  label: 'Deletar conversas não salvas após',
+                  value: _deletarValue,
+                  min: 1,
+                  max: 100,
+                  onChanged: (value) => setState(() => _deletarValue = value),
+                  valueLabel: '${_deletarValue.round()} dias',
                 ),
               ],
             ),
