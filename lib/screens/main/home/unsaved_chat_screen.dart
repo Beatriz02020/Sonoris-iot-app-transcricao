@@ -4,6 +4,9 @@ import 'package:sonoris/components/customButton.dart';
 import 'package:sonoris/theme/colors.dart';
 import 'package:sonoris/theme/text_styles.dart';
 
+import '../../../components/arrowCircleButton.dart';
+import '../../../components/messageBubble.dart';
+
 class UnsavedChatScreen extends StatefulWidget {
   const UnsavedChatScreen({super.key});
 
@@ -26,32 +29,67 @@ class _UnsavedChatScreenState extends State<UnsavedChatScreen> {
       backgroundColor: AppColors.background,
       appBar: AppBar(
         backgroundColor: AppColors.white100,
-        iconTheme: const IconThemeData(color: AppColors.blue500),
-        titleTextStyle: AppTextStyles.h3.copyWith(color: AppColors.blue500),
-        title: const Text('Conversa Não Salva'),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.only(
-          left: 30,
-          right: 30,
-          top: 55,
-          bottom: 30,
-        ),
-        child: Column(
-          spacing: 4,
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
+        iconTheme: const IconThemeData(color: AppColors.gray900),
+
+        titleTextStyle: AppTextStyles.bold.copyWith(color: AppColors.gray900),
+        title: Row(
+          spacing: 20,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text('Conversa Não Salva', style: AppTextStyles.body),
-            CustomButton(
-              text: 'Salvar Conversa',
-              fullWidth: true,
-              onPressed: () {
-                Navigator.of(context).pushNamed('/unsavedchats/chat/saving');
-              },
-            ),
-          ],
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('Conversa_04_07_25_8h'),
+                  Text(
+                    '04/07/2025, 08:30 - 11:30',
+                    style: AppTextStyles.light.copyWith(
+                      color: AppColors.gray500,
+                    ),
+                  ),
+                ],
+              ),
+            ],
         ),
+      ),
+      body: ListView(
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(
+              left: 30,
+              right: 30,
+              top: 12, // (55)
+              bottom: 30,
+            ),
+            child: Column(
+              spacing: 12,
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // chat
+                Messagebubble(
+                  texto: 'Texto',
+                  horario: '17:29:59',
+                  isBlue: true,
+                ),
+                Messagebubble(texto: 'Texto', horario: '17:29:59'),
+                Messagebubble(texto: 'Texto', horario: '17:29:59'),
+                Messagebubble(texto: 'Texto', horario: '17:29:59'),
+                Messagebubble(texto: 'Texto', horario: '17:29:59'),
+                Messagebubble(texto: 'Texto', horario: '17:29:59'),
+                Messagebubble(
+                  texto: 'Texto',
+                  horario: '17:29:59',
+                  isBlue: true,
+                ),
+
+                // TODO fazer esse botao
+                // ArrowCircleButton()
+              ],
+
+            ),
+
+          ),
+        ],
       ),
     );
   }
