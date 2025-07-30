@@ -32,7 +32,7 @@ class _ColorSelectorState extends State<ColorSelector> {
       context: context,
       builder: (context) {
         return AlertDialog(
-            title: const Text('Escolha uma cor'),
+          title: const Text('Escolha uma cor'),
           content: SingleChildScrollView(
             child: ColorPicker(
               pickerColor: customColor,
@@ -51,7 +51,7 @@ class _ColorSelectorState extends State<ColorSelector> {
                 widget.onColorSelected(customColor);
                 Navigator.of(context).pop();
               },
-                child: const Text('Selecionar'),
+              child: const Text('Selecionar'),
             ),
           ],
         );
@@ -78,27 +78,26 @@ class _ColorSelectorState extends State<ColorSelector> {
             color: isSelected ? AppColors.gray900 : Colors.transparent,
             width: 2,
           ),
-          boxShadow: isSelected
-              ? [
-                  BoxShadow(
-                    color: AppColors.gray300,
-                    blurRadius: 4,
-                    offset: const Offset(0, 2),
-                  ),
-                ]
-              : null,
+          boxShadow:
+              isSelected
+                  ? [
+                    BoxShadow(
+                      color: AppColors.gray300,
+                      blurRadius: 4,
+                      offset: const Offset(0, 2),
+                    ),
+                  ]
+                  : null,
         ),
         child: _buildCircleContent(color, index, isSelected),
       ),
     );
   }
+
   Widget _buildCircleContent(Color color, int index, bool isSelected) {
     if (index == 0 && widget.enableCustomPicker) {
       return ClipOval(
-        child: Image.asset(
-          'assets/images/icons/cores.png',
-          fit: BoxFit.cover, 
-        ),
+        child: Image.asset('assets/images/icons/cores.png', fit: BoxFit.cover),
       );
     }
 
@@ -119,13 +118,14 @@ class _ColorSelectorState extends State<ColorSelector> {
   Widget build(BuildContext context) {
     return Wrap(
       spacing: widget.spacing,
-      children: widget.colors.asMap().entries.map((entry) {
-        int index = entry.key;
-        Color color = entry.value;
-        bool isSelected = widget.selectedColor == color;
+      children:
+          widget.colors.asMap().entries.map((entry) {
+            int index = entry.key;
+            Color color = entry.value;
+            bool isSelected = widget.selectedColor == color;
 
-        return _buildColorCircle(color, index, isSelected);
-      }).toList(),
+            return _buildColorCircle(color, index, isSelected);
+          }).toList(),
     );
   }
 }

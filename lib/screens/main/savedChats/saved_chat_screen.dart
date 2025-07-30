@@ -14,30 +14,44 @@ class SavedChatScreen extends StatefulWidget {
 }
 
 class _SavedChatScreenState extends State<SavedChatScreen> {
-  // TODO mudar para branco quando tiver nessa página ( e mudar de volta qnd voltar )
+  // TODO Descobrir um jeito melhor de trocar a cor quando entrar nessa página
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      SystemChrome.setSystemUIOverlayStyle(
+        SystemUiOverlayStyle.dark.copyWith(
+          statusBarColor: AppColors.white100,
+          systemNavigationBarColor: AppColors.white100,
+          systemNavigationBarIconBrightness: Brightness.dark,
+        ),
+      );
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setSystemUIOverlayStyle(
-      SystemUiOverlayStyle.dark.copyWith(
-        statusBarColor: AppColors.background,
-        systemNavigationBarColor: AppColors.blue500,
-      ),
-    );
-
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
         backgroundColor: AppColors.white100,
         iconTheme: const IconThemeData(color: AppColors.gray900),
-
-        // image
+        toolbarHeight: 75,
+        scrolledUnderElevation: 0,
+        elevation: 0,
+        automaticallyImplyLeading:
+            false, // desativa o ícone de voltar automático
         titleTextStyle: AppTextStyles.bold.copyWith(color: AppColors.gray900),
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Row(
-              spacing: 10,
+              spacing: 8,
               children: [
+                IconButton(
+                  icon: const Icon(Icons.arrow_back),
+                  onPressed: () => {Navigator.of(context).pushNamed('/')},
+                ),
                 Stack(
                   children: [
                     Image.asset(
@@ -51,7 +65,6 @@ class _SavedChatScreenState extends State<SavedChatScreen> {
                       left: 25,
                       child: Container(
                         padding: const EdgeInsets.all(2),
-                        decoration: BoxDecoration(),
                         child: Image.asset('assets/images/icons/Estrela.png'),
                       ),
                     ),
@@ -71,8 +84,22 @@ class _SavedChatScreenState extends State<SavedChatScreen> {
                 ),
               ],
             ),
-            Icon(Icons.more_vert, color: AppColors.gray900),
+            const Icon(Icons.more_vert, color: AppColors.gray900),
           ],
+        ),
+      ),
+      // TODO terminar isso
+      bottomNavigationBar: Container(
+        padding: const EdgeInsets.only(
+          left: 24,
+          top: 20,
+          right: 24,
+          bottom: 20,
+        ),
+        decoration: BoxDecoration(color: AppColors.white100),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [Text("Deletar"), Text("Editar"), Text("Favorito")],
         ),
       ),
       body: ListView(

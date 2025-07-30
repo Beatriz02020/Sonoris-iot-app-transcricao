@@ -28,6 +28,7 @@ class _UnsavedChatsScreenState extends State<UnsavedChatsScreen> {
       appBar: AppBar(
         backgroundColor: AppColors.background,
         iconTheme: const IconThemeData(color: AppColors.blue700),
+        scrolledUnderElevation: 0,
         titleTextStyle: AppTextStyles.h3.copyWith(color: AppColors.blue700),
         title: const Text('Conversas Não Salvas'),
       ),

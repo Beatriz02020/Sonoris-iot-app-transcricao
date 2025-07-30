@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:sonoris/components/customButton.dart';
 import 'package:sonoris/theme/colors.dart';
 import 'package:sonoris/theme/text_styles.dart';
 
-import '../../../components/arrowCircleButton.dart';
 import '../../../components/messageBubble.dart';
 
 class UnsavedChatScreen extends StatefulWidget {
@@ -15,7 +13,7 @@ class UnsavedChatScreen extends StatefulWidget {
 }
 
 class _UnsavedChatScreenState extends State<UnsavedChatScreen> {
-  // TODO mudar para branco quando tiver nessa página ( e mudar de volta qnd voltar )
+  // TODO fazer essa página
   @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(
@@ -30,25 +28,23 @@ class _UnsavedChatScreenState extends State<UnsavedChatScreen> {
       appBar: AppBar(
         backgroundColor: AppColors.white100,
         iconTheme: const IconThemeData(color: AppColors.gray900),
-
+        scrolledUnderElevation: 0,
         titleTextStyle: AppTextStyles.bold.copyWith(color: AppColors.gray900),
         title: Row(
           spacing: 20,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text('Conversa_04_07_25_8h'),
-                  Text(
-                    '04/07/2025, 08:30 - 11:30',
-                    style: AppTextStyles.light.copyWith(
-                      color: AppColors.gray500,
-                    ),
-                  ),
-                ],
-              ),
-            ],
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text('Conversa_04_07_25_8h'),
+                Text(
+                  '04/07/2025, 08:30 - 11:30',
+                  style: AppTextStyles.light.copyWith(color: AppColors.gray500),
+                ),
+              ],
+            ),
+          ],
         ),
       ),
       body: ListView(
@@ -81,13 +77,8 @@ class _UnsavedChatScreenState extends State<UnsavedChatScreen> {
                   horario: '17:29:59',
                   isBlue: true,
                 ),
-
-                // TODO fazer esse botao
-                // ArrowCircleButton()
               ],
-
             ),
-
           ),
         ],
       ),

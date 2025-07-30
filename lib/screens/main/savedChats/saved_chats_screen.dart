@@ -16,19 +16,26 @@ class SavedChatsScreen extends StatefulWidget {
 
 class _SavedChatsScreenState extends State<SavedChatsScreen> {
   @override
-  Widget build(BuildContext context) {
-    SystemChrome.setSystemUIOverlayStyle(
-      SystemUiOverlayStyle.dark.copyWith(
-        statusBarColor: AppColors.background,
-        systemNavigationBarColor: AppColors.blue500,
-      ),
-    );
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      SystemChrome.setSystemUIOverlayStyle(
+        SystemUiOverlayStyle.dark.copyWith(
+          statusBarColor: AppColors.white100,
+          systemNavigationBarColor: AppColors.blue500,
+          systemNavigationBarIconBrightness: Brightness.light,
+        ),
+      );
+    });
+  }
 
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
         backgroundColor: AppColors.background,
-        // iconTheme: const IconThemeData(color: AppColors.blue700,),
+        scrolledUnderElevation: 0,
         titleTextStyle: AppTextStyles.h3.copyWith(color: AppColors.blue700),
         title: const Text('Conversas Salvas'),
       ),

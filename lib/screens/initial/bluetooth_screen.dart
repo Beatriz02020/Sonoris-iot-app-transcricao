@@ -26,6 +26,7 @@ class _BluetoothScreenState extends State<BluetoothScreen> {
       backgroundColor: AppColors.white100,
       appBar: AppBar(
         backgroundColor: AppColors.white100, // cor de fundo da AppBar
+        scrolledUnderElevation: 0,
         iconTheme: const IconThemeData(
           color: AppColors.blue500, // cor dos ícones (ex: seta de voltar)
         ),

@@ -21,34 +21,32 @@ class CustomSlider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: AppTextStyles.bold.copyWith(color: AppColors.gray900),
+        ),
+        Column(
+          children: [
+            Slider(
+              value: value,
+              min: min,
+              max: max,
+              activeColor: AppColors.blue500,
+              inactiveColor: AppColors.white100,
+              onChanged: onChanged,
+            ),
 
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            label,
-            style: AppTextStyles.bold.copyWith(color: AppColors.gray900),
-          ),
-          Column(
-            children: [
-              Slider(
-                value: value,
-                min: min,
-                max: max,
-                activeColor: AppColors.blue500,
-                inactiveColor: AppColors.white100,
-                onChanged: onChanged,
-              ),
-
-          Text(
-            valueLabel ?? value.round().toString(),
-            style: AppTextStyles.medium,
-            textAlign: TextAlign.center,
-          ),
-            ],
-          ),
-        ],
-      );
-
+            Text(
+              valueLabel ?? value.round().toString(),
+              style: AppTextStyles.medium,
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ],
+    );
   }
 }

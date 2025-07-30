@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:sonoris/components/customButton.dart';
 import 'package:sonoris/components/customTextField.dart';
 import 'package:sonoris/components/custom_slider.dart';
-import 'package:sonoris/screens/initial/bluetooth_screen.dart';
-import 'package:sonoris/screens/initial/language_screen.dart';
 import 'package:sonoris/theme/colors.dart';
 import 'package:sonoris/theme/text_styles.dart';
 
@@ -35,6 +32,12 @@ class _DeviceScreenState extends State<DeviceScreen> {
 
     return Scaffold(
       backgroundColor: AppColors.background,
+      appBar: AppBar(
+        backgroundColor: AppColors.background,
+        scrolledUnderElevation: 0,
+        titleTextStyle: AppTextStyles.h3.copyWith(color: AppColors.blue700),
+        title: const Text('Dispositivo'),
+      ),
       body: ListView(
         children: [
           Padding(

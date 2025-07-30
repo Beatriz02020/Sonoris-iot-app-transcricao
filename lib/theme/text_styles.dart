@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'colors.dart';
 
-// TODO arrumar isso
-
 class AppTextStyles {
   static const TextStyle h1 = TextStyle(
     fontFamily: 'RubikVariavel',

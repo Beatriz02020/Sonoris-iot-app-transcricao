@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sonoris/components/customButton.dart';
 import 'package:sonoris/components/customTextField.dart';
-import 'package:sonoris/screens/initial/bluetooth_screen.dart';
-import 'package:sonoris/screens/initial/finished_screen.dart';
 import 'package:sonoris/theme/colors.dart';
 import 'package:sonoris/theme/text_styles.dart';
 
@@ -28,6 +26,7 @@ class _LoginScreenState extends State<LoginScreen> {
       backgroundColor: AppColors.white100,
       appBar: AppBar(
         backgroundColor: AppColors.white100, // cor de fundo da AppBar
+        scrolledUnderElevation: 0,
         iconTheme: const IconThemeData(
           color: AppColors.blue500, // cor dos ícones (ex: seta de voltar)
         ),

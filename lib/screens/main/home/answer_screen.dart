@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:sonoris/components/AnswerCategoryButton.dart';
+import 'package:sonoris/components/answerCategoryButton.dart';
 import 'package:sonoris/components/customButton.dart';
 import 'package:sonoris/theme/colors.dart';
 import 'package:sonoris/theme/text_styles.dart';
@@ -26,6 +26,7 @@ class _AnswerScreenState extends State<AnswerScreen> {
       backgroundColor: AppColors.background,
       appBar: AppBar(
         backgroundColor: AppColors.background,
+        scrolledUnderElevation: 0,
         iconTheme: const IconThemeData(color: AppColors.blue500),
         titleTextStyle: AppTextStyles.h3.copyWith(color: AppColors.blue500),
         title: const Text('Respostas Rápidas'),

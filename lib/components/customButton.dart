@@ -3,8 +3,6 @@ import 'package:flutter/material.dart';
 import '../theme/colors.dart';
 import '../theme/text_styles.dart';
 
-// TODO muda o nome do arquivo
-
 class CustomButton extends StatelessWidget {
   final String text;
   final IconData? icon;
@@ -27,7 +25,7 @@ class CustomButton extends StatelessWidget {
     this.iconSize, // <- Adicionado ao construtor
   });
 
-  // TODO Fazer os outros botoes
+  // TODO Fazer o arrowCircleButton
 
   @override
   Widget build(BuildContext context) {

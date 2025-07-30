@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:sonoris/components/ColorSelector.dart';
-import 'package:sonoris/components/customButton.dart';
+import 'package:sonoris/components/colorSelector.dart';
 import 'package:sonoris/components/customTextField.dart';
 import 'package:sonoris/components/custom_slider.dart';
-import 'package:sonoris/screens/initial/bluetooth_screen.dart';
-import 'package:sonoris/screens/initial/language_screen.dart';
 import 'package:sonoris/theme/colors.dart';
 import 'package:sonoris/theme/text_styles.dart';
 
@@ -40,6 +37,7 @@ class _CaptionsScreenState extends State<CaptionsScreen> {
       backgroundColor: AppColors.background,
       appBar: AppBar(
         backgroundColor: AppColors.background,
+        scrolledUnderElevation: 0,
         iconTheme: const IconThemeData(color: AppColors.blue500),
         titleTextStyle: AppTextStyles.h3.copyWith(color: AppColors.blue500),
         title: const Text('Customizar Legenda'),
@@ -59,7 +57,7 @@ class _CaptionsScreenState extends State<CaptionsScreen> {
             CustomTextField(
               verticalPadding: 20,
               hintText:
-              'Este é um texto de exemplo.\n'
+                  'Este é um texto de exemplo.\n'
                   'As legendas ficarão assim na tela do seu dispositivo.'
                   '\n\n Customize do melhor jeito para você',
               fullWidth: true,
@@ -105,7 +103,7 @@ class _CaptionsScreenState extends State<CaptionsScreen> {
                                     enableCustomPicker: true,
                                     onColorSelected: (color) {
                                       setState(
-                                            () => selectedColorLinha1 = color,
+                                        () => selectedColorLinha1 = color,
                                       );
                                     },
                                   ),
@@ -145,7 +143,7 @@ class _CaptionsScreenState extends State<CaptionsScreen> {
                                     enableCustomPicker: true,
                                     onColorSelected: (color) {
                                       setState(
-                                            () => selectedColorLinha2 = color,
+                                        () => selectedColorLinha2 = color,
                                       );
                                     },
                                   ),
@@ -177,7 +175,8 @@ class _CaptionsScreenState extends State<CaptionsScreen> {
                           value: _fontSizeValue,
                           min: 1,
                           max: 36,
-                          onChanged: (value) => setState(() => _fontSizeValue = value),
+                          onChanged:
+                              (value) => setState(() => _fontSizeValue = value),
                           valueLabel: '${_fontSizeValue.round()}pt',
                         ),
 
@@ -186,7 +185,8 @@ class _CaptionsScreenState extends State<CaptionsScreen> {
                           value: _fontBoldValue,
                           min: 1,
                           max: 100,
-                          onChanged: (value) => setState(() => _fontBoldValue = value),
+                          onChanged:
+                              (value) => setState(() => _fontBoldValue = value),
                         ),
 
                         CustomSlider(
@@ -194,8 +194,10 @@ class _CaptionsScreenState extends State<CaptionsScreen> {
                           value: _txtSpeedValue,
                           min: 1,
                           max: 20,
-                          onChanged: (value) => setState(() => _txtSpeedValue = value),
-                          valueLabel: '${_txtSpeedValue.round()} carácteres por segundo',
+                          onChanged:
+                              (value) => setState(() => _txtSpeedValue = value),
+                          valueLabel:
+                              '${_txtSpeedValue.round()} carácteres por segundo',
                         ),
 
                         Text(
@@ -220,7 +222,8 @@ class _CaptionsScreenState extends State<CaptionsScreen> {
                           value: _verticalValue,
                           min: 1,
                           max: 44,
-                          onChanged: (value) => setState(() => _verticalValue = value),
+                          onChanged:
+                              (value) => setState(() => _verticalValue = value),
                         ),
 
                         CustomSlider(
@@ -228,7 +231,9 @@ class _CaptionsScreenState extends State<CaptionsScreen> {
                           value: _horizontalValue,
                           min: -10,
                           max: 10,
-                          onChanged: (value) => setState(() => _horizontalValue = value),
+                          onChanged:
+                              (value) =>
+                                  setState(() => _horizontalValue = value),
                         ),
 
                         CustomSlider(
@@ -236,9 +241,9 @@ class _CaptionsScreenState extends State<CaptionsScreen> {
                           value: _spaceValue,
                           min: 1,
                           max: 7,
-                          onChanged: (value) => setState(() => _spaceValue = value),
+                          onChanged:
+                              (value) => setState(() => _spaceValue = value),
                         ),
-
                       ],
                     ),
                   ),

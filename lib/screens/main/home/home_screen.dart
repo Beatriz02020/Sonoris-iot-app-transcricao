@@ -15,8 +15,6 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-// TODO faze o backend desta pagina
-
 class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {

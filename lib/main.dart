@@ -3,6 +3,7 @@ import 'package:sonoris/components/bottomNavigationBar.dart';
 import 'package:sonoris/screens/initial/initial_screen.dart';
 
 // TODO arrumar botão de voltar saindo do aplicativo
+// TODO fazer o backend
 
 void main() {
   runApp(const SonorisApp());
