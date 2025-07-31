@@ -35,6 +35,7 @@ class _SavedChatsScreenState extends State<SavedChatsScreen> {
       backgroundColor: AppColors.background,
       appBar: AppBar(
         backgroundColor: AppColors.background,
+        automaticallyImplyLeading: false,
         scrolledUnderElevation: 0,
         titleTextStyle: AppTextStyles.h3.copyWith(color: AppColors.blue700),
         title: const Text('Conversas Salvas'),

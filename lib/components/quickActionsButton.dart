@@ -30,10 +30,10 @@ class QuickActionsButton extends StatelessWidget {
         padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(
           color: AppColors.white100,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(18),
           boxShadow: [
             BoxShadow(
-              color: AppColors.gray900.withOpacity(0.1),
+              color: AppColors.gray900.withAlpha(10),
               spreadRadius: 1,
               blurRadius: 10,
               offset: const Offset(0, 2),

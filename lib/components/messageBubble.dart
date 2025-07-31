@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import '../theme/colors.dart';
 import '../theme/text_styles.dart';
 
+// TODO: deixar componente responsivo
 class Messagebubble extends StatelessWidget {
   final String texto;
   final String horario;

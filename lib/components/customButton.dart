@@ -26,6 +26,7 @@ class CustomButton extends StatelessWidget {
   });
 
   // TODO Fazer o arrowCircleButton
+  // TODO Arrumar o estilo do botão pressionado
 
   @override
   Widget build(BuildContext context) {
@@ -35,10 +36,17 @@ class CustomButton extends StatelessWidget {
             ? OutlinedButton(
               style: OutlinedButton.styleFrom(
                 side: BorderSide(color: mainColor, width: 1.5),
+                padding: const EdgeInsets.only(
+                  left: 16,
+                  right: 16,
+                  top: 6,
+                  bottom: 4,
+                ),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
+                  borderRadius: BorderRadius.circular(12),
                 ),
                 backgroundColor: AppColors.blue50,
+                elevation: 0,
               ),
               onPressed: onPressed,
               child: Text(
@@ -48,10 +56,17 @@ class CustomButton extends StatelessWidget {
             )
             : ElevatedButton(
               style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.only(
+                  left: 16,
+                  right: 16,
+                  top: 6,
+                  bottom: 4,
+                ),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
+                  borderRadius: BorderRadius.circular(12),
                 ),
                 backgroundColor: mainColor,
+                elevation: 0,
               ),
               onPressed: onPressed,
               child: Row(

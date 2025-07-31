@@ -20,9 +20,8 @@ class _CaptionsScreenState extends State<CaptionsScreen> {
   double _fontSizeValue = 18;
   double _fontBoldValue = 50;
   double _txtSpeedValue = 10;
-  double _verticalValue = 22;
+  double _verticalValue = 1.3;
   double _horizontalValue = 0;
-  double _spaceValue = 4;
 
   @override
   Widget build(BuildContext context) {
@@ -44,8 +43,8 @@ class _CaptionsScreenState extends State<CaptionsScreen> {
       ),
       body: Padding(
         padding: const EdgeInsets.only(
-          left: 30,
-          right: 30,
+          left: 20,
+          right: 20,
           top: 10,
           bottom: 30,
         ),
@@ -53,14 +52,31 @@ class _CaptionsScreenState extends State<CaptionsScreen> {
           spacing: 25,
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
+
           children: [
-            CustomTextField(
-              verticalPadding: 20,
-              hintText:
-                  'Este é um texto de exemplo.\n'
-                  'As legendas ficarão assim na tela do seu dispositivo.'
-                  '\n\n Customize do melhor jeito para você',
-              fullWidth: true,
+            Container(
+              padding: EdgeInsets.symmetric(vertical: 18, horizontal: 16),
+              decoration: BoxDecoration(
+                color: AppColors.white100,
+                border: Border.all(
+                  color: AppColors.blue700,
+                  width: 1.5, // stroke width
+                ),
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Text(
+                'Este é um texto de exemplo.\n'
+                'As legendas ficarão assim na tela do seu dispositivo.'
+                '\n\n Customize do melhor jeito para você',
+
+                style: AppTextStyles.body.copyWith(
+                  fontSize: 16,
+                  fontFamily: 'Inter',
+                  fontWeight: FontWeight.w500,
+                  color: AppColors.gray900,
+                  height: 1.3,
+                ),
+              ),
             ),
             Expanded(
               child: ListView(
@@ -87,6 +103,7 @@ class _CaptionsScreenState extends State<CaptionsScreen> {
                               child: ListView(
                                 scrollDirection: Axis.horizontal,
                                 children: [
+                                  // TODO: adicionar mais cores
                                   ColorSelector(
                                     colors: [
                                       Colors.transparent,
@@ -127,6 +144,7 @@ class _CaptionsScreenState extends State<CaptionsScreen> {
                               child: ListView(
                                 scrollDirection: Axis.horizontal,
                                 children: [
+                                  // TODO: adicionar mais cores
                                   ColorSelector(
                                     colors: [
                                       Colors.transparent,
@@ -218,10 +236,10 @@ class _CaptionsScreenState extends State<CaptionsScreen> {
                         ),
 
                         CustomSlider(
-                          label: 'Espaçamento vertical',
+                          label: 'Tamanho da linha',
                           value: _verticalValue,
                           min: 1,
-                          max: 44,
+                          max: 2,
                           onChanged:
                               (value) => setState(() => _verticalValue = value),
                         ),
@@ -234,15 +252,6 @@ class _CaptionsScreenState extends State<CaptionsScreen> {
                           onChanged:
                               (value) =>
                                   setState(() => _horizontalValue = value),
-                        ),
-
-                        CustomSlider(
-                          label: 'Espaçamento entre parágrafos',
-                          value: _spaceValue,
-                          min: 1,
-                          max: 7,
-                          onChanged:
-                              (value) => setState(() => _spaceValue = value),
                         ),
                       ],
                     ),

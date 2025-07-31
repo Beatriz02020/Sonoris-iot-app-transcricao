@@ -20,14 +20,17 @@ class AnswerCategoryButton extends StatelessWidget {
     this.width,
   });
 
-  // TODO Arrumar esse código porco
+  // TODO Arrumar o estilo do botão pressionado
   @override
   Widget build(BuildContext context) {
     Widget button = ElevatedButton(
       style: ElevatedButton.styleFrom(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
         backgroundColor: AppColors.white100,
+        padding: const EdgeInsets.symmetric(horizontal: 12),
+        elevation: 0,
       ),
+
       onPressed: onPressed,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -36,7 +39,7 @@ class AnswerCategoryButton extends StatelessWidget {
             children: <Widget>[
               if (icon != null)
                 Padding(
-                  padding: const EdgeInsets.only(right: 8.0),
+                  padding: const EdgeInsets.only(right: 12.0),
                   child: Icon(icon, color: AppColors.gray900, size: 20),
                 ),
               Text(
@@ -66,9 +69,37 @@ class AnswerCategoryButton extends StatelessWidget {
       ),
     );
     if (width != null) {
-      return SizedBox(height: 50, width: width, child: button);
+      return Container(
+        height: 50,
+        decoration: BoxDecoration(
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.gray900.withAlpha(18),
+              blurRadius: 18.5,
+              spreadRadius: 1,
+              offset: const Offset(0, 6),
+            ),
+          ],
+        ),
+        width: width,
+        child: button,
+      );
     } else {
-      return SizedBox(height: 50, width: double.infinity, child: button);
+      return Container(
+        height: 50,
+        decoration: BoxDecoration(
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.gray900.withAlpha(18),
+              blurRadius: 18.5,
+              spreadRadius: 1,
+              offset: const Offset(0, 6),
+            ),
+          ],
+        ),
+        width: double.infinity,
+        child: button,
+      );
     }
   }
 }

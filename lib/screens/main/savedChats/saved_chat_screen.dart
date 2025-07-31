@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:sonoris/components/customDivider.dart';
 import 'package:sonoris/theme/colors.dart';
 import 'package:sonoris/theme/text_styles.dart';
@@ -88,18 +89,54 @@ class _SavedChatScreenState extends State<SavedChatScreen> {
           ],
         ),
       ),
-      // TODO terminar isso
       bottomNavigationBar: Container(
-        padding: const EdgeInsets.only(
-          left: 24,
-          top: 20,
-          right: 24,
-          bottom: 20,
-        ),
+        height: 100,
+        padding: const EdgeInsets.only(left: 45, top: 0, right: 45, bottom: 15),
         decoration: BoxDecoration(color: AppColors.white100),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [Text("Deletar"), Text("Editar"), Text("Favorito")],
+          children: [
+            Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              spacing: 6,
+              children: [
+                SvgPicture.asset(
+                  "assets/images/XIcon.svg",
+                  height: 28,
+                  colorFilter: ColorFilter.mode(
+                    AppColors.rose500,
+                    BlendMode.srcIn,
+                  ),
+                ),
+                Text(
+                  "Deletar",
+                  style: AppTextStyles.body.copyWith(color: AppColors.rose500),
+                ),
+              ],
+            ),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              spacing: 4,
+              children: [
+                Icon(Icons.edit_rounded, color: AppColors.blue500, size: 40),
+                Text(
+                  "Editar",
+                  style: AppTextStyles.body.copyWith(color: AppColors.blue500),
+                ),
+              ],
+            ),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              spacing: 4,
+              children: [
+                Icon(Icons.star, color: AppColors.amber500, size: 40),
+                Text(
+                  "Favorito",
+                  style: AppTextStyles.body.copyWith(color: AppColors.amber500),
+                ),
+              ],
+            ),
+          ],
         ),
       ),
       body: ListView(

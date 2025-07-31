@@ -23,17 +23,20 @@ class CustomSlider extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
+      spacing: 5,
       children: [
         Text(
           label,
           style: AppTextStyles.bold.copyWith(color: AppColors.gray900),
         ),
         Column(
+          spacing: 0,
           children: [
             Slider(
               value: value,
               min: min,
               max: max,
+              padding: const EdgeInsets.symmetric(horizontal: 10),
               activeColor: AppColors.blue500,
               inactiveColor: AppColors.white100,
               onChanged: onChanged,

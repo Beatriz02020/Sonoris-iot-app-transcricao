@@ -48,13 +48,13 @@ class _AnswerCategoryScreenState extends State<AnswerCategoryScreen> {
               children: [
                 CustomButton(
                   icon: Icons.edit,
-                  iconSize: 16,
+                  iconSize: 20,
                   text: 'Renomear',
                   onPressed: () {},
                 ),
                 CustomButton(
                   icon: Icons.close,
-                  iconSize: 16,
+                  iconSize: 22,
                   color: AppColors.rose500,
                   text: 'Deletar Categoria',
                   onPressed: () {},
@@ -91,7 +91,7 @@ class _AnswerCategoryScreenState extends State<AnswerCategoryScreen> {
 
                 CustomButton(
                   icon: Icons.add,
-                  text: 'Adicionar Categoria',
+                  text: 'Adicionar Resposta',
                   fullWidth: true,
                   onPressed: () {},
                 ),

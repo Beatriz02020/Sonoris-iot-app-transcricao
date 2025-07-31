@@ -185,7 +185,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       // navegação utilizando container
                       QuickActionsButton(
                         icon: 'RespostasRapidas',
-                        text: 'Respostas rápidas',
+                        text: 'Respostas Rápidas',
                         onPressed: () {
                           Navigator.push(
                             context,
@@ -197,7 +197,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                       QuickActionsButton(
                         icon: 'CustomizarLegendas',
-                        text: 'Customizar legendas',
+                        text: 'Customizar Legendas',
                         onPressed: () {
                           Navigator.push(
                             context,
@@ -209,7 +209,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                       QuickActionsButton(
                         icon: 'ConfigurarDispositivo',
-                        text: 'Configurar dispositivo',
+                        text: 'Configurar Dispositivo',
                         onPressed: () {
                           BottomNav.of(context)?.switchTab(2);
                         },

@@ -72,27 +72,31 @@ class _DeviceScreenState extends State<DeviceScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          // logo e nome do dispositivo
-                          Row(
-                            spacing: 8,
-                            children: [
-                              Text(
-                                'Sonoris v1.0',
-                                style: AppTextStyles.bold.copyWith(
-                                  color: AppColors.white100,
-                                ),
-                              ),
-                            ],
+                          // nome do dispositivo
+                          Text(
+                            'Sonoris v1.0',
+                            style: AppTextStyles.bold.copyWith(
+                              color: AppColors.white100,
+                            ),
                           ),
 
                           // bateria do dispositivo
                           Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            spacing: 6,
                             children: [
                               Text(
                                 'Conectado',
                                 style: AppTextStyles.body.copyWith(
                                   color: AppColors.teal500,
+                                ),
+                              ),
+                              Container(
+                                height: 9,
+                                width: 9,
+                                decoration: BoxDecoration(
+                                  color: AppColors.teal500,
+                                  borderRadius: BorderRadius.circular(100),
                                 ),
                               ),
                             ],
@@ -207,6 +211,7 @@ class _DeviceScreenState extends State<DeviceScreen> {
 
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
+                  spacing: 6,
                   children: [
                     Text(
                       'Línguas',
@@ -215,19 +220,27 @@ class _DeviceScreenState extends State<DeviceScreen> {
                       ),
                     ),
                     Row(
-                      spacing: 0,
+                      spacing: 10,
                       children: [
-                        Checkbox(
-                          value: _isCheckedPt,
-                          onChanged: (bool? value) {
-                            setState(() {
-                              _isCheckedPt = value ?? false;
-                            });
-                          },
-                          activeColor: AppColors.blue500,
-                          checkColor: AppColors.white100,
-                          side: BorderSide(color: AppColors.blue500, width: 2),
+                        SizedBox(
+                          height: 24.0,
+                          width: 24.0,
+                          child: Checkbox(
+                            value: _isCheckedPt,
+                            onChanged: (bool? value) {
+                              setState(() {
+                                _isCheckedPt = value ?? false;
+                              });
+                            },
+                            activeColor: AppColors.blue500,
+                            checkColor: AppColors.white100,
+                            side: BorderSide(
+                              color: AppColors.blue500,
+                              width: 2,
+                            ),
+                          ),
                         ),
+
                         Text(
                           'Português (Brasileiro)',
                           style: AppTextStyles.bold.copyWith(
@@ -237,17 +250,25 @@ class _DeviceScreenState extends State<DeviceScreen> {
                       ],
                     ),
                     Row(
+                      spacing: 10,
                       children: [
-                        Checkbox(
-                          value: _isCheckedEn,
-                          onChanged: (bool? value) {
-                            setState(() {
-                              _isCheckedEn = value ?? false;
-                            });
-                          },
-                          activeColor: AppColors.blue500,
-                          checkColor: AppColors.white100,
-                          side: BorderSide(color: AppColors.blue500, width: 2),
+                        SizedBox(
+                          height: 24.0,
+                          width: 24.0,
+                          child: Checkbox(
+                            value: _isCheckedEn,
+                            onChanged: (bool? value) {
+                              setState(() {
+                                _isCheckedEn = value ?? false;
+                              });
+                            },
+                            activeColor: AppColors.blue500,
+                            checkColor: AppColors.white100,
+                            side: BorderSide(
+                              color: AppColors.blue500,
+                              width: 2,
+                            ),
+                          ),
                         ),
                         Text(
                           'Inglês',
