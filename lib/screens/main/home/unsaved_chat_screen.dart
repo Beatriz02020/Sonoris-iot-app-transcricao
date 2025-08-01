@@ -15,6 +15,7 @@ class UnsavedChatScreen extends StatefulWidget {
 
 class _UnsavedChatScreenState extends State<UnsavedChatScreen> {
   // TODO Descobrir um jeito melhor de trocar a cor quando entrar nessa página
+  // TODO Fazer o botão de scrollar para cima e para baixo
   @override
   void initState() {
     super.initState();

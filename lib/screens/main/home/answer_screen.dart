@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:sonoris/components/answerCategoryButton.dart';
+import 'package:sonoris/components/answerButton.dart';
 import 'package:sonoris/components/customButton.dart';
 import 'package:sonoris/theme/colors.dart';
 import 'package:sonoris/theme/text_styles.dart';
