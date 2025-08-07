@@ -13,16 +13,16 @@ import 'package:sonoris/screens/initial/initial_screen.dart';
 // TODO Modo de funcionamento                                 | (DISPOSITIVO)
 // TODO Lingua desejada                                       | (DISPOSITIVO)
 // TODO Cadastro                                              | Beatriz
-// TODO Login                                                 | Amanda
+// TODO Login                                                 | Beatriz
 // TODO Editar dispositivo                                    | (DISPOSITIVO)
-// TODO Editar perfil                                         | Beatriz
+// TODO Editar perfil                                         | Amanda
 // TODO Adicionar categoria de respostas rápidas              | Amanda
-// TODO Botao de pesquisar e filtrar conversas                | Nicole
+// TODO Botao de pesquisar e filtrar conversas                | Beatriz
 // TODO Apresentar lista de conversas salvas e não salvas     | (DISPOSITIVO)
 // TODO Customizar legenda                                    | (DISPOSITIVO)
 // TODO Adicionar respostas a categoria de respostas rápidas  | Amanda
 // TODO Chat de conversas funcional                           | (DISPOSITIVO)
-// TODO Salvar conversas                                      | Nicole
+// TODO Salvar conversas                                      | Amanda
 
 void main() {
   runApp(const SonorisApp());
