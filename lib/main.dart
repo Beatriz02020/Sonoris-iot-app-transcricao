@@ -4,6 +4,7 @@ import 'package:sonoris/screens/initial/initial_screen.dart';
 
 // TODO arrumar botão de voltar saindo do aplicativo
 // TODO consertar o icone e tela de inicio do aplicativo
+// TODO organizar pasta de imagens
 // TODO finalizar ReadMe
 // TODO Fazer responsividade do aplicativo
 // TODO verificar os ToDos
