@@ -3,10 +3,26 @@ import 'package:sonoris/components/bottomNavigationBar.dart';
 import 'package:sonoris/screens/initial/initial_screen.dart';
 
 // TODO arrumar botão de voltar saindo do aplicativo
-// TODO concertar o icone e tela de inicio do aplicativo
+// TODO consertar o icone e tela de inicio do aplicativo
 // TODO finalizar ReadMe
 // TODO Fazer responsividade do aplicativo
-// TODO fazer o backend
+// TODO verificar os ToDos
+
+// ======= BACKEND =======
+// TODO Pareamento de dispositivo                             | Beatriz
+// TODO Modo de funcionamento                                 | (DISPOSITIVO)
+// TODO Lingua desejada                                       | (DISPOSITIVO)
+// TODO Cadastro                                              | Beatriz
+// TODO Login                                                 | Amanda
+// TODO Editar dispositivo                                    | (DISPOSITIVO)
+// TODO Editar perfil                                         | Beatriz
+// TODO Adicionar categoria de respostas rápidas              | Amanda
+// TODO Botao de pesquisar e filtrar conversas                | Nicole
+// TODO Apresentar lista de conversas salvas e não salvas     | (DISPOSITIVO)
+// TODO Customizar legenda                                    | (DISPOSITIVO)
+// TODO Adicionar respostas a categoria de respostas rápidas  | Amanda
+// TODO Chat de conversas funcional                           | (DISPOSITIVO)
+// TODO Salvar conversas                                      | Nicole
 
 void main() {
   runApp(const SonorisApp());
