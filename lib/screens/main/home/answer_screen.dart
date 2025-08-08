@@ -51,7 +51,7 @@ class _AnswerScreenState extends State<AnswerScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Texto explicando como funciona as respostas rápidas',
+                    'Texto explicando como funciona as respostas rápidas', // TODO
                     style: AppTextStyles.body.copyWith(
                       color: AppColors.gray700,
                     ),
