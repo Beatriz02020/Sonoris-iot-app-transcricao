@@ -43,7 +43,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
     if (!_formKey.currentState!.validate()) return;
 
     try {
-      // Cria o usuário no Firebase Auth
       UserCredential userCredential =
       await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: _emailController.text.trim(),
@@ -194,7 +193,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             return 'Por favor, insira um e-mail.';
                           }
                           if (!RegExp(
-                            r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+                            r'^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$',
                           ).hasMatch(value)) {
                             return 'Por favor, insira um e-mail válido.';
                           }
