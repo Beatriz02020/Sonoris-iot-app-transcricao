@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:sonoris/components/bottomNavigationBar.dart';
 import 'package:sonoris/screens/initial/initial_screen.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 
 // TODO arrumar botão de voltar saindo do aplicativo
 // TODO consertar o icone e tela de inicio do aplicativo
@@ -25,7 +27,11 @@ import 'package:sonoris/screens/initial/initial_screen.dart';
 // TODO Chat de conversas funcional                           | (DISPOSITIVO)
 // TODO Salvar conversas                                      | Amanda
 
-void main() {
+void main() async{
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(const SonorisApp());
 }
 
