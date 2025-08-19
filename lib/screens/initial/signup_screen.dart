@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:sonoris/components/customButton.dart';
 import 'package:sonoris/components/customTextField.dart';
+import 'package:sonoris/screens/initial/bluetooth_screen.dart';
 import 'package:sonoris/services/auth_service.dart';
 import 'package:sonoris/theme/colors.dart';
 import 'package:sonoris/theme/text_styles.dart';
@@ -68,8 +69,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
         ),
       );
 
-      Navigator.of(context, rootNavigator: true)
-          .pushReplacementNamed('/main');
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => BluetoothScreen()),
+      );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(

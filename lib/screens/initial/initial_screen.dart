@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sonoris/components/customButton.dart';
 import 'package:sonoris/screens/initial/bluetooth_screen.dart';
+import 'package:sonoris/screens/initial/login_screen.dart';
+import 'package:sonoris/screens/initial/signup_screen.dart';
 import 'package:sonoris/theme/colors.dart';
 import 'package:sonoris/theme/text_styles.dart';
 
@@ -52,15 +54,31 @@ class InitialScreen extends StatelessWidget {
                 ),
               ],
             ),
-            CustomButton(
-              text: 'Conectar dispositivo',
-              fullWidth: true,
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => BluetoothScreen()),
-                );
-              },
+            Column(
+              spacing: 2,
+              children: [
+                CustomButton(
+                  text: 'Cadastro',
+                  fullWidth: true,
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => SignUpScreen()),
+                    );
+                  },
+                ),
+                CustomButton(
+                  text: 'Login',
+                  outlined: true,
+                  fullWidth: true,
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => LoginScreen()),
+                    );
+                  },
+                ),
+              ],
             ),
           ],
         ),

@@ -55,31 +55,13 @@ class FinishedScreen extends StatelessWidget {
                 ),
               ],
             ),
-            Column(
-              spacing: 2,
-              children: [
-                CustomButton(
-                  text: 'Cadastro',
-                  fullWidth: true,
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => SignUpScreen()),
-                    );
-                  },
-                ),
-                CustomButton(
-                  text: 'Login',
-                  outlined: true,
-                  fullWidth: true,
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => LoginScreen()),
-                    );
-                  },
-                ),
-              ],
+            CustomButton(
+              text: 'Continuar',
+              fullWidth: true,
+              onPressed: () {
+                Navigator.of(context, rootNavigator: true)
+                    .pushReplacementNamed('/main');
+              },
             ),
           ],
         ),
