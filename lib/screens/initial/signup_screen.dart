@@ -1,12 +1,10 @@
 import 'dart:io';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:sonoris/components/customButton.dart';
 import 'package:sonoris/components/customTextField.dart';
+import 'package:sonoris/services/auth_service.dart';
 import 'package:sonoris/theme/colors.dart';
 import 'package:sonoris/theme/text_styles.dart';
 
@@ -27,8 +25,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
   bool _obscurePassword = true;
   final _birthDateFormatter = _BirthDateInputFormatter();
 
-  File? _selectedImage; // Foto escolhida
+  File? _selectedImage;
   final ImagePicker _picker = ImagePicker();
+  final AuthService _authService = AuthService();
 
   Future<void> _pickImage() async {
     final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
@@ -43,33 +42,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
     if (!_formKey.currentState!.validate()) return;
 
     try {
-      UserCredential userCredential =
-      await FirebaseAuth.instance.createUserWithEmailAndPassword(
+      await _authService.signUp(
+        name: _nameController.text.trim(),
+        birthDate: _birthDateController.text.trim(),
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
+        photo: _selectedImage,
       );
-
-      String? photoUrl;
-
-      if (_selectedImage != null) {
-        final storageRef = FirebaseStorage.instance
-            .ref()
-            .child('user_photos/${userCredential.user!.uid}.jpg');
-
-        await storageRef.putFile(_selectedImage!);
-        photoUrl = await storageRef.getDownloadURL();
-      }
-
-      await FirebaseFirestore.instance
-          .collection('Usuario')
-          .doc(userCredential.user!.uid)
-          .set({
-        'Nome': _nameController.text.trim(),
-        'DataNasc': _birthDateController.text.trim(),
-        'Email': _emailController.text.trim(),
-        'Foto_url': photoUrl,
-        'Criado_em': FieldValue.serverTimestamp(),
-      });
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -95,7 +74,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text("Erro ao cadastrar: $e"),
-          backgroundColor: Colors.red,
+          backgroundColor: AppColors.rose600,
         ),
       );
     }
