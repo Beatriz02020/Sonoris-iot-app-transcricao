@@ -59,8 +59,10 @@ class FinishedScreen extends StatelessWidget {
               text: 'Continuar',
               fullWidth: true,
               onPressed: () {
-                Navigator.of(context, rootNavigator: true)
-                    .pushReplacementNamed('/main');
+                Navigator.of(
+                  context,
+                  rootNavigator: true,
+                ).pushReplacementNamed('/main');
               },
             ),
           ],

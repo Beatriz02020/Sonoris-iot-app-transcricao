@@ -58,9 +58,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           behavior: SnackBarBehavior.floating,
           margin: EdgeInsets.all(10),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(
-              Radius.circular(10),
-            ),
+            borderRadius: BorderRadius.all(Radius.circular(10)),
           ),
           content: Text(
             'Cadastrado com sucesso!',
@@ -106,16 +104,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
         child: SingleChildScrollView(
           child: ConstrainedBox(
             constraints: BoxConstraints(
-              minHeight: MediaQuery.of(context).size.height -
+              minHeight:
+                  MediaQuery.of(context).size.height -
                   kToolbarHeight -
                   MediaQuery.of(context).padding.top,
             ),
             child: Padding(
-              padding: const EdgeInsets.only(
-                left: 38,
-                right: 38,
-                bottom: 55,
-              ),
+              padding: const EdgeInsets.only(left: 38, right: 38, bottom: 55),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -128,11 +123,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         onTap: _pickImage,
                         child: CircleAvatar(
                           radius: 60,
-                          backgroundImage: _selectedImage != null
-                              ? FileImage(_selectedImage!)
-                              : const AssetImage(
-                            'assets/images/User.png',
-                          ) as ImageProvider,
+                          backgroundImage:
+                              _selectedImage != null
+                                  ? FileImage(_selectedImage!)
+                                  : const AssetImage('assets/images/User.png')
+                                      as ImageProvider,
                         ),
                       ),
                       const SizedBox(height: 16),
@@ -140,10 +135,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         hintText: 'Nome',
                         fullWidth: true,
                         controller: _nameController,
-                        validator: (value) =>
-                        value == null || value.isEmpty
-                            ? 'Por favor, insira um nome.'
-                            : null,
+                        validator:
+                            (value) =>
+                                value == null || value.isEmpty
+                                    ? 'Por favor, insira um nome.'
+                                    : null,
                       ),
                       CustomTextField(
                         controller: _birthDateController,
@@ -156,8 +152,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           if (value == null || value.isEmpty) {
                             return 'Por favor, insira uma data de nascimento.';
                           }
-                          if (!RegExp(r'^\d{2}/\d{2}/\d{4}$')
-                              .hasMatch(value)) {
+                          if (!RegExp(r'^\d{2}/\d{2}/\d{4}$').hasMatch(value)) {
                             return 'Formato inválido. Use dd/mm/aaaa.';
                           }
                           return null;
@@ -188,10 +183,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         keyboardType: TextInputType.visiblePassword,
                         controller: _passwordController,
                         obscureText: _obscurePassword,
-                        validator: (value) =>
-                        value == null || value.isEmpty
-                            ? 'Por favor, insira uma senha.'
-                            : null,
+                        validator:
+                            (value) =>
+                                value == null || value.isEmpty
+                                    ? 'Por favor, insira uma senha.'
+                                    : null,
                         suffixIcon: IconButton(
                           icon: Icon(
                             _obscurePassword
@@ -226,9 +222,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
 class _BirthDateInputFormatter extends TextInputFormatter {
   @override
   TextEditingValue formatEditUpdate(
-      TextEditingValue oldValue,
-      TextEditingValue newValue,
-      ) {
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
     var text = newValue.text.replaceAll(RegExp(r'[^0-9]'), '');
     final buffer = StringBuffer();
     for (int i = 0; i < text.length && i < 8; i++) {

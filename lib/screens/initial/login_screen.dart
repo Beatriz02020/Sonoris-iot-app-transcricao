@@ -12,11 +12,9 @@ class LoginScreen extends StatefulWidget {
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
-
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-
   final _formKey = GlobalKey<FormState>();
   bool _obscurePassword = true;
 
@@ -34,24 +32,25 @@ class _LoginScreenState extends State<LoginScreen> {
         );
         if (user != null) {
           ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                backgroundColor: AppColors.blue500,
-                duration: Duration(seconds: 3),
-                behavior: SnackBarBehavior.floating,
-                margin: EdgeInsets.all(10),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(10),
-                  ),
-                ),
-                content: Text(
-                  'Logado com sucesso!',
-                  style: TextStyle(color: AppColors.white100),
-                ),
+            SnackBar(
+              backgroundColor: AppColors.blue500,
+              duration: Duration(seconds: 3),
+              behavior: SnackBarBehavior.floating,
+              margin: EdgeInsets.all(10),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(10)),
               ),
+              content: Text(
+                'Logado com sucesso!',
+                style: TextStyle(color: AppColors.white100),
+              ),
+            ),
           );
           // ignore: use_build_context_synchronously
-          Navigator.of(context, rootNavigator: true).pushReplacementNamed('/main');
+          Navigator.of(
+            context,
+            rootNavigator: true,
+          ).pushReplacementNamed('/main');
         }
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -86,7 +85,7 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
       body: Form(
         key: _formKey,
-        
+
         child: SingleChildScrollView(
           child: ConstrainedBox(
             constraints: BoxConstraints(
@@ -124,7 +123,6 @@ class _LoginScreenState extends State<LoginScreen> {
                           keyboardType: TextInputType.emailAddress,
                           controller: _emailController,
                           validator: (value) {
-
                             // verifica se o usuário digitou e-mail
                             if (value == null || value.isEmpty) {
                               return 'Por favor, insira um e-mail.';
@@ -145,10 +143,11 @@ class _LoginScreenState extends State<LoginScreen> {
                           keyboardType: TextInputType.visiblePassword,
                           controller: _passwordController,
                           obscureText: _obscurePassword,
-                          validator: (value) =>
-                          value == null || value.isEmpty
-                              ? 'Por favor, insira uma senha.'
-                              : null,
+                          validator:
+                              (value) =>
+                                  value == null || value.isEmpty
+                                      ? 'Por favor, insira uma senha.'
+                                      : null,
                           suffixIcon: IconButton(
                             icon: Icon(
                               _obscurePassword

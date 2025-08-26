@@ -27,11 +27,9 @@ import 'firebase_options.dart';
 // TODO Chat de conversas funcional                           | (DISPOSITIVO)
 // TODO Salvar conversas                                      | Amanda
 
-void main() async{
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(const SonorisApp());
 }
 
@@ -42,7 +40,7 @@ class SonorisApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Sonoris App',
-      initialRoute: '/main',
+      initialRoute: '/initial',
       routes: {
         '/initial': (context) => const InitialScreen(),
         '/main': (context) => const BottomNav(),

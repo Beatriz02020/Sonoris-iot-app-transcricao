@@ -32,9 +32,9 @@ class AuthService {
 
     String? photoUrl;
     if (photo != null) {
-      final storageRef = _storage
-          .ref()
-          .child('user_photos/${userCredential.user!.uid}.jpg');
+      final storageRef = _storage.ref().child(
+        'user_photos/${userCredential.user!.uid}.jpg',
+      );
       await storageRef.putFile(photo);
       photoUrl = await storageRef.getDownloadURL();
     }

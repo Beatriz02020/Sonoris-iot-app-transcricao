@@ -36,10 +36,10 @@ class CustomTextField extends StatelessWidget {
     this.suffixIcon,
     this.inputFormatters,
   }) : assert(
-  isDropdown == false ||
-      (dropdownOptions != null && dropdownOptions.length > 0),
-  'Para usar como dropdown, forneça ao menos uma opção em dropdownOptions.',
-  );
+         isDropdown == false ||
+             (dropdownOptions != null && dropdownOptions.length > 0),
+         'Para usar como dropdown, forneça ao menos uma opção em dropdownOptions.',
+       );
 
   @override
   Widget build(BuildContext context) {
@@ -54,53 +54,53 @@ class CustomTextField extends StatelessWidget {
     }
 
     Widget field =
-    isDropdown
-        ? DropdownButtonFormField<String>(
-      value: selectedValue ?? dropdownOptions!.first,
-      decoration: InputDecoration(
-        border: customBorder(),
-        enabledBorder: customBorder(),
-        focusedBorder: customBorder(),
-        hintStyle: AppTextStyles.body,
-        hintText: hintText,
-        contentPadding: const EdgeInsets.only(left: 15, top: 0),
-      ),
-      items:
-      dropdownOptions!
-          .map(
-            (option) => DropdownMenuItem(
-          value: option,
-          child: Text(option),
-        ),
-      )
-          .toList(),
-      onChanged: onChanged,
-    )
-        : TextFormField(
-      keyboardType: keyboardType,
-      validator: validator,
-      controller: controller,
-      style: AppTextStyles.body.copyWith(color: AppColors.gray900),
-      obscureText: obscureText,
-      inputFormatters: inputFormatters,
-      decoration: InputDecoration(
-        border: customBorder(),
-        enabledBorder: customBorder(),
-        focusedBorder: customBorder(),
-        hintStyle: AppTextStyles.body,
-        hintText: hintText,
-        hintMaxLines: 10,
-        prefixIcon:
-        isSearch // icone do input de pesquisa
-            ? Icon(Icons.search, color: AppColors.gray500, size: 20)
-            : null,
-        suffixIcon: suffixIcon,
-        contentPadding: EdgeInsets.symmetric(
-          vertical: verticalPadding,
-          horizontal: 15,
-        ),
-      ),
-    );
+        isDropdown
+            ? DropdownButtonFormField<String>(
+              value: selectedValue ?? dropdownOptions!.first,
+              decoration: InputDecoration(
+                border: customBorder(),
+                enabledBorder: customBorder(),
+                focusedBorder: customBorder(),
+                hintStyle: AppTextStyles.body,
+                hintText: hintText,
+                contentPadding: const EdgeInsets.only(left: 15, top: 0),
+              ),
+              items:
+                  dropdownOptions!
+                      .map(
+                        (option) => DropdownMenuItem(
+                          value: option,
+                          child: Text(option),
+                        ),
+                      )
+                      .toList(),
+              onChanged: onChanged,
+            )
+            : TextFormField(
+              keyboardType: keyboardType,
+              validator: validator,
+              controller: controller,
+              style: AppTextStyles.body.copyWith(color: AppColors.gray900),
+              obscureText: obscureText,
+              inputFormatters: inputFormatters,
+              decoration: InputDecoration(
+                border: customBorder(),
+                enabledBorder: customBorder(),
+                focusedBorder: customBorder(),
+                hintStyle: AppTextStyles.body,
+                hintText: hintText,
+                hintMaxLines: 10,
+                prefixIcon:
+                    isSearch // icone do input de pesquisa
+                        ? Icon(Icons.search, color: AppColors.gray500, size: 20)
+                        : null,
+                suffixIcon: suffixIcon,
+                contentPadding: EdgeInsets.symmetric(
+                  vertical: verticalPadding,
+                  horizontal: 15,
+                ),
+              ),
+            );
 
     return fullWidth ? SizedBox(width: double.infinity, child: field) : field;
   }
