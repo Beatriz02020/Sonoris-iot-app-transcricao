@@ -47,17 +47,18 @@ class _UserScreenState extends State<UserScreen> {
 
       if (snapshot.exists) {
         final data = snapshot.data()!;
-        print("Dados recebidos: $data");
+        // print("Dados recebidos: $data");
 
-        final nome = (data['Nome'] ?? '').toString();
+        final nomeCompleto = (data['Nome'] ?? '').toString();
+        final primeiroNome = nomeCompleto.split(' ').first;
         final dataNasc = (data['DataNasc'] ?? '').toString();
         final email = (data['Email'] ?? '').toString();
         // final foto = (data['Foto_url'] ?? '').toString();
 
         setState(() {
-          _userName = nome;
+          _userName = primeiroNome;
 
-          _nameController.text = _userName;
+          _nameController.text = nomeCompleto;
           _birthDateController.text = dataNasc ?? "";
           _emailController.text = email ?? "";
         });
@@ -120,13 +121,15 @@ class _UserScreenState extends State<UserScreen> {
                       mainAxisAlignment: MainAxisAlignment.start,
                       spacing: 12,
                       children: [
-                        // titulo
+                        // Titulo
                         Text(
                           _userName.isNotEmpty ? _userName : "Carregando...",
                           style: AppTextStyles.h3.copyWith(
                             color: AppColors.blue950,
                           ),
                         ),
+
+                        // Nome
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -150,6 +153,7 @@ class _UserScreenState extends State<UserScreen> {
                           ],
                         ),
 
+                        // Data de Nascimento
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -181,6 +185,7 @@ class _UserScreenState extends State<UserScreen> {
                           ],
                         ),
 
+                        // Email
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [

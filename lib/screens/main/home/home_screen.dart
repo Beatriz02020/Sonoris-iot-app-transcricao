@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sonoris/components/bottomNavigationBar.dart';
@@ -16,6 +18,39 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  String _userName = ""; // nome do usuário
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserData();
+  }
+
+  void _loadUserData() async {
+    final user = FirebaseAuth.instance.currentUser;
+
+    if (user != null) {
+      // print("Usuário logado: ${user.uid}"); // depuração
+
+      final snapshot =
+      await FirebaseFirestore.instance
+          .collection("Usuario")
+          .doc(user.uid)
+          .get();
+
+      if (snapshot.exists) {
+        final data = snapshot.data()!;
+        // print("Dados recebidos: $data");
+
+        final nome = (data['Nome'] ?? '').toString();
+
+        setState(() {
+          _userName = nome;
+        });
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(
@@ -58,7 +93,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     radius: 24,
                     backgroundImage: AssetImage('assets/images/Avatar.jpg'),
                   ),
-                  Text('Olá, Nicole', style: AppTextStyles.h4),
+                  Text(_userName.isNotEmpty ? _userName : "Carregando...", style: AppTextStyles.h4),
                 ],
               ),
 
