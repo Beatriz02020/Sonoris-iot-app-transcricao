@@ -49,16 +49,29 @@ class _UserScreenState extends State<UserScreen> {
         final data = snapshot.data()!;
         print("Dados recebidos: $data");
 
-        final nome = (data['Nome'] ?? '').toString();
-        // final email = (data['Email'] ?? '').toString();
+        final nomeCompleto = (data['Nome'] ?? '').toString();
+        final primeiroNome = nomeCompleto.split(' ').first;
+        final email = (data['Email'] ?? '').toString();
         // final foto = (data['Foto_url'] ?? '').toString();
 
-        setState(() {
-          _userName = nome;
+        // Caso a data de nascimento seja String ou Timestamp
+        String dataNascStr = "";
+        final rawDataNasc = data['DataNasc'];
+        if (rawDataNasc != null) {
+          if (rawDataNasc is Timestamp) { // caso seja timestamp
+            final dt = rawDataNasc.toDate();
+            dataNascStr = "${dt.day.toString().padLeft(2,'0')}/${dt.month.toString().padLeft(2,'0')}/${dt.year}";
+          } else { // caso seja string
+            dataNascStr = rawDataNasc.toString();
+          }
+        }
 
-          //_nameController.text = _userName;
-          //_birthDateController.text = data["birthDate"] ?? "";
-          //_emailController.text = usuario.email ?? "";
+        setState(() {
+          _userName = primeiroNome;
+
+          _nameController.text = nomeCompleto;
+          _birthDateController.text = dataNascStr;
+          _emailController.text = email;
         });
       }
     }
@@ -120,17 +133,19 @@ class _UserScreenState extends State<UserScreen> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     spacing: 12,
                     children: [
-                      // titulo
+                      // Titulo
                       Text(
                         _userName.isNotEmpty ? _userName : "Carregando...",
                         style: AppTextStyles.h3.copyWith(
                           color: AppColors.blue950,
                         ),
                       ),
+
+                      // Nome
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          // nome
+
                           Text(
                             'Nome',
                             style: AppTextStyles.bold.copyWith(
@@ -138,12 +153,14 @@ class _UserScreenState extends State<UserScreen> {
                             ),
                           ),
                           CustomTextField(
+                            controller: _nameController,
                             hintText: 'Nicole Rodrigues',
                             fullWidth: true,
                           ),
                         ],
                       ),
 
+                      // DataNasc
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -154,12 +171,14 @@ class _UserScreenState extends State<UserScreen> {
                             ),
                           ),
                           CustomTextField(
+                            controller: _birthDateController,
                             hintText: '09/11/2006',
                             fullWidth: true,
                           ),
                         ],
                       ),
 
+                      // Email
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -170,6 +189,7 @@ class _UserScreenState extends State<UserScreen> {
                             ),
                           ),
                           CustomTextField(
+                            controller: _emailController,
                             hintText: 'Nicole@Rodrigues.com',
                             fullWidth: true,
                           ),
