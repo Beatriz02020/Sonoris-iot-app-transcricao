@@ -124,9 +124,13 @@ class _LoginScreenState extends State<LoginScreen> {
                           keyboardType: TextInputType.emailAddress,
                           controller: _emailController,
                           validator: (value) {
+
+                            // verifica se o usuário digitou e-mail
                             if (value == null || value.isEmpty) {
                               return 'Por favor, insira um e-mail.';
                             }
+
+                            // verifica se o usuário digitou e-mail válido
                             if (!RegExp(
                               r'^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$',
                             ).hasMatch(value)) {

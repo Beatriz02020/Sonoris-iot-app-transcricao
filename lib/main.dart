@@ -15,8 +15,8 @@ import 'firebase_options.dart';
 // TODO Pareamento de dispositivo                             | Beatriz
 // TODO Modo de funcionamento                                 | (DISPOSITIVO)
 // TODO Lingua desejada                                       | (DISPOSITIVO)
-// TODO Cadastro                                              | Beatriz
-// TODO Login                                                 | Beatriz
+// TODO Cadastro                                              | Beatriz - FEITO
+// TODO Login                                                 | Beatriz - FEITO
 // TODO Editar dispositivo                                    | (DISPOSITIVO)
 // TODO Editar perfil                                         | Amanda
 // TODO Adicionar categoria de respostas rápidas              | Amanda
