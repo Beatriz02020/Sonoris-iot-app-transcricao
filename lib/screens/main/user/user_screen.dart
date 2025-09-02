@@ -7,16 +7,18 @@ import 'package:sonoris/components/customTextField.dart';
 import 'package:sonoris/theme/colors.dart';
 import 'package:sonoris/theme/text_styles.dart';
 
+
 import '../../../models/usuario.dart';
 
 class UserScreen extends StatefulWidget {
-  const UserScreen({super.key});
+  const UserScreen({Key? key}) : super(key: key);
 
   @override
   State<UserScreen> createState() => _UserScreenState();
 }
 
 class _UserScreenState extends State<UserScreen> {
+
   final _formKey = GlobalKey<FormState>();
 
   final _nameController = TextEditingController();
@@ -26,11 +28,13 @@ class _UserScreenState extends State<UserScreen> {
   String _userName = ""; // nome do usuário
   final _birthDateFormatter = _BirthDateInputFormatter();
 
+
   @override
   void initState() {
     super.initState();
     _loadUserData();
   }
+
 
   // Busca dados de usuários logados
   void _loadUserData() async {
@@ -57,14 +61,14 @@ class _UserScreenState extends State<UserScreen> {
 
         setState(() {
           _userName = primeiroNome;
-
           _nameController.text = nomeCompleto;
-          _birthDateController.text = dataNasc ?? "";
-          _emailController.text = email ?? "";
+          _birthDateController.text = dataNasc;
+          _emailController.text = email;
         });
       }
     }
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -133,7 +137,6 @@ class _UserScreenState extends State<UserScreen> {
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            // nome
                             Text(
                               'Nome',
                               style: AppTextStyles.bold.copyWith(
@@ -144,11 +147,10 @@ class _UserScreenState extends State<UserScreen> {
                               hintText: 'Nome',
                               fullWidth: true,
                               controller: _nameController,
-                              validator:
-                                  (value) =>
-                              value == null || value.isEmpty
-                                  ? 'Por favor, insira um nome.'
-                                  : null,
+                              validator: (value) =>
+                                  value == null || value.isEmpty
+                                      ? 'Por favor, insira um nome.'
+                                      : null,
                             ),
                           ],
                         ),
@@ -216,14 +218,41 @@ class _UserScreenState extends State<UserScreen> {
                         ),
                       ],
                     ),
+                    SizedBox(height: 38),
                     Column(
+                      spacing: 10,
                       children: [
                         CustomButton(
                           text: 'Salvar',
                           fullWidth: true,
-                          onPressed: () {},
+                          onPressed: () async {
+                            if (_formKey.currentState!.validate()) {
+                              final user = FirebaseAuth.instance.currentUser;
+                              if (user != null) {
+                                await FirebaseFirestore.instance.collection('Usuario').doc(user.uid).update({
+                                  'Nome': _nameController.text,
+                                  'DataNasc': _birthDateController.text,
+                                  'Email': _emailController.text,
+                                });
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    backgroundColor: AppColors.blue500,
+                                    duration: Duration(seconds: 3),
+                                    behavior: SnackBarBehavior.floating,
+                                    margin: EdgeInsets.all(10),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.all(Radius.circular(10)),
+                                    ),
+                                    content: Text(
+                                        'Informações salvas com sucesso!',
+                                      style: TextStyle(color: AppColors.white100),
+                                    ),
+                                  ),
+                                );
+                              }
+                            }
+                          },
                         ),
-
                         CustomButton(
                           color: AppColors.rose500,
                           text: 'Sair',
@@ -251,9 +280,9 @@ class _UserScreenState extends State<UserScreen> {
 class _BirthDateInputFormatter extends TextInputFormatter {
   @override
   TextEditingValue formatEditUpdate(
-      TextEditingValue oldValue,
-      TextEditingValue newValue,
-      ) {
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
     var text = newValue.text.replaceAll(RegExp(r'[^0-9]'), '');
     final buffer = StringBuffer();
     for (int i = 0; i < text.length && i < 8; i++) {
