@@ -19,6 +19,96 @@ class AnswerCategoryScreen extends StatefulWidget {
 }
 
 class _AnswerCategoryScreenState extends State<AnswerCategoryScreen> {
+  User? get _user => FirebaseAuth.instance.currentUser;
+
+  CollectionReference<Map<String, dynamic>> get _categoriaRef {
+    return FirebaseFirestore.instance
+      .collection('Usuario')
+      .doc(_user!.uid)
+      .collection('Categorias');
+  }
+    
+  void _showAddCategoryDialog(BuildContext context, String categoriaId) {
+    final TextEditingController _categoryController = TextEditingController();
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+        title: Text('Adicionar Resposta', style: AppTextStyles.h3.copyWith(color: AppColors.blue500)),
+        content: CustomTextField(
+          hintText: 'Texto da resposta',
+          controller: _categoryController,
+          fullWidth: true,
+        ),
+        actions: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              CustomButton(
+                text: 'Cancelar',
+                color: AppColors.rose500,
+                onPressed: () => Navigator.of(context).pop(),
+              ),
+              CustomButton(
+                text: 'Salvar',
+                onPressed: () async {
+                  if (_user != null && _categoryController.text.isNotEmpty) {
+                    await _categoriaRef
+                      .doc(categoriaId)
+                      .collection('Respostas')
+                      .add({
+                        'texto': _categoryController.text,
+                        'criado_em': FieldValue.serverTimestamp(),
+                      });
+                  }
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+    
+  void _showRenameCategoryDialog(BuildContext context, String categoriaId) {
+    final TextEditingController _renameController = TextEditingController();
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+        title: Text('Renomear Categoria', style: AppTextStyles.h3.copyWith(color: AppColors.blue500)),
+        content: CustomTextField(
+          hintText: 'Novo nome da categoria',
+          controller: _renameController,
+          fullWidth: true,
+        ),
+        actions: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              CustomButton(
+                text: 'Cancelar',
+                color: AppColors.rose500,
+                onPressed: () => Navigator.of(context).pop(),
+              ),
+              CustomButton(
+                text: 'Salvar',
+                onPressed: () async {
+                  if (_user != null && _renameController.text.isNotEmpty) {
+                    await _categoriaRef
+                      .doc(categoriaId)
+                      .update({'nome': _renameController.text});
+                  }
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
   @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(
@@ -28,21 +118,14 @@ class _AnswerCategoryScreenState extends State<AnswerCategoryScreen> {
       ),
     );
 
-    final user = FirebaseAuth.instance.currentUser;
-
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(kToolbarHeight),
         child: StreamBuilder<DocumentSnapshot>(
-          stream: user == null
+          stream: _user == null
               ? null
-              : FirebaseFirestore.instance
-                  .collection('Usuario')
-                  .doc(user.uid)
-                  .collection('Categorias')
-                  .doc(widget.categoriaId)
-                  .snapshots(),
+              : _categoriaRef.doc(widget.categoriaId).snapshots(),
           builder: (context, snapshot) {
             String nomeCategoria = 'Categoria';
             if (snapshot.hasData && snapshot.data!.exists) {
@@ -87,13 +170,8 @@ class _AnswerCategoryScreenState extends State<AnswerCategoryScreen> {
                   color: AppColors.rose500,
                   text: 'Deletar Categoria',
                   onPressed: () async {
-                    if (user != null) {
-                      await FirebaseFirestore.instance
-                        .collection('Usuario')
-                        .doc(user.uid)
-                        .collection('Categorias')
-                        .doc(widget.categoriaId)
-                        .delete();
+                    if (_user != null) {
+                      await _categoriaRef.doc(widget.categoriaId).delete();
                       Navigator.of(context).pop();
                     }
                   },
@@ -105,13 +183,9 @@ class _AnswerCategoryScreenState extends State<AnswerCategoryScreen> {
               style: AppTextStyles.bold.copyWith(color: AppColors.blue600),
             ),
             StreamBuilder<QuerySnapshot>(
-              stream: user == null
+              stream: _user == null
                   ? null
-                  : FirebaseFirestore.instance
-                      .collection('Usuario')
-                      .doc(user.uid)
-                      .collection('Categorias')
-                      .doc(widget.categoriaId)
+                  : _categoriaRef.doc(widget.categoriaId)
                       .collection('Respostas')
                       .orderBy('criado_em', descending: true)
                       .snapshots(),
@@ -148,93 +222,4 @@ class _AnswerCategoryScreenState extends State<AnswerCategoryScreen> {
   }
 }
 
-void _showAddCategoryDialog(BuildContext context, String categoriaId) {
-  final TextEditingController _categoryController = TextEditingController();
-  showDialog(
-    context: context,
-    builder: (context) => AlertDialog(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-      title: Text('Adicionar Resposta', style: AppTextStyles.h3.copyWith(color: AppColors.blue500)),
-      content: CustomTextField(
-        hintText: 'Texto da resposta',
-        controller: _categoryController,
-        fullWidth: true,
-      ),
-      actions: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            CustomButton(
-              text: 'Cancelar',
-              color: AppColors.rose500,
-              onPressed: () => Navigator.of(context).pop(),
-            ),
-            CustomButton(
-              text: 'Salvar',
-              onPressed: () async {
-                final user = FirebaseAuth.instance.currentUser;
-                if (user != null && _categoryController.text.isNotEmpty) {
-                  await FirebaseFirestore.instance
-                    .collection('Usuario')
-                    .doc(user.uid)
-                    .collection('Categorias')
-                    .doc(categoriaId)
-                    .collection('Respostas')
-                    .add({
-                      'texto': _categoryController.text,
-                      'criado_em': FieldValue.serverTimestamp(),
-                    });
-                }
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        ),
-      ],
-    ),
-  );
-}
-
-void _showRenameCategoryDialog(BuildContext context, String categoriaId) {
-  final TextEditingController _renameController = TextEditingController();
-  showDialog(
-    context: context,
-    builder: (context) => AlertDialog(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-      title: Text('Renomear Categoria', style: AppTextStyles.h3.copyWith(color: AppColors.blue500)),
-      content: CustomTextField(
-        hintText: 'Novo nome da categoria',
-        controller: _renameController,
-        fullWidth: true,
-      ),
-      actions: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            CustomButton(
-              text: 'Cancelar',
-              color: AppColors.rose500,
-              onPressed: () => Navigator.of(context).pop(),
-            ),
-            CustomButton(
-              text: 'Salvar',
-              onPressed: () async {
-                final user = FirebaseAuth.instance.currentUser;
-                if (user != null && _renameController.text.isNotEmpty) {
-                  await FirebaseFirestore.instance
-                    .collection('Usuario')
-                    .doc(user.uid)
-                    .collection('Categorias')
-                    .doc(categoriaId)
-                    .update({'nome': _renameController.text});
-                }
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        ),
-      ],
-    ),
-  );
-}
 
