@@ -9,9 +9,9 @@ class CustomButton extends StatelessWidget {
   final VoidCallback onPressed;
   final bool outlined;
   final Color? color;
-  final double? width; // <- Novo parâmetro
+  final double? width;
   final bool fullWidth;
-  final double? iconSize; // <- Nova variável para controlar o tamanho do ícone
+  final double? iconSize;
 
   const CustomButton({
     super.key,

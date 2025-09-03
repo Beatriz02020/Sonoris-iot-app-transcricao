@@ -5,6 +5,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:sonoris/components/customButton.dart';
 import 'package:sonoris/components/customTextField.dart';
 import 'package:sonoris/screens/initial/bluetooth_screen.dart';
+import 'package:sonoris/screens/initial/select_mode_screen.dart';
 import 'package:sonoris/services/auth_service.dart';
 import 'package:sonoris/theme/colors.dart';
 import 'package:sonoris/theme/text_styles.dart';
@@ -69,7 +70,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => BluetoothScreen()),
+        MaterialPageRoute(builder: (context) => SelectModeScreen()),
       );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -121,13 +122,22 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     children: [
                       GestureDetector(
                         onTap: _pickImage,
-                        child: CircleAvatar(
-                          radius: 60,
-                          backgroundImage:
-                              _selectedImage != null
-                                  ? FileImage(_selectedImage!)
-                                  : const AssetImage('assets/images/User.png')
-                                      as ImageProvider,
+                        child: Container( // borda
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: AppColors.blue500,
+                              width: 2,
+                            ),
+                          ),
+                          child: CircleAvatar(
+                            radius: 60,
+                            backgroundImage:
+                                _selectedImage != null
+                                    ? FileImage(_selectedImage!)
+                                    : const AssetImage('assets/images/User.png')
+                                        as ImageProvider,
+                          ),
                         ),
                       ),
                       const SizedBox(height: 16),

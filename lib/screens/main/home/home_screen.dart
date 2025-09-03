@@ -42,10 +42,10 @@ class _HomeScreenState extends State<HomeScreen> {
         final data = snapshot.data()!;
         // print("Dados recebidos: $data");
 
-        final nome = (data['Nome'] ?? '').toString();
+        final primeiroNome = (data['Nome'] ?? '').toString().split(' ').first;
 
         setState(() {
-          _userName = nome;
+          _userName = primeiroNome;
         });
       }
     }
@@ -91,7 +91,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 children: [
                   CircleAvatar(
                     radius: 24,
-                    backgroundImage: AssetImage('assets/images/Avatar.jpg'),
+                    backgroundImage: AssetImage('assets/images/User.png'),
                   ),
                   Text(_userName.isNotEmpty ? _userName : "Carregando...", style: AppTextStyles.h4),
                 ],

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sonoris/components/customButton.dart';
+import 'package:sonoris/screens/initial/finished_screen.dart';
 import 'package:sonoris/screens/initial/select_mode_screen.dart';
 import 'package:sonoris/theme/colors.dart';
 import 'package:sonoris/theme/text_styles.dart';
@@ -194,7 +195,7 @@ class _ConnectionScreenState extends State<ConnectionScreen> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => SelectModeScreen(),
+                        builder: (context) => FinishedScreen(),
                       ),
                     );
                   },

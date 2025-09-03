@@ -54,7 +54,7 @@ class _AnswerScreenState extends State<AnswerScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Texto explicando como funciona as respostas rápidas', // TODO
+                    'As respostas rápidas são configuradas no aplicativo e exibidas no dispositivo, permitindo que, ao serem selecionadas, emitam um som correspondente à palavra ou frase definida.',
                     style: AppTextStyles.body.copyWith(
                       color: AppColors.gray700,
                     ),
@@ -125,7 +125,6 @@ class _AnswerScreenState extends State<AnswerScreen> {
     );
   }
 }
-
 
   void _showAddCategoryDialog(BuildContext context) {
     final TextEditingController _categoryController = TextEditingController();
