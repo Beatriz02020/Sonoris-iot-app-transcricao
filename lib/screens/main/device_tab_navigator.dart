@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sonoris/screens/tab_navigator_observer.dart';
+
 import 'device/device_screen.dart';
 
 class DeviceTabNavigator extends StatelessWidget {

@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sonoris/components/answerButton.dart';
@@ -6,8 +8,6 @@ import 'package:sonoris/components/customTextField.dart';
 import 'package:sonoris/screens/main/home/answer_category_screen.dart';
 import 'package:sonoris/theme/colors.dart';
 import 'package:sonoris/theme/text_styles.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 class AnswerScreen extends StatefulWidget {
   const AnswerScreen({super.key});
@@ -70,19 +70,21 @@ class _AnswerScreenState extends State<AnswerScreen> {
             ),
 
             StreamBuilder<QuerySnapshot>(
-              stream: FirebaseAuth.instance.currentUser == null
-                  ? null
-                  : FirebaseFirestore.instance
-                      .collection('Usuario')
-                      .doc(FirebaseAuth.instance.currentUser!.uid)
-                      .collection('Categorias')
-                      .orderBy('criado_em', descending: true)
-                      .snapshots(),
+              stream:
+                  FirebaseAuth.instance.currentUser == null
+                      ? null
+                      : FirebaseFirestore.instance
+                          .collection('Usuario')
+                          .doc(FirebaseAuth.instance.currentUser!.uid)
+                          .collection('Categorias')
+                          .orderBy('criado_em', descending: true)
+                          .snapshots(),
               builder: (context, snapshot) {
                 if (!snapshot.hasData) {
                   return Center(child: CircularProgressIndicator());
                 }
                 final categorias = snapshot.data!.docs;
+                //TODO: Fazer a lógica de mudar ordem das categorias
                 return Column(
                   spacing: 10,
                   children: [
@@ -100,7 +102,10 @@ class _AnswerScreenState extends State<AnswerScreen> {
                             onPressed: () {
                               Navigator.of(context).push(
                                 MaterialPageRoute(
-                                  builder: (context) => AnswerCategoryScreen(categoriaId: doc.id),
+                                  builder:
+                                      (context) => AnswerCategoryScreen(
+                                        categoriaId: doc.id,
+                                      ),
                                 ),
                               );
                             },
@@ -126,47 +131,54 @@ class _AnswerScreenState extends State<AnswerScreen> {
   }
 }
 
-  void _showAddCategoryDialog(BuildContext context) {
-    final TextEditingController _categoryController = TextEditingController();
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-        title: Text('Adicionar Categoria', style: AppTextStyles.h3.copyWith(color: AppColors.blue500)),
-        content: CustomTextField(
-          hintText: 'Nome da categoria',
-          controller: _categoryController,
-          fullWidth: true,
-        ),
-        actions: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              CustomButton(
-                text: 'Cancelar',
-                color: AppColors.rose500,
-                onPressed: () => Navigator.of(context).pop(),
-              ),
-              CustomButton(
-                text: 'Salvar',
-                onPressed: () async {
-                  final user = FirebaseAuth.instance.currentUser;
-                  if (user != null && _categoryController.text.isNotEmpty) {
-                    await FirebaseFirestore.instance
-                      .collection('Usuario')
-                      .doc(user.uid)
-                      .collection('Categorias')
-                      .add({
-                        'nome': _categoryController.text,
-                        'criado_em': FieldValue.serverTimestamp(),
-                      });
-                  }
-                  Navigator.of(context).pop();
-                },
-              ),
-            ],
+// TODO: Arrumar as cores do dialog
+void _showAddCategoryDialog(BuildContext context) {
+  final TextEditingController _categoryController = TextEditingController();
+  showDialog(
+    context: context,
+    builder:
+        (context) => AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15),
           ),
-        ],
-      ),
-    );
-  }
+          title: Text(
+            'Adicionar Categoria',
+            style: AppTextStyles.h3.copyWith(color: AppColors.blue500),
+          ),
+          content: CustomTextField(
+            hintText: 'Nome da categoria',
+            controller: _categoryController,
+            fullWidth: true,
+          ),
+          actions: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                CustomButton(
+                  text: 'Cancelar',
+                  color: AppColors.rose500,
+                  onPressed: () => Navigator.of(context).pop(),
+                ),
+                CustomButton(
+                  text: 'Salvar',
+                  onPressed: () async {
+                    final user = FirebaseAuth.instance.currentUser;
+                    if (user != null && _categoryController.text.isNotEmpty) {
+                      await FirebaseFirestore.instance
+                          .collection('Usuario')
+                          .doc(user.uid)
+                          .collection('Categorias')
+                          .add({
+                            'nome': _categoryController.text,
+                            'criado_em': FieldValue.serverTimestamp(),
+                          });
+                    }
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            ),
+          ],
+        ),
+  );
+}

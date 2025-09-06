@@ -50,7 +50,7 @@ class HomeTabNavigator extends StatelessWidget {
             page = const AnswerScreen();
             break;
           case '/answers/category':
-            page = const AnswerCategoryScreen(categoriaId: '',);
+            page = const AnswerCategoryScreen(categoriaId: '');
             break;
           case '/captions':
             page = const CaptionsScreen();

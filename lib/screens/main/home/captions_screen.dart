@@ -54,6 +54,7 @@ class _CaptionsScreenState extends State<CaptionsScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
 
           children: [
+            // TODO: Mudar o texto de exemplo para refletir as mudanças automaticamente
             Container(
               padding: EdgeInsets.symmetric(vertical: 18, horizontal: 16),
               decoration: BoxDecoration(

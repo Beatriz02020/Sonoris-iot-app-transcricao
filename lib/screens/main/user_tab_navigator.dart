@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sonoris/screens/tab_navigator_observer.dart';
+
 import 'user/user_screen.dart';
 
 class UserTabNavigator extends StatelessWidget {

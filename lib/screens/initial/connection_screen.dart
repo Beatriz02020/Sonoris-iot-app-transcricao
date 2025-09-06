@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sonoris/components/customButton.dart';
 import 'package:sonoris/screens/initial/finished_screen.dart';
-import 'package:sonoris/screens/initial/select_mode_screen.dart';
 import 'package:sonoris/theme/colors.dart';
 import 'package:sonoris/theme/text_styles.dart';
+
+// TODO: Implementar a lógica de conexão com o dispositivo Sonoris
 
 class ConnectionScreen extends StatefulWidget {
   const ConnectionScreen({super.key});
@@ -194,9 +195,7 @@ class _ConnectionScreenState extends State<ConnectionScreen> {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(
-                        builder: (context) => FinishedScreen(),
-                      ),
+                      MaterialPageRoute(builder: (context) => FinishedScreen()),
                     );
                   },
                 ),

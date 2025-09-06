@@ -13,8 +13,10 @@ class DeviceScreen extends StatefulWidget {
 }
 
 class _DeviceScreenState extends State<DeviceScreen> {
+  /*
   bool _isCheckedPt = false; // Para Português (Brasileiro)
   bool _isCheckedEn = false; // Para Inglês
+  */
 
   // Adicione estes estados para os sliders:
   double _standbyValue = 5;
@@ -209,6 +211,7 @@ class _DeviceScreenState extends State<DeviceScreen> {
                   ],
                 ),
 
+                /*
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   spacing: 6,
@@ -280,7 +283,7 @@ class _DeviceScreenState extends State<DeviceScreen> {
                     ),
                   ],
                 ),
-
+                */
                 CustomSlider(
                   label: 'Entrar em Standby após',
                   value: _standbyValue,

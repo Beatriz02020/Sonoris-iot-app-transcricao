@@ -7,9 +7,6 @@ import 'package:sonoris/components/customTextField.dart';
 import 'package:sonoris/theme/colors.dart';
 import 'package:sonoris/theme/text_styles.dart';
 
-
-import '../../../models/usuario.dart';
-
 class UserScreen extends StatefulWidget {
   const UserScreen({Key? key}) : super(key: key);
 
@@ -18,7 +15,6 @@ class UserScreen extends StatefulWidget {
 }
 
 class _UserScreenState extends State<UserScreen> {
-
   final _formKey = GlobalKey<FormState>();
 
   final _nameController = TextEditingController();
@@ -28,13 +24,11 @@ class _UserScreenState extends State<UserScreen> {
   String _userName = ""; // nome do usuário
   final _birthDateFormatter = _BirthDateInputFormatter();
 
-
   @override
   void initState() {
     super.initState();
     _loadUserData();
   }
-
 
   // Busca dados de usuários logados
   void _loadUserData() async {
@@ -69,7 +63,6 @@ class _UserScreenState extends State<UserScreen> {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(
@@ -90,6 +83,7 @@ class _UserScreenState extends State<UserScreen> {
                 clipBehavior: Clip.none,
                 children: [
                   // banner e avatar
+                  // TODO: Adicionar banner placeholder
                   Container(
                     color: AppColors.blue200,
                     width: double.infinity,
@@ -147,10 +141,11 @@ class _UserScreenState extends State<UserScreen> {
                               hintText: 'Nome',
                               fullWidth: true,
                               controller: _nameController,
-                              validator: (value) =>
-                                  value == null || value.isEmpty
-                                      ? 'Por favor, insira um nome.'
-                                      : null,
+                              validator:
+                                  (value) =>
+                                      value == null || value.isEmpty
+                                          ? 'Por favor, insira um nome.'
+                                          : null,
                             ),
                           ],
                         ),
@@ -176,7 +171,9 @@ class _UserScreenState extends State<UserScreen> {
                                 if (value == null || value.isEmpty) {
                                   return 'Por favor, insira uma data de nascimento.';
                                 }
-                                if (!RegExp(r'^\d{2}/\d{2}/\d{4}$').hasMatch(value)) {
+                                if (!RegExp(
+                                  r'^\d{2}/\d{2}/\d{4}$',
+                                ).hasMatch(value)) {
                                   return 'Formato inválido. Use dd/mm/aaaa.';
                                 }
                                 return null;
@@ -218,7 +215,6 @@ class _UserScreenState extends State<UserScreen> {
                         ),
                       ],
                     ),
-                    SizedBox(height: 38),
                     Column(
                       spacing: 10,
                       children: [
@@ -229,11 +225,14 @@ class _UserScreenState extends State<UserScreen> {
                             if (_formKey.currentState!.validate()) {
                               final user = FirebaseAuth.instance.currentUser;
                               if (user != null) {
-                                await FirebaseFirestore.instance.collection('Usuario').doc(user.uid).update({
-                                  'Nome': _nameController.text,
-                                  'DataNasc': _birthDateController.text,
-                                  'Email': _emailController.text,
-                                });
+                                await FirebaseFirestore.instance
+                                    .collection('Usuario')
+                                    .doc(user.uid)
+                                    .update({
+                                      'Nome': _nameController.text,
+                                      'DataNasc': _birthDateController.text,
+                                      'Email': _emailController.text,
+                                    });
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
                                     backgroundColor: AppColors.blue500,
@@ -241,11 +240,15 @@ class _UserScreenState extends State<UserScreen> {
                                     behavior: SnackBarBehavior.floating,
                                     margin: EdgeInsets.all(10),
                                     shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.all(Radius.circular(10)),
+                                      borderRadius: BorderRadius.all(
+                                        Radius.circular(10),
+                                      ),
                                     ),
                                     content: Text(
-                                        'Informações salvas com sucesso!',
-                                      style: TextStyle(color: AppColors.white100),
+                                      'Informações salvas com sucesso!',
+                                      style: TextStyle(
+                                        color: AppColors.white100,
+                                      ),
                                     ),
                                   ),
                                 );

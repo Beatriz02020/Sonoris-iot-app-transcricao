@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sonoris/components/customButton.dart';
 import 'package:sonoris/screens/initial/bluetooth_screen.dart';
-import 'package:sonoris/screens/initial/language_screen.dart';
 import 'package:sonoris/theme/colors.dart';
 import 'package:sonoris/theme/text_styles.dart';
+
+// TODO: Salvar a escolha no firebase
 
 class SelectModeScreen extends StatefulWidget {
   const SelectModeScreen({super.key});
@@ -78,7 +79,9 @@ class _SelectModeScreenState extends State<SelectModeScreen> {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => BluetoothScreen()),
+                      MaterialPageRoute(
+                        builder: (context) => BluetoothScreen(),
+                      ),
                     );
                   },
                 ),
@@ -88,7 +91,9 @@ class _SelectModeScreenState extends State<SelectModeScreen> {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => BluetoothScreen()),
+                      MaterialPageRoute(
+                        builder: (context) => BluetoothScreen(),
+                      ),
                     );
                   },
                 ),

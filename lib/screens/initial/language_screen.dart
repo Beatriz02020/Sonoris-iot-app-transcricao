@@ -5,7 +5,7 @@ import 'package:sonoris/screens/initial/finished_screen.dart';
 import 'package:sonoris/theme/colors.dart';
 import 'package:sonoris/theme/text_styles.dart';
 
-// TODO: retirar página não utilizada
+// PÁGINA NÃO UTILIZADA!
 
 class LanguageScreen extends StatefulWidget {
   const LanguageScreen({super.key});

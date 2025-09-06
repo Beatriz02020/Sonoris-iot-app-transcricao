@@ -1,14 +1,16 @@
 import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:sonoris/components/customButton.dart';
 import 'package:sonoris/components/customTextField.dart';
-import 'package:sonoris/screens/initial/bluetooth_screen.dart';
 import 'package:sonoris/screens/initial/select_mode_screen.dart';
 import 'package:sonoris/services/auth_service.dart';
 import 'package:sonoris/theme/colors.dart';
 import 'package:sonoris/theme/text_styles.dart';
+
+//TODO: Fazer o loading ao clicar em cadastrar
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -122,7 +124,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     children: [
                       GestureDetector(
                         onTap: _pickImage,
-                        child: Container( // borda
+                        child: Container(
+                          // borda
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
                             border: Border.all(

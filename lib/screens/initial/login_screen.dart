@@ -7,6 +7,9 @@ import 'package:sonoris/theme/text_styles.dart';
 
 import '../../services/auth_service.dart';
 
+//TODO: Customizar as mensagens de erro do FirebaseAuth
+//TODO: Fazer o loading ao clicar em entrar
+
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
@@ -26,33 +29,27 @@ class _LoginScreenState extends State<LoginScreen> {
   void _login() async {
     if (_formKey.currentState!.validate()) {
       try {
-        final user = await _authService.Login(
-          email: _emailController.text,
-          password: _passwordController.text,
-        );
-        if (user != null) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              backgroundColor: AppColors.blue500,
-              duration: Duration(seconds: 3),
-              behavior: SnackBarBehavior.floating,
-              margin: EdgeInsets.all(10),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(10)),
-              ),
-              content: Text(
-                'Logado com sucesso!',
-                style: TextStyle(color: AppColors.white100),
-              ),
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: AppColors.blue500,
+            duration: Duration(seconds: 3),
+            behavior: SnackBarBehavior.floating,
+            margin: EdgeInsets.all(10),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(10)),
             ),
-          );
-          // ignore: use_build_context_synchronously
-          Navigator.of(
-            context,
-            rootNavigator: true,
-          ).pushReplacementNamed('/main');
-        }
-      } catch (e) {
+            content: Text(
+              'Logado com sucesso!',
+              style: TextStyle(color: AppColors.white100),
+            ),
+          ),
+        );
+        // ignore: use_build_context_synchronously
+        Navigator.of(
+          context,
+          rootNavigator: true,
+        ).pushReplacementNamed('/main');
+            } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text("Erro ao fazer login: $e"),

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sonoris/components/customButton.dart';
-import 'package:sonoris/screens/initial/bluetooth_screen.dart';
 import 'package:sonoris/screens/initial/login_screen.dart';
 import 'package:sonoris/screens/initial/signup_screen.dart';
 import 'package:sonoris/theme/colors.dart';

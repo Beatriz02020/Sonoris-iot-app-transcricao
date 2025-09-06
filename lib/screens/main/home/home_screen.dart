@@ -33,10 +33,10 @@ class _HomeScreenState extends State<HomeScreen> {
       // print("Usuário logado: ${user.uid}"); // depuração
 
       final snapshot =
-      await FirebaseFirestore.instance
-          .collection("Usuario")
-          .doc(user.uid)
-          .get();
+          await FirebaseFirestore.instance
+              .collection("Usuario")
+              .doc(user.uid)
+              .get();
 
       if (snapshot.exists) {
         final data = snapshot.data()!;
@@ -93,7 +93,10 @@ class _HomeScreenState extends State<HomeScreen> {
                     radius: 24,
                     backgroundImage: AssetImage('assets/images/User.png'),
                   ),
-                  Text(_userName.isNotEmpty ? _userName : "Carregando...", style: AppTextStyles.h4),
+                  Text(
+                    _userName.isNotEmpty ? _userName : "Carregando...",
+                    style: AppTextStyles.h4,
+                  ),
                 ],
               ),
 
@@ -157,6 +160,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ],
                     ),
 
+                    // TODO: Pegar dados do dispositivo
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       spacing: 8,
@@ -262,7 +266,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   Text('Conversas não salvas', style: AppTextStyles.body),
 
                   // card com as conversas
-
+                  // TODO: Pegar informações do Firebase
                   // TODO fazer as conversas serem clicaveis
                   Container(
                     padding: const EdgeInsets.all(8),
