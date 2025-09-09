@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:sonoris/components/bottomNavigationBar.dart';
+import 'package:sonoris/screens/initial/connection_screen.dart';
 import 'package:sonoris/screens/initial/initial_screen.dart';
 
 import 'firebase_options.dart';
@@ -40,10 +41,11 @@ class SonorisApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Sonoris App',
-      initialRoute: '/initial',
+      initialRoute: '/test',
       routes: {
         '/initial': (context) => const InitialScreen(),
         '/main': (context) => const BottomNav(),
+        '/test': (context) => const ConnectionScreen(),
       },
     );
   }
