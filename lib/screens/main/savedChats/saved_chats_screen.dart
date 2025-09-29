@@ -15,6 +15,61 @@ class SavedChatsScreen extends StatefulWidget {
 }
 
 class _SavedChatsScreenState extends State<SavedChatsScreen> {
+  // Controlador e estado da pesquisa
+  final TextEditingController _searchController = TextEditingController();
+  String _query = '';
+
+  // Lista estática temporária de conversas salvas (mock). Em futura integração,
+  // isto pode vir do Firestore ou outra fonte dinâmica.
+  // Futuras melhorias:
+  // 1. Buscar dados do Firestore ordenando por data/hora.
+  // 2. Adicionar debounce (ex: Timer 300ms) se a coleção ficar grande.
+  // 3. Implementar filtros de categorias (Favoritos, Estudos, etc.) combinando com busca.
+  // 4. Paginação/infinite scroll caso volume cresça.
+  final List<_SavedChat> _allChats = [
+    _SavedChat(
+      nome: 'Reuniao SoftSkills',
+      data: '02/07/2025',
+      horarioInicial: '09:00',
+      horarioFinal: '12:00',
+      image: 'Teams',
+      favorito: true,
+      descricao: 'DescriçãoDescriçãoDescriçasdsada',
+    ),
+    _SavedChat(
+      nome: 'Workshop de Criatividade',
+      data: '02/07/2025',
+      horarioInicial: '09:00',
+      horarioFinal: '12:00',
+      image: 'Reuniao',
+      favorito: true,
+      descricao: 'DescriçãoDescriçãoDescriçasdsada',
+    ),
+    _SavedChat(
+      nome: 'Treinamento de Liderança',
+      data: '02/07/2025',
+      horarioInicial: '09:00',
+      horarioFinal: '12:00',
+      image: 'Trabalho',
+      descricao: 'DescriçãoDescriçãoDescriçasdsada',
+    ),
+    _SavedChat(
+      nome: 'Conversa_01_07_25_13h',
+      data: '02/07/2025',
+      horarioInicial: '09:00',
+      horarioFinal: '12:00',
+      image: 'Outros',
+    ),
+  ];
+
+  List<_SavedChat> get _filteredChats {
+    if (_query.isEmpty) return _allChats;
+    final q = _query.toLowerCase();
+    return _allChats
+        .where((c) => c.nome.toLowerCase().contains(q))
+        .toList();
+  }
+
   @override
   void initState() {
     super.initState();
@@ -27,6 +82,12 @@ class _SavedChatsScreenState extends State<SavedChatsScreen> {
         ),
       );
     });
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
   }
 
   @override
@@ -60,6 +121,23 @@ class _SavedChatsScreenState extends State<SavedChatsScreen> {
                   hintText: 'Pesquisar',
                   isSearch: true,
                   fullWidth: true,
+                  controller: _searchController,
+                  onChanged: (value) {
+                    setState(() {
+                      _query = value?.trim() ?? '';
+                    });
+                  },
+                  suffixIcon: _query.isNotEmpty
+                      ? IconButton(
+                          icon: Icon(Icons.close, color: AppColors.gray500),
+                          onPressed: () {
+                            _searchController.clear();
+                            setState(() {
+                              _query = '';
+                            });
+                          },
+                        )
+                      : null,
                 ),
 
                 // filtros
@@ -258,43 +336,30 @@ class _SavedChatsScreenState extends State<SavedChatsScreen> {
                 // conversas
                 Text('Conversas', style: AppTextStyles.body),
 
-                ChatSelect(
-                  nome: 'Reuniao SoftSkills',
-                  data: '02/07/2025',
-                  horarioInicial: '09:00',
-                  horarioFinal: '12:00',
-                  image: 'Teams',
-                  salvas: true,
-                  favorito: true,
-                  descricao: 'DescriçãoDescriçãoDescriçasdsada',
-                ),
-                ChatSelect(
-                  nome: 'Workshop de Criatividade',
-                  data: '02/07/2025',
-                  horarioInicial: '09:00',
-                  horarioFinal: '12:00',
-                  image: 'Reuniao',
-                  salvas: true,
-                  favorito: true,
-                  descricao: 'DescriçãoDescriçãoDescriçasdsada',
-                ),
-                ChatSelect(
-                  nome: 'Treinamento de Liderança',
-                  data: '02/07/2025',
-                  horarioInicial: '09:00',
-                  horarioFinal: '12:00',
-                  image: 'Trabalho',
-                  salvas: true,
-                  descricao: 'DescriçãoDescriçãoDescriçasdsada',
-                ),
-                ChatSelect(
-                  nome: 'Conversa_01_07_25_13h',
-                  data: '02/07/2025',
-                  horarioInicial: '09:00',
-                  horarioFinal: '12:00',
-                  salvas: true,
-                  image: 'Outros',
-                ),
+                // Lista filtrada de conversas ou estado vazio
+                if (_filteredChats.isEmpty)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 10),
+                    child: Text(
+                      'Nenhuma conversa encontrada',
+                      style: AppTextStyles.body.copyWith(
+                        color: AppColors.gray500,
+                      ),
+                    ),
+                  )
+                else
+                  ..._filteredChats.map(
+                    (c) => ChatSelect(
+                      nome: c.nome,
+                      data: c.data,
+                      horarioInicial: c.horarioInicial,
+                      horarioFinal: c.horarioFinal,
+                      image: c.image,
+                      salvas: true,
+                      favorito: c.favorito,
+                      descricao: c.descricao,
+                    ),
+                  ),
               ],
             ),
           ),
@@ -302,4 +367,24 @@ class _SavedChatsScreenState extends State<SavedChatsScreen> {
       ),
     );
   }
+}
+
+// Modelo simples local para mock de conversas salvas
+class _SavedChat {
+  final String nome;
+  final String data;
+  final String horarioInicial;
+  final String horarioFinal;
+  final String? descricao;
+  final String? image;
+  final bool favorito;
+  _SavedChat({
+    required this.nome,
+    required this.data,
+    required this.horarioInicial,
+    required this.horarioFinal,
+    this.descricao,
+    this.image,
+    this.favorito = false,
+  });
 }

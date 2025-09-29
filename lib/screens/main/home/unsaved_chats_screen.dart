@@ -14,6 +14,47 @@ class UnsavedChatsScreen extends StatefulWidget {
 }
 
 class _UnsavedChatsScreenState extends State<UnsavedChatsScreen> {
+  final TextEditingController _searchController = TextEditingController();
+  String _query = '';
+
+  // Lista estática temporária de conversas não salvas
+  // Futuras melhorias:
+  // 1. Integrar com backend/Firestore filtrando por usuário e flag de salvo.
+  // 2. Aplicar lógica de expiração automática (cron job / cloud function) para remoção após 7 dias.
+  // 3. Adicionar debounce ao campo de busca se volume crescer.
+  // 4. Paginação (lazy load) se coleção ficar grande.
+  final List<_UnsavedChat> _allUnsaved = [
+    _UnsavedChat(
+      nome: 'Conversa_04_07_25_8h',
+      data: '04/07/2025',
+      horarioInicial: '08:30',
+      horarioFinal: '11:30',
+    ),
+    _UnsavedChat(
+      nome: 'Conversa_03_07_25_10h',
+      data: '03/07/2025',
+      horarioInicial: '10:00',
+      horarioFinal: '13:00',
+    ),
+    _UnsavedChat(
+      nome: 'Conversa_02_07_25_9h',
+      data: '02/07/2025',
+      horarioInicial: '09:00',
+      horarioFinal: '12:00',
+    ),
+  ];
+
+  List<_UnsavedChat> get _filteredUnsaved {
+    if (_query.isEmpty) return _allUnsaved;
+    final q = _query.toLowerCase();
+    return _allUnsaved.where((c) => c.nome.toLowerCase().contains(q)).toList();
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
   @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(
@@ -57,66 +98,45 @@ class _UnsavedChatsScreenState extends State<UnsavedChatsScreen> {
                   hintText: 'Pesquisar',
                   isSearch: true,
                   fullWidth: true,
+                  controller: _searchController,
+                  onChanged: (value) {
+                    setState(() {
+                      _query = value?.trim() ?? '';
+                    });
+                  },
+                  suffixIcon: _query.isNotEmpty
+                      ? IconButton(
+                          icon: Icon(Icons.close, color: AppColors.gray500),
+                          onPressed: () {
+                            _searchController.clear();
+                            setState(() {
+                              _query = '';
+                            });
+                          },
+                        )
+                      : null,
                 ),
 
                 // conversas
                 Column(
                   spacing: 12,
                   children: [
-                    ChatSelect(
-                      nome: 'Conversa_04_07_25_8h',
-                      data: '04/07/2025',
-                      horarioInicial: '08:30',
-                      horarioFinal: '11:30',
-                    ),
-                    ChatSelect(
-                      nome: 'Conversa_03_07_25_10h',
-                      data: '03/07/2025',
-                      horarioInicial: '10:00',
-                      horarioFinal: '13:00',
-                    ),
-                    ChatSelect(
-                      nome: 'Conversa_02_07_25_9h',
-                      data: '02/07/2025',
-                      horarioInicial: '09:00',
-                      horarioFinal: '12:00',
-                    ),
-                    ChatSelect(
-                      nome: 'Conversa_04_07_25_8h',
-                      data: '04/07/2025',
-                      horarioInicial: '08:30',
-                      horarioFinal: '11:30',
-                    ),
-                    ChatSelect(
-                      nome: 'Conversa_03_07_25_10h',
-                      data: '03/07/2025',
-                      horarioInicial: '10:00',
-                      horarioFinal: '13:00',
-                    ),
-                    ChatSelect(
-                      nome: 'Conversa_02_07_25_9h',
-                      data: '02/07/2025',
-                      horarioInicial: '09:00',
-                      horarioFinal: '12:00',
-                    ),
-                    ChatSelect(
-                      nome: 'Conversa_04_07_25_8h',
-                      data: '04/07/2025',
-                      horarioInicial: '08:30',
-                      horarioFinal: '11:30',
-                    ),
-                    ChatSelect(
-                      nome: 'Conversa_03_07_25_10h',
-                      data: '03/07/2025',
-                      horarioInicial: '10:00',
-                      horarioFinal: '13:00',
-                    ),
-                    ChatSelect(
-                      nome: 'Conversa_02_07_25_9h',
-                      data: '02/07/2025',
-                      horarioInicial: '09:00',
-                      horarioFinal: '12:00',
-                    ),
+                    if (_filteredUnsaved.isEmpty)
+                      Text(
+                        'Nenhuma conversa encontrada',
+                        style: AppTextStyles.body.copyWith(
+                          color: AppColors.gray500,
+                        ),
+                      )
+                    else
+                      ..._filteredUnsaved.map(
+                        (c) => ChatSelect(
+                          nome: c.nome,
+                          data: c.data,
+                          horarioInicial: c.horarioInicial,
+                          horarioFinal: c.horarioFinal,
+                        ),
+                      ),
                   ],
                 ),
               ],
@@ -126,4 +146,17 @@ class _UnsavedChatsScreenState extends State<UnsavedChatsScreen> {
       ),
     );
   }
+}
+
+class _UnsavedChat {
+  final String nome;
+  final String data;
+  final String horarioInicial;
+  final String horarioFinal;
+  _UnsavedChat({
+    required this.nome,
+    required this.data,
+    required this.horarioInicial,
+    required this.horarioFinal,
+  });
 }

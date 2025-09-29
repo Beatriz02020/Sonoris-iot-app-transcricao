@@ -83,6 +83,7 @@ class CustomTextField extends StatelessWidget {
               style: AppTextStyles.body.copyWith(color: AppColors.gray900),
               obscureText: obscureText,
               inputFormatters: inputFormatters,
+              onChanged: onChanged,
               decoration: InputDecoration(
                 border: customBorder(),
                 enabledBorder: customBorder(),
