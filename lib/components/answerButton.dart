@@ -6,6 +6,8 @@ class AnswerCategoryButton extends StatelessWidget {
   final String title;
   final String? answerAmount;
   final VoidCallback onPressed;
+  final VoidCallback? onIconPressed; // ação no ícone principal (ex: deletar)
+  final VoidCallback? onDragIconPressed; // ação no ícone de arrastar (ex: editar)
   final IconData? icon;
   final bool outlined;
   final double? width;
@@ -15,6 +17,8 @@ class AnswerCategoryButton extends StatelessWidget {
     required this.title,
     this.answerAmount,
     required this.onPressed,
+    this.onIconPressed,
+    this.onDragIconPressed,
     this.icon,
     this.outlined = false,
     this.width,
@@ -27,7 +31,9 @@ class AnswerCategoryButton extends StatelessWidget {
       style: ElevatedButton.styleFrom(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
         backgroundColor: AppColors.white100,
-        padding: const EdgeInsets.symmetric(horizontal: 12),
+        padding: EdgeInsets.symmetric(
+          horizontal: MediaQuery.of(context).size.width * 0.031, // ~12px
+        ),
         elevation: 0,
       ),
 
@@ -38,13 +44,21 @@ class AnswerCategoryButton extends StatelessWidget {
           Row(
             children: <Widget>[
               if (icon != null)
-                Padding(
-                  padding: const EdgeInsets.only(right: 12.0),
-                  child: Icon(icon, color: AppColors.gray900, size: 20),
+                GestureDetector(
+                  onTap: onIconPressed,
+                  child: Padding(
+                    padding: const EdgeInsets.only(right: 12.0),
+                    child: Icon(icon, color: AppColors.gray900, size: 20),
+                  ),
                 ),
-              Text(
-                title,
-                style: AppTextStyles.bold.copyWith(color: AppColors.gray900),
+              ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 180),
+                child: Text(
+                  title,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: AppTextStyles.bold.copyWith(color: AppColors.gray900),
+                ),
               ),
             ],
           ),
@@ -58,10 +72,13 @@ class AnswerCategoryButton extends StatelessWidget {
                     color: AppColors.gray500,
                   ),
                 ),
-              const Icon(
-                Icons.drag_indicator_rounded,
-                color: AppColors.gray500,
-                size: 25,
+               GestureDetector(
+                onTap: onDragIconPressed,
+                child: const Icon(
+                  Icons.drag_indicator_rounded,
+                  color: AppColors.gray500,
+                  size: 25,
+                ),
               ),
             ],
           ),
