@@ -21,7 +21,7 @@ import 'firebase_options.dart';
 // TODO Editar dispositivo                                    | (DISPOSITIVO)
 // TODO Editar perfil                                         | Amanda - FEITO
 // TODO Adicionar categoria de respostas rápidas              | Amanda - FEITO
-// TODO Botao de pesquisar e filtrar conversas                | Beatriz
+// TODO Botao de pesquisar e filtrar conversas                | Beatriz - FEITO
 // TODO Apresentar lista de conversas salvas e não salvas     |
 // TODO Customizar legenda                                    |
 // TODO Adicionar respostas a categoria de respostas rápidas  | Amanda - FEITO
@@ -41,7 +41,7 @@ class SonorisApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Sonoris App',
-      initialRoute: '/test',
+      initialRoute: '/initial',
       routes: {
         '/initial': (context) => const InitialScreen(),
         '/main': (context) => const BottomNav(),

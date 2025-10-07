@@ -4,6 +4,8 @@ import 'package:sonoris/components/customButton.dart';
 import 'package:sonoris/components/customTextField.dart';
 import 'package:sonoris/theme/colors.dart';
 import 'package:sonoris/theme/text_styles.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../../services/auth_service.dart';
 
@@ -20,44 +22,98 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
   bool _obscurePassword = true;
+  bool _isLoading = false;
 
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
 
   final AuthService _authService = AuthService();
 
-  void _login() async {
-    if (_formKey.currentState!.validate()) {
-      try {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            backgroundColor: AppColors.blue500,
-            duration: Duration(seconds: 3),
-            behavior: SnackBarBehavior.floating,
-            margin: EdgeInsets.all(10),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(10)),
-            ),
-            content: Text(
-              'Logado com sucesso!',
-              style: TextStyle(color: AppColors.white100),
-            ),
+  Future<void> _login() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    setState(() => _isLoading = true);
+    try {
+      final email = _emailController.text.trim();
+      final password = _passwordController.text.trim();
+
+      final credential = await _authService.signIn(email: email, password: password);
+
+      // Busca documento do usuário para confirmar existência de perfil
+      // FUTURO: mover este fetch para um provider/global store e carregar
+      // demais recursos (ex: preferências, categorias) em paralelo.
+      final userDoc = await FirebaseFirestore.instance
+          .collection('Usuario')
+          .doc(credential.user!.uid)
+          .get();
+
+      if (!userDoc.exists) {
+        throw Exception('Perfil de usuário não encontrado.');
+      }
+
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          backgroundColor: AppColors.blue500,
+          duration: Duration(seconds: 2),
+          behavior: SnackBarBehavior.floating,
+          margin: EdgeInsets.all(10),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(10)),
           ),
-        );
-        // ignore: use_build_context_synchronously
-        Navigator.of(
-          context,
-          rootNavigator: true,
-        ).pushReplacementNamed('/main');
-            } catch (e) {
+          content: Text(
+            'Logado com sucesso!',
+            style: TextStyle(color: AppColors.white100),
+          ),
+        ),
+      );
+
+      Navigator.of(context, rootNavigator: true).pushReplacementNamed('/main');
+    } on FirebaseAuthException catch (e) {
+      String message;
+      switch (e.code) {
+        case 'user-not-found':
+          message = 'Usuário não encontrado.';
+          break;
+        case 'wrong-password':
+          message = 'Senha incorreta.';
+          break;
+        case 'invalid-credential':
+          message = 'Credenciais inválidas.';
+          break;
+        case 'too-many-requests':
+          message = 'Muitas tentativas. Tente mais tarde.';
+          break;
+        default:
+          message = 'Erro de autenticação: ${e.code}';
+      }
+      if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text("Erro ao fazer login: $e"),
             backgroundColor: AppColors.rose600,
+            content: Text(message),
           ),
         );
       }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: AppColors.rose600,
+            content: Text(e.toString()),
+          ),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
     }
+  }
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
   }
 
   @override
@@ -92,11 +148,11 @@ class _LoginScreenState extends State<LoginScreen> {
                   MediaQuery.of(context).padding.top,
             ),
             child: Padding(
-              padding: const EdgeInsets.only(
-                left: 38,
-                right: 38,
+              padding: EdgeInsets.only(
+                left: MediaQuery.of(context).size.width * 0.095, // ~38px
+                right: MediaQuery.of(context).size.width * 0.095, // ~38px
                 top: 0,
-                bottom: 55,
+                bottom: MediaQuery.of(context).size.height * 0.065, // ~55px
               ),
               child: IntrinsicHeight(
                 child: Column(
@@ -108,7 +164,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         SizedBox(
-                          width: 175,
+                          width: MediaQuery.of(context).size.width * 0.45, // ~175px em tela de 390px
                           child: Image.asset(
                             'assets/images/Logo.png',
                             fit: BoxFit.contain,
@@ -162,9 +218,9 @@ class _LoginScreenState extends State<LoginScreen> {
                       ],
                     ),
                     CustomButton(
-                      text: 'Entrar',
+                      text: _isLoading ? 'Entrando...' : 'Entrar',
                       fullWidth: true,
-                      onPressed: _login,
+                      onPressed: _isLoading ? null : _login,
                     ),
                   ],
                 ),

@@ -23,8 +23,10 @@ class Usuario {
       'Nome': nome,
       'DataNasc': Timestamp.fromDate(dataNasc),
       'Email': email,
-      'foto_url': fotoUrl,
-      'criado_em': criadoEm != null ? Timestamp.fromDate(criadoEm!) : null,
+      // Inconsistência atual: no signUp é salvo 'Foto_url' e 'Criado_em' (CamelCase inicial),
+      // aqui está sendo usado 'foto_url' e 'criado_em'. Ideal alinhar tudo (ex: padronizar TitleCase ou snake_case).
+      'Foto_url': fotoUrl,
+      'Criado_em': criadoEm != null ? Timestamp.fromDate(criadoEm!) : null,
     };
   }
 
@@ -34,10 +36,11 @@ class Usuario {
       nome: map['Nome'] ?? '',
       dataNasc: (map['DataNasc'] as Timestamp).toDate(),
       email: map['Email'] ?? '',
-      fotoUrl: map['Foto_url'],
-      criadoEm:
-          map['Criado_em'] != null
-              ? (map['Criado_em'] as Timestamp).toDate()
+      fotoUrl: map['Foto_url'] ?? map['foto_url'],
+      criadoEm: map['Criado_em'] != null
+          ? (map['Criado_em'] as Timestamp).toDate()
+          : map['criado_em'] != null
+              ? (map['criado_em'] as Timestamp).toDate()
               : null,
     );
   }

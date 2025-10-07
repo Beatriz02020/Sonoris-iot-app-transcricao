@@ -9,15 +9,19 @@ class AuthService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseStorage _storage = FirebaseStorage.instance;
 
-  Future<UserCredential> Login({
+  // Método padrão (camelCase) para autenticação
+  Future<UserCredential> signIn({
     required String email,
     required String password,
   }) async {
-    return await _auth.signInWithEmailAndPassword(
-      email: email,
-      password: password,
-    );
+    return _auth.signInWithEmailAndPassword(email: email, password: password);
   }
+
+  // Alias legado para evitar quebra caso em algum ponto do código tenha sido usado Login
+  Future<UserCredential> Login({
+    required String email,
+    required String password,
+  }) => signIn(email: email, password: password);
 
   Future<UserCredential> signUp({
     required String name,
