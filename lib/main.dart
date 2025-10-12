@@ -41,7 +41,7 @@ class SonorisApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Sonoris App',
-      initialRoute: '/initial',
+      initialRoute: '/test',
       routes: {
         '/initial': (context) => const InitialScreen(),
         '/main': (context) => const BottomNav(),

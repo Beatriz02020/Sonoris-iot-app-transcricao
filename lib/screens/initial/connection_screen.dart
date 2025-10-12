@@ -7,6 +7,7 @@ import 'package:sonoris/theme/text_styles.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io' show Platform;
+import 'package:sonoris/services/bluetooth_manager.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 
@@ -20,6 +21,15 @@ class ConnectionScreen extends StatefulWidget {
 }
 
 class _ConnectionScreenState extends State<ConnectionScreen> {
+  final _manager = BluetoothManager();
+
+  StreamSubscription<BluetoothDevice?>? _deviceSub;
+  StreamSubscription<BluetoothConnectionState>? _connStateSub;
+  StreamSubscription<String>? _valueSub;
+
+  String _lastValue = '';
+  BluetoothConnectionState _connState = BluetoothConnectionState.disconnected;
+
   Future<bool> getPermissions() async {
     if (Platform.isAndroid) {
       final androidInfo = await Permission.bluetoothScan.status;
@@ -49,6 +59,25 @@ class _ConnectionScreenState extends State<ConnectionScreen> {
   void initState() {
     super.initState();
     getPermissions();
+
+    // assinaturas para atualizar UI (não desconectam o manager)
+    _deviceSub = _manager.deviceStream.listen((d) {
+      setState(() {});
+    });
+    _connStateSub = _manager.connectionStateStream.listen((s) {
+      setState(() => _connState = s);
+    });
+    _valueSub = _manager.valueStream.listen((v) {
+      setState(() => _lastValue = v);
+    });
+  }
+
+  @override
+  void dispose() {
+    _deviceSub?.cancel();
+    _connStateSub?.cancel();
+    _valueSub?.cancel();
+    super.dispose();
   }
 
   @override
@@ -122,46 +151,6 @@ class _ConnectionScreenState extends State<ConnectionScreen> {
                 ),
                 Column(
                   children: [
-                    StreamBuilder<List<BluetoothDevice>>(
-                      stream: Stream.periodic(const Duration(seconds:10))
-                          .asyncMap((_) => FlutterBluePlus.connectedDevices),
-                      initialData: const [],
-                      builder: (c, snapshot){
-                        snapshot.data.toString();
-                        return Column(
-                          children: snapshot.data!.map((d) {
-                            return Column(
-                              children: [
-                                ListTile(
-                                  title: Text(d.platformName,style: TextStyle(color: Color(0xFFEDEDED)),),
-                                  leading: Icon(Icons.devices,color: Color(0xFFEDEDED).withOpacity(0.3),),
-                                  trailing: StreamBuilder<BluetoothConnectionState>(
-                                    stream: d.connectionState,
-                                    initialData: BluetoothConnectionState.disconnected,
-                                    builder: (c, snapshot) {
-                                      bool con = snapshot.data == BluetoothConnectionState.connected;
-                                      return ElevatedButton(
-                                        style: ElevatedButton.styleFrom(
-                                            shape: RoundedRectangleBorder(
-                                                side: BorderSide(color: con?Colors.green:Colors.red),
-                                                borderRadius: BorderRadius.all(Radius.circular(8))
-                                            )
-                                        ),
-                                        onPressed: () {Navigator.of(context).pop(SelectedDevice(d,1));}
-                                        ,
-                                        child:  Text('Connect',style: TextStyle(color: con?Colors.green:Colors.red),),
-                                      );
-                                    },
-                                  ),
-                                ),
-                                Divider()
-                              ],
-                            );
-                          })
-                              .toList(),
-                        );
-                      },
-                    ),
                     StreamBuilder<List<ScanResult>>(
                       stream: FlutterBluePlus.scanResults,
                       initialData: const [],
@@ -218,8 +207,33 @@ class _ConnectionScreenState extends State<ConnectionScreen> {
                                       ],
                                     ),
                                     CustomButton(
-                                      text: "Conectar",
+                                      text: _manager.connectedDevice?.id == templist[index].device.id
+                                          ? (_connState == BluetoothConnectionState.connected ? "Selecionado" : "Conectando")
+                                          : "Conectar",
                                       onPressed: () async {
+                                        final dev = templist[index].device;
+                                        // mostra loading (opcional)
+                                        showDialog(
+                                          context: context,
+                                          barrierDismissible: false,
+                                          builder: (_) => const Center(child: CircularProgressIndicator()),
+                                        );
+
+                                        try {
+                                          // conecte e aguarde até o manager ter enviado START
+                                          await BluetoothManager().connect(dev, autoReconnect: true);
+
+                                          // se chegou aqui, START foi enviado com sucesso -> navega
+                                          Navigator.of(context).pop(); // fecha o dialog
+                                          Navigator.of(context).pushReplacement(
+                                            MaterialPageRoute(builder: (_) => const FinishedScreen()),
+                                          );
+                                        } catch (e) {
+                                          if (Navigator.of(context).canPop()) Navigator.of(context).pop();
+                                          ScaffoldMessenger.of(context).showSnackBar(
+                                            SnackBar(content: Text('Falha ao conectar/enviar START: ${e.toString()}')),
+                                          );
+                                        }
                                       },
                                     ),
                                   ],
