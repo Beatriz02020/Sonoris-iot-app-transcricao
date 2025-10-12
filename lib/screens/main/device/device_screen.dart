@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:sonoris/components/customTextField.dart';
 import 'package:sonoris/components/custom_slider.dart';
 import 'package:sonoris/theme/colors.dart';
 import 'package:sonoris/theme/text_styles.dart';
+
+import '../../../services/bluetooth_manager.dart';
 
 class DeviceScreen extends StatefulWidget {
   const DeviceScreen({super.key});
@@ -13,10 +16,20 @@ class DeviceScreen extends StatefulWidget {
 }
 
 class _DeviceScreenState extends State<DeviceScreen> {
-  /*
-  bool _isCheckedPt = false; // Para Português (Brasileiro)
-  bool _isCheckedEn = false; // Para Inglês
-  */
+  final BluetoothManager _manager = BluetoothManager(); // Certifique-se de inicializar o BluetoothManager
+  BluetoothConnectionState _connState = BluetoothConnectionState.disconnected;
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Assine o estado de conexão para atualizar a UI
+    _manager.connectionStateStream.listen((state) {
+      setState(() {
+        _connState = state;
+      });
+    });
+  }
 
   // Adicione estes estados para os sliders:
   double _standbyValue = 5;
@@ -25,6 +38,9 @@ class _DeviceScreenState extends State<DeviceScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isThisConnected = _manager.connectedDevice != null &&
+        _connState == BluetoothConnectionState.connected;
+
     SystemChrome.setSystemUIOverlayStyle(
       SystemUiOverlayStyle.dark.copyWith(
         statusBarColor: AppColors.background,
@@ -88,16 +104,16 @@ class _DeviceScreenState extends State<DeviceScreen> {
                             spacing: 6,
                             children: [
                               Text(
-                                'Conectado',
+                                isThisConnected ?'Conectado' : 'Desconectado',
                                 style: AppTextStyles.body.copyWith(
-                                  color: AppColors.teal500,
+                                  color: isThisConnected ? AppColors.teal500 : AppColors.rose500,
                                 ),
                               ),
                               Container(
                                 height: 9,
                                 width: 9,
                                 decoration: BoxDecoration(
-                                  color: AppColors.teal500,
+                                  color: isThisConnected ? AppColors.teal500 : AppColors.rose500,
                                   borderRadius: BorderRadius.circular(100),
                                 ),
                               ),
@@ -173,45 +189,47 @@ class _DeviceScreenState extends State<DeviceScreen> {
                     ],
                   ),
                 ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                isThisConnected ? Column(
                   children: [
-                    Text(
-                      'Nome do Dispositivo',
-                      style: AppTextStyles.bold.copyWith(
-                        color: AppColors.gray900,
-                      ),
-                    ),
-                    CustomTextField(
-                      hintText: 'Sonoris v1.23.9',
-                      fullWidth: true,
-                    ),
-                  ],
-                ),
-
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Modo de funcionamento',
-                      style: AppTextStyles.bold.copyWith(
-                        color: AppColors.gray900,
-                      ),
-                    ),
-                    CustomTextField(
-                      isDropdown: true,
-                      fullWidth: true,
-                      dropdownOptions: [
-                        'Transcrição + Respostas Rápidas',
-                        'Apenas Transcrição',
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Nome do Dispositivo',
+                          style: AppTextStyles.bold.copyWith(
+                            color: AppColors.gray900,
+                          ),
+                        ),
+                        CustomTextField(
+                          hintText: 'Sonoris v1.23.9',
+                          fullWidth: true,
+                        ),
                       ],
-                      selectedValue: 'Transcrição + Respostas Rápidas',
-                      onChanged: (value) {},
                     ),
-                  ],
-                ),
 
-                /*
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Modo de funcionamento',
+                          style: AppTextStyles.bold.copyWith(
+                            color: AppColors.gray900,
+                          ),
+                        ),
+                        CustomTextField(
+                          isDropdown: true,
+                          fullWidth: true,
+                          dropdownOptions: [
+                            'Transcrição + Respostas Rápidas',
+                            'Apenas Transcrição',
+                          ],
+                          selectedValue: 'Transcrição + Respostas Rápidas',
+                          onChanged: (value) {},
+                        ),
+                      ],
+                    ),
+
+                    /*
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   spacing: 6,
@@ -284,32 +302,40 @@ class _DeviceScreenState extends State<DeviceScreen> {
                   ],
                 ),
                 */
-                CustomSlider(
-                  label: 'Entrar em Standby após',
-                  value: _standbyValue,
-                  min: 1,
-                  max: 60,
-                  onChanged: (value) => setState(() => _standbyValue = value),
-                  valueLabel: '${_standbyValue.round()} minutos sem fala',
-                ),
+                    CustomSlider(
+                      label: 'Entrar em Standby após',
+                      value: _standbyValue,
+                      min: 1,
+                      max: 60,
+                      onChanged: (value) => setState(() => _standbyValue = value),
+                      valueLabel: '${_standbyValue.round()} minutos sem fala',
+                    ),
 
-                CustomSlider(
-                  label: 'Tempo entre conversas',
-                  value: _conversaValue,
-                  min: 1,
-                  max: 60,
-                  onChanged: (value) => setState(() => _conversaValue = value),
-                  valueLabel: '${_conversaValue.round()} minutos',
-                ),
+                    CustomSlider(
+                      label: 'Tempo entre conversas',
+                      value: _conversaValue,
+                      min: 1,
+                      max: 60,
+                      onChanged: (value) => setState(() => _conversaValue = value),
+                      valueLabel: '${_conversaValue.round()} minutos',
+                    ),
 
-                CustomSlider(
-                  label: 'Deletar conversas não salvas após',
-                  value: _deletarValue,
-                  min: 1,
-                  max: 100,
-                  onChanged: (value) => setState(() => _deletarValue = value),
-                  valueLabel: '${_deletarValue.round()} dias',
-                ),
+                    CustomSlider(
+                      label: 'Deletar conversas não salvas após',
+                      value: _deletarValue,
+                      min: 1,
+                      max: 100,
+                      onChanged: (value) => setState(() => _deletarValue = value),
+                      valueLabel: '${_deletarValue.round()} dias',
+                    ),
+                  ],
+                )  : Column(
+                  children: [
+                    // TODO: fazer a conexão por essa tela
+                    Text('Tela de conexão')
+                  ],
+                )
+
               ],
             ),
           ),

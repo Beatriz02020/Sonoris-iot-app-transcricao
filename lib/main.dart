@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:sonoris/components/bottomNavigationBar.dart';
@@ -41,11 +42,40 @@ class SonorisApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Sonoris App',
-      initialRoute: '/test',
+      // Use a propriedade 'home' para definir o widget inicial.
+      // Ele vai decidir qual tela mostrar.
+      home: const AuthCheck(),
+
+      // Suas outras rotas nomeadas continuam aqui para navegação futura
       routes: {
         '/initial': (context) => const InitialScreen(),
         '/main': (context) => const BottomNav(),
         '/test': (context) => const ConnectionScreen(),
+      },
+    );
+  }
+}
+
+// Coloque a classe AuthCheck que criamos acima aqui ou em um arquivo separado
+class AuthCheck extends StatelessWidget {
+  const AuthCheck({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<User?>(
+      stream: FirebaseAuth.instance.authStateChanges(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Scaffold(
+            body: Center(child: CircularProgressIndicator()),
+          );
+        }
+
+        if (snapshot.hasData) {
+          return const BottomNav(); // Usuário logado
+        }
+
+        return const InitialScreen(); // Usuário não logado
       },
     );
   }

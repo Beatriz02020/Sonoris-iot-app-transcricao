@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:sonoris/components/bottomNavigationBar.dart';
 import 'package:sonoris/components/customButton.dart';
 import 'package:sonoris/components/quickActionsButton.dart';
@@ -9,6 +10,8 @@ import 'package:sonoris/screens/main/home/answer_screen.dart';
 import 'package:sonoris/screens/main/home/captions_screen.dart';
 import 'package:sonoris/theme/colors.dart';
 import 'package:sonoris/theme/text_styles.dart';
+
+import '../../../services/bluetooth_manager.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -18,30 +21,35 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  String _userName = ""; // nome do usuário
+  final BluetoothManager _manager = BluetoothManager(); // Certifique-se de inicializar o BluetoothManager
+  BluetoothConnectionState _connState = BluetoothConnectionState.disconnected;
+
+  String _userName = ""; // Nome do usuário
 
   @override
   void initState() {
     super.initState();
     _loadUserData();
+
+    // Assine o estado de conexão para atualizar a UI
+    _manager.connectionStateStream.listen((state) {
+      setState(() {
+        _connState = state;
+      });
+    });
   }
 
   void _loadUserData() async {
     final user = FirebaseAuth.instance.currentUser;
 
     if (user != null) {
-      // print("Usuário logado: ${user.uid}"); // depuração
-
-      final snapshot =
-          await FirebaseFirestore.instance
-              .collection("Usuario")
-              .doc(user.uid)
-              .get();
+      final snapshot = await FirebaseFirestore.instance
+          .collection("Usuario")
+          .doc(user.uid)
+          .get();
 
       if (snapshot.exists) {
         final data = snapshot.data()!;
-        // print("Dados recebidos: $data");
-
         final primeiroNome = (data['Nome'] ?? '').toString().split(' ').first;
 
         setState(() {
@@ -53,6 +61,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isThisConnected = _manager.connectedDevice != null &&
+        _connState == BluetoothConnectionState.connected;
+
     SystemChrome.setSystemUIOverlayStyle(
       SystemUiOverlayStyle.dark.copyWith(
         statusBarColor: AppColors.background,
@@ -102,6 +113,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
               // card contendo informações do dispositivo
               Container(
+                width: double.infinity,
                 padding: const EdgeInsets.symmetric(
                   vertical: 18,
                   horizontal: 24,
@@ -110,7 +122,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   color: AppColors.blue950,
                   borderRadius: BorderRadius.circular(16),
                 ),
-                child: Row(
+                child:
+                isThisConnected ? Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Column(
@@ -207,6 +220,11 @@ class _HomeScreenState extends State<HomeScreen> {
                       ],
                     ),
                   ],
+                ) : Text(
+                  'Nenhum dispositivo conectado',
+                  style: AppTextStyles.body.copyWith(
+                    color: AppColors.white100,
+                  ),
                 ),
               ),
 

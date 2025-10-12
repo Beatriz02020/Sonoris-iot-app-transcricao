@@ -5,6 +5,8 @@ import 'package:sonoris/screens/main/home_tab_navigator.dart';
 import 'package:sonoris/screens/main/saved_chats_tab_navigator.dart';
 import 'package:sonoris/screens/main/user_tab_navigator.dart';
 
+//TODO: Atualizar os dodos do firebase ao trocar de tela
+
 class BottomNav extends StatefulWidget {
   const BottomNav({super.key});
 

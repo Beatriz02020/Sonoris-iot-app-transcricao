@@ -11,7 +11,7 @@ import 'package:sonoris/services/bluetooth_manager.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 
-// TODO: Implementar a lógica de conexão com o dispositivo Sonoris
+// TODO: Filtrar apenas dispositivos Sonoris
 
 class ConnectionScreen extends StatefulWidget {
   const ConnectionScreen({super.key});

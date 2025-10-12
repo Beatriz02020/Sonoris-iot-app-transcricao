@@ -9,7 +9,7 @@ class AuthService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseStorage _storage = FirebaseStorage.instance;
 
-  // Método padrão (camelCase) para autenticação
+  // Métod padrão (camelCase) para autenticação
   Future<UserCredential> signIn({
     required String email,
     required String password,

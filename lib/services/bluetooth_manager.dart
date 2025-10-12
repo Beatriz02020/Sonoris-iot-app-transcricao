@@ -224,7 +224,7 @@ class BluetoothManager {
     // Para debugging — registra as propriedades
     debugPrint('Characteristic props: write=${props.write}, writeWithoutResponse=${props.writeWithoutResponse}, notify=${props.notify}, indicate=${props.indicate}');
 
-    // Decide método preferido:
+    // Decide métod preferido:
     // preferWithResponse se available, caso contrário prefer withoutResponse.
     final bool canWriteWithResponse = props.write ?? false;
     final bool canWriteWithoutResponse = props.writeWithoutResponse ?? false;
@@ -233,7 +233,7 @@ class BluetoothManager {
       throw Exception('Characteristic não suporta escrita (nem withResponse nem withoutResponse).');
     }
 
-    // preferir withResponse (se disponível) — mas só tentamos um método por vez com retries
+    // preferir withResponse (se disponível) — mas só tentamos um métod por vez com retries
     final bool tryWithResponseFirst = canWriteWithResponse;
 
     const int maxAttempts = 3;

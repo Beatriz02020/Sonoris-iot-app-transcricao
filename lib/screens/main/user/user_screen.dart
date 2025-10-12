@@ -260,11 +260,12 @@ class _UserScreenState extends State<UserScreen> {
                           color: AppColors.rose500,
                           text: 'Sair',
                           fullWidth: true,
-                          onPressed: () {
+                          onPressed: () async {
+                            await FirebaseAuth.instance.signOut(); // Desconecta o usuário
                             Navigator.of(
                               context,
                               rootNavigator: true,
-                            ).pushReplacementNamed('/initial');
+                            ).pushReplacementNamed('/initial'); // Redireciona para a tela inicial
                           },
                         ),
                       ],
