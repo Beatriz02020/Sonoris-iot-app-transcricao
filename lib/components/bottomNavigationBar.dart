@@ -22,8 +22,6 @@ class _BottomNavState extends State<BottomNav> {
   int _selectedIndex = 0;
   bool _showBottomNav = true;
 
-  final List<Widget> _pages = [];
-
   final List<GlobalKey<NavigatorState>> _navigatorKeys = [
     GlobalKey<NavigatorState>(),
     GlobalKey<NavigatorState>(),
@@ -38,25 +36,38 @@ class _BottomNavState extends State<BottomNav> {
   @override
   void initState() {
     super.initState();
+  }
 
-    _pages.addAll([
-      HomeTabNavigator(
-        navigatorKey: _navigatorKeys[0],
-        setBottomNavVisibility: _setBottomNavVisibility,
-      ),
-      SavedChatsTabNavigator(
-        navigatorKey: _navigatorKeys[1],
-        setBottomNavVisibility: _setBottomNavVisibility,
-      ),
-      DeviceTabNavigator(
-        navigatorKey: _navigatorKeys[2],
-        setBottomNavVisibility: _setBottomNavVisibility,
-      ),
-      UserTabNavigator(
-        navigatorKey: _navigatorKeys[3],
-        setBottomNavVisibility: _setBottomNavVisibility,
-      ),
-    ]);
+  // Função para gerar a página com uma UniqueKey
+  Widget _getPage(int index) {
+    switch (index) {
+      case 0:
+        return HomeTabNavigator(
+          key: UniqueKey(),
+          navigatorKey: _navigatorKeys[0],
+          setBottomNavVisibility: _setBottomNavVisibility,
+        );
+      case 1:
+        return SavedChatsTabNavigator(
+          key: UniqueKey(),
+          navigatorKey: _navigatorKeys[1],
+          setBottomNavVisibility: _setBottomNavVisibility,
+        );
+      case 2:
+        return DeviceTabNavigator(
+          key: UniqueKey(),
+          navigatorKey: _navigatorKeys[2],
+          setBottomNavVisibility: _setBottomNavVisibility,
+        );
+      case 3:
+        return UserTabNavigator(
+          key: UniqueKey(),
+          navigatorKey: _navigatorKeys[3],
+          setBottomNavVisibility: _setBottomNavVisibility,
+        );
+      default:
+        return Container();
+    }
   }
 
   void _onItemTapped(int index) {
@@ -75,7 +86,8 @@ class _BottomNavState extends State<BottomNav> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: IndexedStack(index: _selectedIndex, children: _pages),
+      // Use apenas a página atual, com UniqueKey
+      body: _getPage(_selectedIndex),
       bottomNavigationBar:
           _showBottomNav
               ? CustomBottomNavBar(

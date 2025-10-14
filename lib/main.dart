@@ -9,25 +9,7 @@ import 'firebase_options.dart';
 
 // TODO arrumar botão de voltar saindo do aplicativo
 // TODO consertar o icone e tela de inicio do aplicativo
-// TODO organizar pasta de imagens
-// TODO finalizar ReadMe
-// TODO Fazer responsividade do aplicativo
-// TODO verificar os ToDos
-
-// ======= BACKEND =======
-// TODO Pareamento de dispositivo                             | (DISPOSITIVO)
-// TODO Modo de funcionamento                                 |
-// TODO Cadastro                                              | Beatriz - FEITO
-// TODO Login                                                 | Beatriz - FEITO
-// TODO Editar dispositivo                                    | (DISPOSITIVO)
-// TODO Editar perfil                                         | Amanda - FEITO
-// TODO Adicionar categoria de respostas rápidas              | Amanda - FEITO
-// TODO Botao de pesquisar e filtrar conversas                | Beatriz - FEITO
-// TODO Apresentar lista de conversas salvas e não salvas     |
-// TODO Customizar legenda                                    |
-// TODO Adicionar respostas a categoria de respostas rápidas  | Amanda - FEITO
-// TODO Chat de conversas funcional                           |
-// TODO Salvar conversas                                      | Amanda
+//TODO: Customizar as mensagens de erro do Firebase no geral
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

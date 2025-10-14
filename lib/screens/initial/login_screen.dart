@@ -9,7 +9,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../../services/auth_service.dart';
 
-//TODO: Customizar as mensagens de erro do FirebaseAuth
 //TODO: Fazer o loading ao clicar em entrar
 
 class LoginScreen extends StatefulWidget {

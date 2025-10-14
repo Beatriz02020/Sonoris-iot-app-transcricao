@@ -55,14 +55,23 @@ class _UnsavedChatsScreenState extends State<UnsavedChatsScreen> {
     _searchController.dispose();
     super.dispose();
   }
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      SystemChrome.setSystemUIOverlayStyle(
+        SystemUiOverlayStyle.dark.copyWith(
+          statusBarColor: AppColors.white100,
+          systemNavigationBarColor: AppColors.blue500,
+          systemNavigationBarIconBrightness: Brightness.light,
+        ),
+      );
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setSystemUIOverlayStyle(
-      SystemUiOverlayStyle.dark.copyWith(
-        statusBarColor: AppColors.background,
-        systemNavigationBarColor: AppColors.blue500,
-      ),
-    );
 
     return Scaffold(
       backgroundColor: AppColors.background,

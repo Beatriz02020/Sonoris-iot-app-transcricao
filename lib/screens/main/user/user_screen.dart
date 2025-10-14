@@ -19,7 +19,6 @@ class _UserScreenState extends State<UserScreen> {
 
   final _nameController = TextEditingController();
   final _birthDateController = TextEditingController();
-  final _emailController = TextEditingController();
 
   String _userName = ""; // nome do usuário
   final _birthDateFormatter = _BirthDateInputFormatter();
@@ -50,14 +49,13 @@ class _UserScreenState extends State<UserScreen> {
         final nomeCompleto = (data['Nome'] ?? '').toString();
         final primeiroNome = nomeCompleto.split(' ').first;
         final dataNasc = (data['DataNasc'] ?? '').toString();
-        final email = (data['Email'] ?? '').toString();
-        // final foto = (data['Foto_url'] ?? '').toString();
+        // final email = (data['Email'] ?? '').toString();
 
         setState(() {
           _userName = primeiroNome;
           _nameController.text = nomeCompleto;
           _birthDateController.text = dataNasc;
-          _emailController.text = email;
+          // final email = (data['Email'] ?? '').toString();
         });
       }
     }
@@ -183,36 +181,6 @@ class _UserScreenState extends State<UserScreen> {
                             ),
                           ],
                         ),
-
-                        // Email
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Email',
-                              style: AppTextStyles.bold.copyWith(
-                                color: AppColors.gray900,
-                              ),
-                            ),
-                            CustomTextField(
-                              hintText: 'Email',
-                              fullWidth: true,
-                              keyboardType: TextInputType.emailAddress,
-                              controller: _emailController,
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Por favor, insira um e-mail.';
-                                }
-                                if (!RegExp(
-                                  r'^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$',
-                                ).hasMatch(value)) {
-                                  return 'Por favor, insira um e-mail válido.';
-                                }
-                                return null;
-                              },
-                            ),
-                          ],
-                        ),
                       ],
                     ),
                     Column(
@@ -231,8 +199,13 @@ class _UserScreenState extends State<UserScreen> {
                                     .update({
                                       'Nome': _nameController.text,
                                       'DataNasc': _birthDateController.text,
-                                      'Email': _emailController.text,
                                     });
+                                // Atualiza o nome exibido no topo após salvar
+                                final nomeCompleto = _nameController.text;
+                                final primeiroNome = nomeCompleto.split(' ').first;
+                                setState(() {
+                                  _userName = primeiroNome;
+                                });
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
                                     backgroundColor: AppColors.blue500,
