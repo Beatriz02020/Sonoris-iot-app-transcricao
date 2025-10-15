@@ -29,45 +29,36 @@ class _BottomNavState extends State<BottomNav> {
     GlobalKey<NavigatorState>(),
   ];
 
+  late final List<Widget Function()> _pageFactories = [
+    () => HomeTabNavigator(
+          key: UniqueKey(),
+          navigatorKey: _navigatorKeys[0],
+          setBottomNavVisibility: _setBottomNavVisibility,
+        ),
+    () => SavedChatsTabNavigator(
+          key: UniqueKey(),
+          navigatorKey: _navigatorKeys[1],
+          setBottomNavVisibility: _setBottomNavVisibility,
+        ),
+    () => DeviceTabNavigator(
+          key: UniqueKey(),
+          navigatorKey: _navigatorKeys[2],
+          setBottomNavVisibility: _setBottomNavVisibility,
+        ),
+    () => UserTabNavigator(
+          key: UniqueKey(),
+          navigatorKey: _navigatorKeys[3],
+          setBottomNavVisibility: _setBottomNavVisibility,
+        ),
+  ];
+
   void switchTab(int index) {
     _onItemTapped(index);
   }
 
-  @override
-  void initState() {
-    super.initState();
-  }
-
   // Função para gerar a página com uma UniqueKey
   Widget _getPage(int index) {
-    switch (index) {
-      case 0:
-        return HomeTabNavigator(
-          key: UniqueKey(),
-          navigatorKey: _navigatorKeys[0],
-          setBottomNavVisibility: _setBottomNavVisibility,
-        );
-      case 1:
-        return SavedChatsTabNavigator(
-          key: UniqueKey(),
-          navigatorKey: _navigatorKeys[1],
-          setBottomNavVisibility: _setBottomNavVisibility,
-        );
-      case 2:
-        return DeviceTabNavigator(
-          key: UniqueKey(),
-          navigatorKey: _navigatorKeys[2],
-          setBottomNavVisibility: _setBottomNavVisibility,
-        );
-      case 3:
-        return UserTabNavigator(
-          key: UniqueKey(),
-          navigatorKey: _navigatorKeys[3],
-          setBottomNavVisibility: _setBottomNavVisibility,
-        );
-      default:
-        return Container();
-    }
+    return _pageFactories[index]();
   }
 
   void _onItemTapped(int index) {

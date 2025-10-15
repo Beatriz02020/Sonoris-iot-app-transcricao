@@ -19,6 +19,7 @@ class _UserScreenState extends State<UserScreen> {
 
   final _nameController = TextEditingController();
   final _birthDateController = TextEditingController();
+  final _emailController = TextEditingController(); // Novo controller para email
 
   String _userName = ""; // nome do usuário
   final _birthDateFormatter = _BirthDateInputFormatter();
@@ -55,7 +56,7 @@ class _UserScreenState extends State<UserScreen> {
           _userName = primeiroNome;
           _nameController.text = nomeCompleto;
           _birthDateController.text = dataNasc;
-          // final email = (data['Email'] ?? '').toString();
+          _emailController.text = user.email ?? ''; // Preenche o email
         });
       }
     }
@@ -80,8 +81,6 @@ class _UserScreenState extends State<UserScreen> {
               Stack(
                 clipBehavior: Clip.none,
                 children: [
-                  // banner e avatar
-                  // TODO: Adicionar banner placeholder
                   Container(
                     color: AppColors.blue200,
                     width: double.infinity,
@@ -111,7 +110,7 @@ class _UserScreenState extends State<UserScreen> {
                   bottom: 30,
                 ),
                 child: Column(
-                  spacing: 38,
+                  spacing: 70,
                   children: [
                     Column(
                       mainAxisAlignment: MainAxisAlignment.start,
@@ -174,6 +173,35 @@ class _UserScreenState extends State<UserScreen> {
                                 ).hasMatch(value)) {
                                   return 'Formato inválido. Use dd/mm/aaaa.';
                                 }
+                                // Validação de data real
+                                final parts = value.split('/');
+                                final dia = int.tryParse(parts[0] ?? '');
+                                final mes = int.tryParse(parts[1] ?? '');
+                                final ano = int.tryParse(parts[2] ?? '');
+                                if (dia == null || mes == null || ano == null) {
+                                  return 'Data inválida.';
+                                }
+                                if (mes < 1 || mes > 12) {
+                                  return 'Mês inválido.';
+                                }
+                                // Dias máximos por mês
+                                final diasPorMes = <int>[
+                                  31, // Janeiro
+                                  (ano % 4 == 0 && (ano % 100 != 0 || ano % 400 == 0)) ? 29 : 28, // Fevereiro
+                                  31, // Março
+                                  30, // Abril
+                                  31, // Maio
+                                  30, // Junho
+                                  31, // Julho
+                                  31, // Agosto
+                                  30, // Setembro
+                                  31, // Outubro
+                                  30, // Novembro
+                                  31, // Dezembro
+                                ];
+                                if (dia < 1 || dia > diasPorMes[mes - 1]) {
+                                  return 'Dia inválido para o mês informado.';
+                                }
                                 return null;
                               },
                               hintText: 'Data de Nascimento',
@@ -181,10 +209,28 @@ class _UserScreenState extends State<UserScreen> {
                             ),
                           ],
                         ),
+                        // Email (desativado)
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Email',
+                              style: AppTextStyles.bold.copyWith(
+                                color: AppColors.gray900,
+                              ),
+                            ),
+                            CustomTextField(
+                              hintText: 'Email',
+                              fullWidth: true,
+                              controller: _emailController,
+                              enabled: false, // Desativa edição
+                            ),
+                          ],
+                        ),
                       ],
                     ),
                     Column(
-                      spacing: 10,
+                      spacing: 2,
                       children: [
                         CustomButton(
                           text: 'Salvar',

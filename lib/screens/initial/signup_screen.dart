@@ -168,6 +168,36 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           if (!RegExp(r'^\d{2}/\d{2}/\d{4}$').hasMatch(value)) {
                             return 'Formato inválido. Use dd/mm/aaaa.';
                           }
+
+                          // Validação de data real
+                          final parts = value.split('/');
+                          final dia = int.tryParse(parts[0] ?? '');
+                          final mes = int.tryParse(parts[1] ?? '');
+                          final ano = int.tryParse(parts[2] ?? '');
+                          if (dia == null || mes == null || ano == null) {
+                            return 'Data inválida.';
+                          }
+                          if (mes < 1 || mes > 12) {
+                            return 'Mês inválido.';
+                          }
+                          // Dias máximos por mês
+                          final diasPorMes = <int>[
+                            31, // Janeiro
+                            (ano % 4 == 0 && (ano % 100 != 0 || ano % 400 == 0)) ? 29 : 28, // Fevereiro
+                            31, // Março
+                            30, // Abril
+                            31, // Maio
+                            30, // Junho
+                            31, // Julho
+                            31, // Agosto
+                            30, // Setembro
+                            31, // Outubro
+                            30, // Novembro
+                            31, // Dezembro
+                          ];
+                          if (dia < 1 || dia > diasPorMes[mes - 1]) {
+                            return 'Dia inválido para o mês informado.';
+                          }
                           return null;
                         },
                         hintText: 'Data de Nascimento',
