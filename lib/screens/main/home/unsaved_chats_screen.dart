@@ -72,7 +72,6 @@ class _UnsavedChatsScreenState extends State<UnsavedChatsScreen> {
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
@@ -113,17 +112,18 @@ class _UnsavedChatsScreenState extends State<UnsavedChatsScreen> {
                       _query = value?.trim() ?? '';
                     });
                   },
-                  suffixIcon: _query.isNotEmpty
-                      ? IconButton(
-                          icon: Icon(Icons.close, color: AppColors.gray500),
-                          onPressed: () {
-                            _searchController.clear();
-                            setState(() {
-                              _query = '';
-                            });
-                          },
-                        )
-                      : null,
+                  suffixIcon:
+                      _query.isNotEmpty
+                          ? IconButton(
+                            icon: Icon(Icons.close, color: AppColors.gray500),
+                            onPressed: () {
+                              _searchController.clear();
+                              setState(() {
+                                _query = '';
+                              });
+                            },
+                          )
+                          : null,
                 ),
 
                 // conversas

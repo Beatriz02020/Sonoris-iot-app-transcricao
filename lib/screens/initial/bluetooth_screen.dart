@@ -5,7 +5,7 @@ import 'package:sonoris/screens/initial/connection_screen.dart';
 import 'package:sonoris/theme/colors.dart';
 import 'package:sonoris/theme/text_styles.dart';
 
-// TODO: Só entrar nessa página quando o bluetooth estiver desativado
+// TODO: Só entrar nessa página quando o bluetooth estiver desativado ( e ver se realmente precisa dessa página )
 
 class BluetoothScreen extends StatefulWidget {
   const BluetoothScreen({super.key});

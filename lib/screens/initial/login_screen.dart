@@ -1,11 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sonoris/components/customButton.dart';
 import 'package:sonoris/components/customTextField.dart';
 import 'package:sonoris/theme/colors.dart';
 import 'package:sonoris/theme/text_styles.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../../services/auth_service.dart';
 
@@ -36,15 +36,19 @@ class _LoginScreenState extends State<LoginScreen> {
       final email = _emailController.text.trim();
       final password = _passwordController.text.trim();
 
-      final credential = await _authService.signIn(email: email, password: password);
+      final credential = await _authService.signIn(
+        email: email,
+        password: password,
+      );
 
       // Busca documento do usuário para confirmar existência de perfil
       // FUTURO: mover este fetch para um provider/global store e carregar
       // demais recursos (ex: preferências, categorias) em paralelo.
-      final userDoc = await FirebaseFirestore.instance
-          .collection('Usuario')
-          .doc(credential.user!.uid)
-          .get();
+      final userDoc =
+          await FirebaseFirestore.instance
+              .collection('Usuario')
+              .doc(credential.user!.uid)
+              .get();
 
       if (!userDoc.exists) {
         throw Exception('Perfil de usuário não encontrado.');
@@ -88,10 +92,7 @@ class _LoginScreenState extends State<LoginScreen> {
       }
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            backgroundColor: AppColors.rose600,
-            content: Text(message),
-          ),
+          SnackBar(backgroundColor: AppColors.rose600, content: Text(message)),
         );
       }
     } catch (e) {
@@ -163,7 +164,9 @@ class _LoginScreenState extends State<LoginScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.45, // ~175px em tela de 390px
+                          width:
+                              MediaQuery.of(context).size.width *
+                              0.45, // ~175px em tela de 390px
                           child: Image.asset(
                             'assets/images/Logo.png',
                             fit: BoxFit.contain,

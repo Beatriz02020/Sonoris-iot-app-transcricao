@@ -19,7 +19,8 @@ class _UserScreenState extends State<UserScreen> {
 
   final _nameController = TextEditingController();
   final _birthDateController = TextEditingController();
-  final _emailController = TextEditingController(); // Novo controller para email
+  final _emailController =
+      TextEditingController(); // Novo controller para email
 
   String _userName = ""; // nome do usuário
   final _birthDateFormatter = _BirthDateInputFormatter();
@@ -175,9 +176,9 @@ class _UserScreenState extends State<UserScreen> {
                                 }
                                 // Validação de data real
                                 final parts = value.split('/');
-                                final dia = int.tryParse(parts[0] ?? '');
-                                final mes = int.tryParse(parts[1] ?? '');
-                                final ano = int.tryParse(parts[2] ?? '');
+                                final dia = int.tryParse(parts[0]);
+                                final mes = int.tryParse(parts[1]);
+                                final ano = int.tryParse(parts[2]);
                                 if (dia == null || mes == null || ano == null) {
                                   return 'Data inválida.';
                                 }
@@ -187,7 +188,10 @@ class _UserScreenState extends State<UserScreen> {
                                 // Dias máximos por mês
                                 final diasPorMes = <int>[
                                   31, // Janeiro
-                                  (ano % 4 == 0 && (ano % 100 != 0 || ano % 400 == 0)) ? 29 : 28, // Fevereiro
+                                  (ano % 4 == 0 &&
+                                          (ano % 100 != 0 || ano % 400 == 0))
+                                      ? 29
+                                      : 28, // Fevereiro
                                   31, // Março
                                   30, // Abril
                                   31, // Maio
@@ -248,7 +252,8 @@ class _UserScreenState extends State<UserScreen> {
                                     });
                                 // Atualiza o nome exibido no topo após salvar
                                 final nomeCompleto = _nameController.text;
-                                final primeiroNome = nomeCompleto.split(' ').first;
+                                final primeiroNome =
+                                    nomeCompleto.split(' ').first;
                                 setState(() {
                                   _userName = primeiroNome;
                                 });
@@ -280,11 +285,14 @@ class _UserScreenState extends State<UserScreen> {
                           text: 'Sair',
                           fullWidth: true,
                           onPressed: () async {
-                            await FirebaseAuth.instance.signOut(); // Desconecta o usuário
+                            await FirebaseAuth.instance
+                                .signOut(); // Desconecta o usuário
                             Navigator.of(
                               context,
                               rootNavigator: true,
-                            ).pushReplacementNamed('/initial'); // Redireciona para a tela inicial
+                            ).pushReplacementNamed(
+                              '/initial',
+                            ); // Redireciona para a tela inicial
                           },
                         ),
                       ],

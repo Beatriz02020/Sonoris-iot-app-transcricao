@@ -7,7 +7,8 @@ class AnswerCategoryButton extends StatelessWidget {
   final String? answerAmount;
   final VoidCallback onPressed;
   final VoidCallback? onIconPressed; // ação no ícone principal (ex: deletar)
-  final VoidCallback? onDragIconPressed; // ação no ícone de arrastar (ex: editar)
+  final VoidCallback?
+  onDragIconPressed; // ação no ícone de arrastar (ex: editar)
   final IconData? icon;
   final bool outlined;
   final double? width;
@@ -24,7 +25,6 @@ class AnswerCategoryButton extends StatelessWidget {
     this.width,
   });
 
-  // TODO Arrumar o estilo do botão pressionado
   @override
   Widget build(BuildContext context) {
     Widget button = ElevatedButton(
@@ -72,7 +72,7 @@ class AnswerCategoryButton extends StatelessWidget {
                     color: AppColors.gray500,
                   ),
                 ),
-               GestureDetector(
+              GestureDetector(
                 onTap: onDragIconPressed,
                 child: const Icon(
                   Icons.drag_indicator_rounded,

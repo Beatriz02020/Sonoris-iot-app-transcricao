@@ -1,6 +1,7 @@
 // lib/services/bluetooth_manager.dart
 import 'dart:async';
 import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 
@@ -13,7 +14,7 @@ class BluetoothManager {
   // streams públicos para UI
   final _deviceController = StreamController<BluetoothDevice?>.broadcast();
   final _connectionStateController =
-  StreamController<BluetoothConnectionState>.broadcast();
+      StreamController<BluetoothConnectionState>.broadcast();
   final _valueController = StreamController<String>.broadcast();
 
   Stream<BluetoothDevice?> get deviceStream => _deviceController.stream;
@@ -44,7 +45,10 @@ class BluetoothManager {
 
   /// Conecta ao device. Retorna quando a sequência de discover + (notify se houver) + write("START")
   /// for concluída com sucesso (ou lança erro).
-  Future<void> connect(BluetoothDevice device, {bool autoReconnect = true}) async {
+  Future<void> connect(
+    BluetoothDevice device, {
+    bool autoReconnect = true,
+  }) async {
     // se já estamos conectados ao mesmo device e já processamos connected, apenas retorna
     if (_device != null && _device!.id == device.id && !_hasSentStart) {
       // existe o device, mas talvez ainda não tenhamos completado handshake
@@ -66,7 +70,10 @@ class BluetoothManager {
 
     try {
       // conecta sem autoConnect (evita conflito mtu/autoConnect)
-      await device.connect(autoConnect: false, timeout: const Duration(seconds: 10));
+      await device.connect(
+        autoConnect: false,
+        timeout: const Duration(seconds: 10),
+      );
     } catch (e) {
       // se já estava conectado, device.connect pode lançar; permitimos continuar
       debugPrint('device.connect erro/aviso: $e');
@@ -118,7 +125,10 @@ class BluetoothManager {
 
   /// Handler que executa discoverServices, configura notification (se suportado)
   /// e envia START. É garantido que só um handler execute por vez (debounce).
-  Future<void> _handleConnected(BluetoothDevice device, {bool autoReconnect = true}) async {
+  Future<void> _handleConnected(
+    BluetoothDevice device, {
+    bool autoReconnect = true,
+  }) async {
     if (_processingConnected) {
       debugPrint('Já processando connected — ignorando evento duplicado.');
       return;
@@ -129,20 +139,22 @@ class BluetoothManager {
       // discover services
       List<BluetoothService> services = await device.discoverServices();
       final service = services.firstWhere(
-            (s) => s.uuid.toString().toLowerCase() == SERVICE_UUID.toLowerCase(),
+        (s) => s.uuid.toString().toLowerCase() == SERVICE_UUID.toLowerCase(),
         orElse: () => throw Exception('Serviço $SERVICE_UUID não encontrado'),
       );
 
       final characteristic = service.characteristics.firstWhere(
-            (c) => c.uuid.toString().toLowerCase() == CHAR_UUID.toLowerCase(),
-        orElse: () => throw Exception('Characteristic $CHAR_UUID não encontrado'),
+        (c) => c.uuid.toString().toLowerCase() == CHAR_UUID.toLowerCase(),
+        orElse:
+            () => throw Exception('Characteristic $CHAR_UUID não encontrado'),
       );
 
       _characteristic = characteristic;
 
       // se a characteristic suporta notify, habilita — senão, pula
       final props = characteristic.properties;
-      final supportsNotify = (props.notify ?? false) || (props.indicate ?? false);
+      final supportsNotify =
+          (props.notify) || (props.indicate);
       if (supportsNotify) {
         try {
           await characteristic.setNotifyValue(true);
@@ -173,7 +185,9 @@ class BluetoothManager {
       if (_hasSentStart && _lastStartSentAt != null) {
         final diff = now.difference(_lastStartSentAt!);
         if (diff.inMilliseconds < 800) {
-          debugPrint('START já enviado recentemente (${diff.inMilliseconds}ms) — pulando reenvio.');
+          debugPrint(
+            'START já enviado recentemente (${diff.inMilliseconds}ms) — pulando reenvio.',
+          );
           // completa o completor caso exista (pois já enviou antes)
           if (_connectCompleter != null && !_connectCompleter!.isCompleted) {
             _connectCompleter!.complete();
@@ -222,15 +236,19 @@ class BluetoothManager {
     final props = _characteristic!.properties;
 
     // Para debugging — registra as propriedades
-    debugPrint('Characteristic props: write=${props.write}, writeWithoutResponse=${props.writeWithoutResponse}, notify=${props.notify}, indicate=${props.indicate}');
+    debugPrint(
+      'Characteristic props: write=${props.write}, writeWithoutResponse=${props.writeWithoutResponse}, notify=${props.notify}, indicate=${props.indicate}',
+    );
 
     // Decide métod preferido:
     // preferWithResponse se available, caso contrário prefer withoutResponse.
-    final bool canWriteWithResponse = props.write ?? false;
-    final bool canWriteWithoutResponse = props.writeWithoutResponse ?? false;
+    final bool canWriteWithResponse = props.write;
+    final bool canWriteWithoutResponse = props.writeWithoutResponse;
 
     if (!canWriteWithResponse && !canWriteWithoutResponse) {
-      throw Exception('Characteristic não suporta escrita (nem withResponse nem withoutResponse).');
+      throw Exception(
+        'Characteristic não suporta escrita (nem withResponse nem withoutResponse).',
+      );
     }
 
     // preferir withResponse (se disponível) — mas só tentamos um métod por vez com retries
@@ -249,7 +267,9 @@ class BluetoothManager {
             await _characteristic!.write(bytes, withoutResponse: false);
             return; // sucesso
           } else if (canWriteWithoutResponse) {
-            debugPrint('Fallback: tentando write withoutResponse attempt $attempt');
+            debugPrint(
+              'Fallback: tentando write withoutResponse attempt $attempt',
+            );
             await _characteristic!.write(bytes, withoutResponse: true);
             return;
           }
@@ -260,7 +280,9 @@ class BluetoothManager {
             await _characteristic!.write(bytes, withoutResponse: true);
             return;
           } else if (canWriteWithResponse) {
-            debugPrint('Fallback: tentando write withResponse attempt $attempt');
+            debugPrint(
+              'Fallback: tentando write withResponse attempt $attempt',
+            );
             await _characteristic!.write(bytes, withoutResponse: false);
             return;
           }
@@ -282,29 +304,33 @@ class BluetoothManager {
     throw lastError ?? Exception('Falha desconhecida ao escrever START');
   }
 
-
   /// Escreve texto arbitrário na characteristic. Mantém a lógica de fallback.
-  Future<void> writeString(String text, {bool preferWithResponse = true}) async {
+  Future<void> writeString(
+    String text, {
+    bool preferWithResponse = true,
+  }) async {
     if (_characteristic == null) {
-      throw Exception('Characteristic não configurada (chame connect/discover primeiro).');
+      throw Exception(
+        'Characteristic não configurada (chame connect/discover primeiro).',
+      );
     }
     final bytes = utf8.encode(text);
     final props = _characteristic!.properties;
 
     try {
-      if (preferWithResponse && (props.write ?? false)) {
+      if (preferWithResponse && (props.write)) {
         await _characteristic!.write(bytes, withoutResponse: false);
         return;
       }
-      if (!preferWithResponse && (props.writeWithoutResponse ?? false)) {
+      if (!preferWithResponse && (props.writeWithoutResponse)) {
         await _characteristic!.write(bytes, withoutResponse: true);
         return;
       }
-      if (props.write ?? false) {
+      if (props.write) {
         await _characteristic!.write(bytes, withoutResponse: false);
         return;
       }
-      if (props.writeWithoutResponse ?? false) {
+      if (props.writeWithoutResponse) {
         await _characteristic!.write(bytes, withoutResponse: true);
         return;
       }
@@ -312,10 +338,10 @@ class BluetoothManager {
     } catch (e) {
       // fallback invertido
       try {
-        if (preferWithResponse && (props.writeWithoutResponse ?? false)) {
+        if (preferWithResponse && (props.writeWithoutResponse)) {
           await _characteristic!.write(bytes, withoutResponse: true);
           return;
-        } else if (!preferWithResponse && (props.write ?? false)) {
+        } else if (!preferWithResponse && (props.write)) {
           await _characteristic!.write(bytes, withoutResponse: false);
           return;
         }

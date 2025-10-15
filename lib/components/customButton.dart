@@ -26,7 +26,7 @@ class CustomButton extends StatelessWidget {
   });
 
   // TODO Fazer o arrowCircleButton
-  // TODO Arrumar o estilo do botão pressionado
+  // TODO Arrumar o estilo do botão pressionado (tirar a sombra)
 
   @override
   Widget build(BuildContext context) {
@@ -34,71 +34,70 @@ class CustomButton extends StatelessWidget {
     Widget button =
         outlined
             ? OutlinedButton(
-                style: OutlinedButton.styleFrom(
-                  side: BorderSide(color: mainColor, width: 1.5),
-                  padding: const EdgeInsets.only(
-                    left: 16,
-                    right: 16,
-                    top: 6,
-                    bottom: 4,
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  backgroundColor: AppColors.blue50,
-                  elevation: 0,
-                  disabledForegroundColor: AppColors.gray500,
-                  disabledBackgroundColor: AppColors.gray200,
+              style: OutlinedButton.styleFrom(
+                side: BorderSide(color: mainColor, width: 1.5),
+                padding: const EdgeInsets.only(
+                  left: 16,
+                  right: 16,
+                  top: 6,
+                  bottom: 4,
                 ),
-                onPressed: onPressed,
-                child: Text(
-                  text,
-                  style: AppTextStyles.bold.copyWith(
-                    color: onPressed == null
-                        ? AppColors.gray500
-                        : AppColors.blue600,
-                  ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
                 ),
-              )
+                backgroundColor: AppColors.blue50,
+                elevation: 0,
+                disabledForegroundColor: AppColors.gray500,
+                disabledBackgroundColor: AppColors.gray200,
+              ),
+              onPressed: onPressed,
+              child: Text(
+                text,
+                style: AppTextStyles.bold.copyWith(
+                  color:
+                      onPressed == null ? AppColors.gray500 : AppColors.blue600,
+                ),
+              ),
+            )
             : ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.only(
-                    left: 16,
-                    right: 16,
-                    top: 6,
-                    bottom: 4,
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  backgroundColor:
-                      onPressed == null ? AppColors.gray300 : mainColor,
-                  elevation: 0,
-                  disabledBackgroundColor: AppColors.gray300,
-                  disabledForegroundColor: AppColors.gray500,
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.only(
+                  left: 16,
+                  right: 16,
+                  top: 6,
+                  bottom: 4,
                 ),
-                onPressed: onPressed,
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    if (icon != null)
-                      Padding(
-                        padding: const EdgeInsets.only(right: 8.0),
-                        child: Icon(
-                          icon,
-                          color: AppColors.white100,
-                          size: iconSize ?? 25,
-                        ),
-                      ),
-                    Text(
-                      text,
-                      style: AppTextStyles.bold.copyWith(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                backgroundColor:
+                    onPressed == null ? AppColors.gray300 : mainColor,
+                elevation: 0,
+                disabledBackgroundColor: AppColors.gray300,
+                disabledForegroundColor: AppColors.gray500,
+              ),
+              onPressed: onPressed,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  if (icon != null)
+                    Padding(
+                      padding: const EdgeInsets.only(right: 8.0),
+                      child: Icon(
+                        icon,
                         color: AppColors.white100,
+                        size: iconSize ?? 25,
                       ),
                     ),
-                  ],
-                ),
-              );
+                  Text(
+                    text,
+                    style: AppTextStyles.bold.copyWith(
+                      color: AppColors.white100,
+                    ),
+                  ),
+                ],
+              ),
+            );
 
     // Agora decidimos o tamanho com base nos parâmetros:
     if (fullWidth) {

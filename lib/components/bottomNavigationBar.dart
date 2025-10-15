@@ -5,8 +5,6 @@ import 'package:sonoris/screens/main/home_tab_navigator.dart';
 import 'package:sonoris/screens/main/saved_chats_tab_navigator.dart';
 import 'package:sonoris/screens/main/user_tab_navigator.dart';
 
-//TODO: Atualizar os dodos do firebase ao trocar de tela
-
 class BottomNav extends StatefulWidget {
   const BottomNav({super.key});
 
@@ -31,25 +29,25 @@ class _BottomNavState extends State<BottomNav> {
 
   late final List<Widget Function()> _pageFactories = [
     () => HomeTabNavigator(
-          key: UniqueKey(),
-          navigatorKey: _navigatorKeys[0],
-          setBottomNavVisibility: _setBottomNavVisibility,
-        ),
+      key: UniqueKey(),
+      navigatorKey: _navigatorKeys[0],
+      setBottomNavVisibility: _setBottomNavVisibility,
+    ),
     () => SavedChatsTabNavigator(
-          key: UniqueKey(),
-          navigatorKey: _navigatorKeys[1],
-          setBottomNavVisibility: _setBottomNavVisibility,
-        ),
+      key: UniqueKey(),
+      navigatorKey: _navigatorKeys[1],
+      setBottomNavVisibility: _setBottomNavVisibility,
+    ),
     () => DeviceTabNavigator(
-          key: UniqueKey(),
-          navigatorKey: _navigatorKeys[2],
-          setBottomNavVisibility: _setBottomNavVisibility,
-        ),
+      key: UniqueKey(),
+      navigatorKey: _navigatorKeys[2],
+      setBottomNavVisibility: _setBottomNavVisibility,
+    ),
     () => UserTabNavigator(
-          key: UniqueKey(),
-          navigatorKey: _navigatorKeys[3],
-          setBottomNavVisibility: _setBottomNavVisibility,
-        ),
+      key: UniqueKey(),
+      navigatorKey: _navigatorKeys[3],
+      setBottomNavVisibility: _setBottomNavVisibility,
+    ),
   ];
 
   void switchTab(int index) {

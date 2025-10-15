@@ -65,9 +65,7 @@ class _SavedChatsScreenState extends State<SavedChatsScreen> {
   List<_SavedChat> get _filteredChats {
     if (_query.isEmpty) return _allChats;
     final q = _query.toLowerCase();
-    return _allChats
-        .where((c) => c.nome.toLowerCase().contains(q))
-        .toList();
+    return _allChats.where((c) => c.nome.toLowerCase().contains(q)).toList();
   }
 
   @override
@@ -127,17 +125,18 @@ class _SavedChatsScreenState extends State<SavedChatsScreen> {
                       _query = value?.trim() ?? '';
                     });
                   },
-                  suffixIcon: _query.isNotEmpty
-                      ? IconButton(
-                          icon: Icon(Icons.close, color: AppColors.gray500),
-                          onPressed: () {
-                            _searchController.clear();
-                            setState(() {
-                              _query = '';
-                            });
-                          },
-                        )
-                      : null,
+                  suffixIcon:
+                      _query.isNotEmpty
+                          ? IconButton(
+                            icon: Icon(Icons.close, color: AppColors.gray500),
+                            onPressed: () {
+                              _searchController.clear();
+                              setState(() {
+                                _query = '';
+                              });
+                            },
+                          )
+                          : null,
                 ),
 
                 // filtros

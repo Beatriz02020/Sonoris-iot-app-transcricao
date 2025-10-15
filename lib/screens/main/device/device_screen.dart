@@ -6,6 +6,7 @@ import 'package:sonoris/components/custom_slider.dart';
 import 'package:sonoris/theme/colors.dart';
 import 'package:sonoris/theme/text_styles.dart';
 
+import '../../../components/customButton.dart';
 import '../../../services/bluetooth_manager.dart';
 
 class DeviceScreen extends StatefulWidget {
@@ -16,7 +17,8 @@ class DeviceScreen extends StatefulWidget {
 }
 
 class _DeviceScreenState extends State<DeviceScreen> {
-  final BluetoothManager _manager = BluetoothManager(); // Certifique-se de inicializar o BluetoothManager
+  final BluetoothManager _manager =
+      BluetoothManager(); // Certifique-se de inicializar o BluetoothManager
   BluetoothConnectionState _connState = BluetoothConnectionState.disconnected;
 
   @override
@@ -38,7 +40,8 @@ class _DeviceScreenState extends State<DeviceScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isThisConnected = _manager.connectedDevice != null &&
+    final isThisConnected =
+        _manager.connectedDevice != null &&
         _connState == BluetoothConnectionState.connected;
 
     SystemChrome.setSystemUIOverlayStyle(
@@ -104,16 +107,22 @@ class _DeviceScreenState extends State<DeviceScreen> {
                             spacing: 6,
                             children: [
                               Text(
-                                isThisConnected ?'Conectado' : 'Desconectado',
+                                isThisConnected ? 'Conectado' : 'Desconectado',
                                 style: AppTextStyles.body.copyWith(
-                                  color: isThisConnected ? AppColors.teal500 : AppColors.rose500,
+                                  color:
+                                      isThisConnected
+                                          ? AppColors.teal500
+                                          : AppColors.rose500,
                                 ),
                               ),
                               Container(
                                 height: 9,
                                 width: 9,
                                 decoration: BoxDecoration(
-                                  color: isThisConnected ? AppColors.teal500 : AppColors.rose500,
+                                  color:
+                                      isThisConnected
+                                          ? AppColors.teal500
+                                          : AppColors.rose500,
                                   borderRadius: BorderRadius.circular(100),
                                 ),
                               ),
@@ -189,47 +198,48 @@ class _DeviceScreenState extends State<DeviceScreen> {
                     ],
                   ),
                 ),
-                isThisConnected ? Column(
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                isThisConnected
+                    ? Column(
                       children: [
-                        Text(
-                          'Nome do Dispositivo',
-                          style: AppTextStyles.bold.copyWith(
-                            color: AppColors.gray900,
-                          ),
-                        ),
-                        CustomTextField(
-                          hintText: 'Sonoris v1.23.9',
-                          fullWidth: true,
-                        ),
-                      ],
-                    ),
-
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Modo de funcionamento',
-                          style: AppTextStyles.bold.copyWith(
-                            color: AppColors.gray900,
-                          ),
-                        ),
-                        CustomTextField(
-                          isDropdown: true,
-                          fullWidth: true,
-                          dropdownOptions: [
-                            'Transcrição + Respostas Rápidas',
-                            'Apenas Transcrição',
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Nome do Dispositivo',
+                              style: AppTextStyles.bold.copyWith(
+                                color: AppColors.gray900,
+                              ),
+                            ),
+                            CustomTextField(
+                              hintText: 'Sonoris v1.23.9',
+                              fullWidth: true,
+                            ),
                           ],
-                          selectedValue: 'Transcrição + Respostas Rápidas',
-                          onChanged: (value) {},
                         ),
-                      ],
-                    ),
 
-                    /*
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Modo de funcionamento',
+                              style: AppTextStyles.bold.copyWith(
+                                color: AppColors.gray900,
+                              ),
+                            ),
+                            CustomTextField(
+                              isDropdown: true,
+                              fullWidth: true,
+                              dropdownOptions: [
+                                'Transcrição + Respostas Rápidas',
+                                'Apenas Transcrição',
+                              ],
+                              selectedValue: 'Transcrição + Respostas Rápidas',
+                              onChanged: (value) {},
+                            ),
+                          ],
+                        ),
+
+                        /*
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   spacing: 6,
@@ -302,40 +312,206 @@ class _DeviceScreenState extends State<DeviceScreen> {
                   ],
                 ),
                 */
-                    CustomSlider(
-                      label: 'Entrar em Standby após',
-                      value: _standbyValue,
-                      min: 1,
-                      max: 60,
-                      onChanged: (value) => setState(() => _standbyValue = value),
-                      valueLabel: '${_standbyValue.round()} minutos sem fala',
-                    ),
+                        CustomSlider(
+                          label: 'Entrar em Standby após',
+                          value: _standbyValue,
+                          min: 1,
+                          max: 60,
+                          onChanged:
+                              (value) => setState(() => _standbyValue = value),
+                          valueLabel:
+                              '${_standbyValue.round()} minutos sem fala',
+                        ),
 
-                    CustomSlider(
-                      label: 'Tempo entre conversas',
-                      value: _conversaValue,
-                      min: 1,
-                      max: 60,
-                      onChanged: (value) => setState(() => _conversaValue = value),
-                      valueLabel: '${_conversaValue.round()} minutos',
-                    ),
+                        CustomSlider(
+                          label: 'Tempo entre conversas',
+                          value: _conversaValue,
+                          min: 1,
+                          max: 60,
+                          onChanged:
+                              (value) => setState(() => _conversaValue = value),
+                          valueLabel: '${_conversaValue.round()} minutos',
+                        ),
 
-                    CustomSlider(
-                      label: 'Deletar conversas não salvas após',
-                      value: _deletarValue,
-                      min: 1,
-                      max: 100,
-                      onChanged: (value) => setState(() => _deletarValue = value),
-                      valueLabel: '${_deletarValue.round()} dias',
-                    ),
-                  ],
-                )  : Column(
-                  children: [
-                    // TODO: fazer a conexão por essa tela
-                    Text('Tela de conexão')
-                  ],
-                )
+                        CustomSlider(
+                          label: 'Deletar conversas não salvas após',
+                          value: _deletarValue,
+                          min: 1,
+                          max: 100,
+                          onChanged:
+                              (value) => setState(() => _deletarValue = value),
+                          valueLabel: '${_deletarValue.round()} dias',
+                        ),
+                      ],
+                    )
+                    : Column(
+                      spacing: 4,
+                      children: [
+                        Text(
+                            'Selecione seu dispositivo:',
+                            style: AppTextStyles.bold,
+                          ),
+                        Column(
+                          spacing: 6,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            StreamBuilder<bool>(
+                              stream: FlutterBluePlus.isScanning,
+                              initialData: false,
+                              builder: (c, snapshot) {
+                                if (snapshot.data!) {
+                                  return CustomButton(
+                                    onPressed: () => FlutterBluePlus.stopScan(),
+                                    text: 'Parar',
+                                  );
+                                } else {
+                                  return CustomButton(
+                                    onPressed:
+                                        () => FlutterBluePlus.startScan(
+                                          timeout: const Duration(seconds: 25),
+                                        ),
+                                    text: 'Procurar',
+                                  );
+                                }
+                              },
+                            ),
+                            Column(
+                              children: [
+                                StreamBuilder<List<ScanResult>>(
+                                  stream: FlutterBluePlus.scanResults,
+                                  initialData: const [],
+                                  builder: (c, snapshot) {
+                                    List<ScanResult> scanresults =
+                                        snapshot.data!;
+                                    List<ScanResult> templist = [];
+                                    for (var element in scanresults) {
+                                      if (element.device.platformName != "") {
+                                        templist.add(element);
+                                      }
+                                    }
 
+                                    return SizedBox(
+                                      height: 190,
+                                      child: ListView.builder(
+                                        itemCount: templist.length,
+                                        itemBuilder: (context, index) {
+                                          return Container(
+                                            padding: const EdgeInsets.symmetric(
+                                              horizontal: 10,
+                                              vertical: 12,
+                                            ),
+                                            decoration: BoxDecoration(
+                                              color: AppColors.white100,
+                                              borderRadius:
+                                                  BorderRadius.circular(14),
+                                              boxShadow: [
+                                                BoxShadow(
+                                                  color: Colors.black.withAlpha(
+                                                    18,
+                                                  ),
+                                                  blurRadius: 18.5,
+                                                  spreadRadius: 1,
+                                                  offset: const Offset(0, 6),
+                                                ),
+                                              ],
+                                            ),
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Row(
+                                                  children: [
+                                                    SizedBox(
+                                                      width: 30,
+                                                      child: Image.asset(
+                                                        'assets/images/Icon.png',
+                                                        fit: BoxFit.contain,
+                                                      ),
+                                                    ),
+                                                    Text(
+                                                      templist[index]
+                                                          .device
+                                                          .platformName,
+                                                      style: AppTextStyles.body,
+                                                    ),
+                                                  ],
+                                                ),
+                                                CustomButton(
+                                                  text:
+                                                      _manager
+                                                                  .connectedDevice
+                                                                  ?.id ==
+                                                              templist[index]
+                                                                  .device
+                                                                  .id
+                                                          ? (_connState ==
+                                                                  BluetoothConnectionState
+                                                                      .connected
+                                                              ? "Selecionado"
+                                                              : "Conectando")
+                                                          : "Conectar",
+                                                  onPressed: () async {
+                                                    final dev =
+                                                        templist[index].device;
+                                                    showDialog(
+                                                      context: context,
+                                                      barrierDismissible: false,
+                                                      builder:
+                                                          (_) => const Center(
+                                                            child:
+                                                                CircularProgressIndicator(),
+                                                          ),
+                                                    );
+
+                                                    try {
+                                                      await BluetoothManager()
+                                                          .connect(
+                                                            dev,
+                                                            autoReconnect: true,
+                                                          );
+
+                                                      if (Navigator.of(
+                                                        context,
+                                                      ).canPop())
+                                                        Navigator.of(
+                                                          context,
+                                                        ).pop();
+                                                      // Opcional: mostrar sucesso ou atualizar a tela
+                                                      setState(() {});
+                                                    } catch (e) {
+                                                      if (Navigator.of(
+                                                        context,
+                                                      ).canPop())
+                                                        Navigator.of(
+                                                          context,
+                                                        ).pop();
+                                                      ScaffoldMessenger.of(
+                                                        context,
+                                                      ).showSnackBar(
+                                                        SnackBar(
+                                                          content: Text(
+                                                            'Falha ao conectar/enviar START: ${e.toString()}',
+                                                          ),
+                                                        ),
+                                                      );
+                                                    }
+                                                  },
+                                                ),
+                                              ],
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
               ],
             ),
           ),

@@ -125,8 +125,12 @@ class _AnswerCategoryScreenState extends State<AnswerCategoryScreen> {
                         title: doc['texto'] ?? '',
                         onPressed: () {},
                         onIconPressed: () => _deleteResponse(doc.id),
-                                                onDragIconPressed: () {
-                          _showEditResponseDialog(context, doc.id, doc['texto'] ?? '');
+                        onDragIconPressed: () {
+                          _showEditResponseDialog(
+                            context,
+                            doc.id,
+                            doc['texto'] ?? '',
+                          );
                         },
                       ),
                     CustomButton(
@@ -241,46 +245,55 @@ class _AnswerCategoryScreenState extends State<AnswerCategoryScreen> {
           ),
     );
   }
-  
 
-  void _showEditResponseDialog(BuildContext context, String respostaId, String textoAtual) {
+  void _showEditResponseDialog(
+    BuildContext context,
+    String respostaId,
+    String textoAtual,
+  ) {
     final controller = TextEditingController(text: textoAtual);
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-        title: Text('Editar Resposta', style: AppTextStyles.h3.copyWith(color: AppColors.blue500)),
-        content: CustomTextField(
-          hintText: 'Texto da resposta',
-          controller: controller,
-          fullWidth: true,
-        ),
-        actions: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              CustomButton(
-                text: 'Cancelar',
-                color: AppColors.rose500,
-                onPressed: () => Navigator.of(context).pop(),
-              ),
-              CustomButton(
-                text: 'Salvar',
-                onPressed: () async {
-                  if (_user != null && controller.text.isNotEmpty) {
-                    await _categoriaRef
-                        .doc(widget.categoriaId)
-                        .collection('Respostas')
-                        .doc(respostaId)
-                        .update({'texto': controller.text});
-                    if (mounted) Navigator.of(context).pop();
-                  }
-                },
+      builder:
+          (context) => AlertDialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(15),
+            ),
+            title: Text(
+              'Editar Resposta',
+              style: AppTextStyles.h3.copyWith(color: AppColors.blue500),
+            ),
+            content: CustomTextField(
+              hintText: 'Texto da resposta',
+              controller: controller,
+              fullWidth: true,
+            ),
+            actions: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  CustomButton(
+                    text: 'Cancelar',
+                    color: AppColors.rose500,
+                    onPressed: () => Navigator.of(context).pop(),
+                  ),
+                  CustomButton(
+                    text: 'Salvar',
+                    onPressed: () async {
+                      if (_user != null && controller.text.isNotEmpty) {
+                        await _categoriaRef
+                            .doc(widget.categoriaId)
+                            .collection('Respostas')
+                            .doc(respostaId)
+                            .update({'texto': controller.text});
+                        if (mounted) Navigator.of(context).pop();
+                      }
+                    },
+                  ),
+                ],
               ),
             ],
-          )
-        ],
-      ),
+          ),
     );
   }
 
@@ -301,7 +314,8 @@ class _AnswerCategoryScreenState extends State<AnswerCategoryScreen> {
     if (_user == null) return;
     try {
       final categoriaRef = _categoriaRef.doc(widget.categoriaId);
-      final respostasSnapshot = await categoriaRef.collection('Respostas').get();
+      final respostasSnapshot =
+          await categoriaRef.collection('Respostas').get();
       final batch = FirebaseFirestore.instance.batch();
       for (final doc in respostasSnapshot.docs) {
         batch.delete(doc.reference);

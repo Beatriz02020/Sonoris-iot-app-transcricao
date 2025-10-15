@@ -171,9 +171,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
                           // Validação de data real
                           final parts = value.split('/');
-                          final dia = int.tryParse(parts[0] ?? '');
-                          final mes = int.tryParse(parts[1] ?? '');
-                          final ano = int.tryParse(parts[2] ?? '');
+                          final dia = int.tryParse(parts[0]);
+                          final mes = int.tryParse(parts[1]);
+                          final ano = int.tryParse(parts[2]);
                           if (dia == null || mes == null || ano == null) {
                             return 'Data inválida.';
                           }
@@ -183,7 +183,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           // Dias máximos por mês
                           final diasPorMes = <int>[
                             31, // Janeiro
-                            (ano % 4 == 0 && (ano % 100 != 0 || ano % 400 == 0)) ? 29 : 28, // Fevereiro
+                            (ano % 4 == 0 && (ano % 100 != 0 || ano % 400 == 0))
+                                ? 29
+                                : 28, // Fevereiro
                             31, // Março
                             30, // Abril
                             31, // Maio

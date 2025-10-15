@@ -1,15 +1,15 @@
+import 'dart:async';
+import 'dart:io' show Platform;
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_blue_plus/flutter_blue_plus.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:sonoris/components/customButton.dart';
 import 'package:sonoris/screens/initial/finished_screen.dart';
+import 'package:sonoris/services/bluetooth_manager.dart';
 import 'package:sonoris/theme/colors.dart';
 import 'package:sonoris/theme/text_styles.dart';
-import 'dart:async';
-import 'dart:convert';
-import 'dart:io' show Platform;
-import 'package:sonoris/services/bluetooth_manager.dart';
-import 'package:permission_handler/permission_handler.dart';
-import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 
 // TODO: Filtrar apenas dispositivos Sonoris
 
@@ -32,7 +32,6 @@ class _ConnectionScreenState extends State<ConnectionScreen> {
 
   Future<bool> getPermissions() async {
     if (Platform.isAndroid) {
-      final androidInfo = await Permission.bluetoothScan.status;
 
       final statuses =
           await [
@@ -207,31 +206,56 @@ class _ConnectionScreenState extends State<ConnectionScreen> {
                                       ],
                                     ),
                                     CustomButton(
-                                      text: _manager.connectedDevice?.id == templist[index].device.id
-                                          ? (_connState == BluetoothConnectionState.connected ? "Selecionado" : "Conectando")
-                                          : "Conectar",
+                                      text:
+                                          _manager.connectedDevice?.id ==
+                                                  templist[index].device.id
+                                              ? (_connState ==
+                                                      BluetoothConnectionState
+                                                          .connected
+                                                  ? "Selecionado"
+                                                  : "Conectando")
+                                              : "Conectar",
                                       onPressed: () async {
                                         final dev = templist[index].device;
                                         // mostra loading (opcional)
                                         showDialog(
                                           context: context,
                                           barrierDismissible: false,
-                                          builder: (_) => const Center(child: CircularProgressIndicator()),
+                                          builder:
+                                              (_) => const Center(
+                                                child:
+                                                    CircularProgressIndicator(),
+                                              ),
                                         );
 
                                         try {
                                           // conecte e aguarde até o manager ter enviado START
-                                          await BluetoothManager().connect(dev, autoReconnect: true);
+                                          await BluetoothManager().connect(
+                                            dev,
+                                            autoReconnect: true,
+                                          );
 
                                           // se chegou aqui, START foi enviado com sucesso -> navega
-                                          Navigator.of(context).pop(); // fecha o dialog
+                                          Navigator.of(
+                                            context,
+                                          ).pop(); // fecha o dialog
                                           Navigator.of(context).pushReplacement(
-                                            MaterialPageRoute(builder: (_) => const FinishedScreen()),
+                                            MaterialPageRoute(
+                                              builder:
+                                                  (_) => const FinishedScreen(),
+                                            ),
                                           );
                                         } catch (e) {
-                                          if (Navigator.of(context).canPop()) Navigator.of(context).pop();
-                                          ScaffoldMessenger.of(context).showSnackBar(
-                                            SnackBar(content: Text('Falha ao conectar/enviar START: ${e.toString()}')),
+                                          if (Navigator.of(context).canPop())
+                                            Navigator.of(context).pop();
+                                          ScaffoldMessenger.of(
+                                            context,
+                                          ).showSnackBar(
+                                            SnackBar(
+                                              content: Text(
+                                                'Falha ao conectar/enviar START: ${e.toString()}',
+                                              ),
+                                            ),
                                           );
                                         }
                                       },

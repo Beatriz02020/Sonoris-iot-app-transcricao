@@ -37,9 +37,10 @@ class Usuario {
       dataNasc: (map['DataNasc'] as Timestamp).toDate(),
       email: map['Email'] ?? '',
       fotoUrl: map['Foto_url'] ?? map['foto_url'],
-      criadoEm: map['Criado_em'] != null
-          ? (map['Criado_em'] as Timestamp).toDate()
-          : map['criado_em'] != null
+      criadoEm:
+          map['Criado_em'] != null
+              ? (map['Criado_em'] as Timestamp).toDate()
+              : map['criado_em'] != null
               ? (map['criado_em'] as Timestamp).toDate()
               : null,
     );
