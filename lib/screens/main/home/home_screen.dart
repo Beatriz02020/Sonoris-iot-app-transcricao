@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -26,6 +27,9 @@ class _HomeScreenState extends State<HomeScreen> {
   BluetoothConnectionState _connState = BluetoothConnectionState.disconnected;
 
   String _userName = ""; // Nome do usuário
+  String? _photoUrl; // Foto do usuário
+  Stream<DocumentSnapshot<Map<String, dynamic>>>? _userStream;
+  StreamSubscription<DocumentSnapshot<Map<String, dynamic>>>? _userSub;
 
   @override
   void initState() {
@@ -44,21 +48,31 @@ class _HomeScreenState extends State<HomeScreen> {
     final user = FirebaseAuth.instance.currentUser;
 
     if (user != null) {
-      final snapshot =
-          await FirebaseFirestore.instance
-              .collection("Usuario")
-              .doc(user.uid)
-              .get();
+      // ouça as mudanças do usuário (foto e nome) em tempo real
+      _userStream = FirebaseFirestore.instance
+          .collection("Usuario")
+          .doc(user.uid)
+          .snapshots();
 
-      if (snapshot.exists) {
-        final data = snapshot.data()!;
-        final primeiroNome = (data['Nome'] ?? '').toString().split(' ').first;
-
-        setState(() {
-          _userName = primeiroNome;
-        });
-      }
+      _userSub = _userStream!.listen((snapshot) {
+        if (!mounted) return;
+        if (snapshot.exists) {
+          final data = snapshot.data()!;
+          final primeiroNome = (data['Nome'] ?? '').toString().split(' ').first;
+          final foto = (data['Foto_url'] ?? '')?.toString();
+          setState(() {
+            _userName = primeiroNome;
+            _photoUrl = (foto != null && foto.isNotEmpty) ? foto : null;
+          });
+        }
+      });
     }
+  }
+
+  @override
+  void dispose() {
+    _userSub?.cancel();
+    super.dispose();
   }
 
   @override
@@ -105,7 +119,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 children: [
                   CircleAvatar(
                     radius: 24,
-                    backgroundImage: AssetImage('assets/images/User.png'),
+                    backgroundImage: const AssetImage('assets/images/User.png'),
+                    foregroundImage:
+                        _photoUrl != null ? NetworkImage(_photoUrl!) : null,
                   ),
                   Text(
                     _userName.isNotEmpty ? _userName : "Carregando...",

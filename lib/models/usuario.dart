@@ -31,10 +31,26 @@ class Usuario {
   }
 
   factory Usuario.fromMap(Map<String, dynamic> map) {
+    DateTime parseDataNasc(dynamic value) {
+      if (value is Timestamp) return value.toDate();
+      if (value is String) {
+        final parts = value.split('/');
+        if (parts.length == 3) {
+          final d = int.tryParse(parts[0]);
+          final m = int.tryParse(parts[1]);
+          final y = int.tryParse(parts[2]);
+          if (d != null && m != null && y != null) {
+            return DateTime(y, m, d);
+          }
+        }
+      }
+      // fallback: agora
+      return DateTime.now();
+    }
     return Usuario(
       uid: map['uid'] ?? '',
       nome: map['Nome'] ?? '',
-      dataNasc: (map['DataNasc'] as Timestamp).toDate(),
+      dataNasc: parseDataNasc(map['DataNasc']),
       email: map['Email'] ?? '',
       fotoUrl: map['Foto_url'] ?? map['foto_url'],
       criadoEm:

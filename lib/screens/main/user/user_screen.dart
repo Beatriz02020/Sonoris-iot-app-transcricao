@@ -1,9 +1,12 @@
+import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:sonoris/components/customButton.dart';
 import 'package:sonoris/components/customTextField.dart';
+import 'package:sonoris/services/auth_service.dart';
 import 'package:sonoris/theme/colors.dart';
 import 'package:sonoris/theme/text_styles.dart';
 
@@ -23,6 +26,10 @@ class _UserScreenState extends State<UserScreen> {
       TextEditingController(); // Novo controller para email
 
   String _userName = ""; // nome do usuário
+  String? _photoUrl; // url da foto do usuário
+  String? _bannerUrl; // url do banner do usuário
+  bool _updatingPhoto = false;
+  bool _updatingBanner = false;
   final _birthDateFormatter = _BirthDateInputFormatter();
 
   @override
@@ -58,6 +65,118 @@ class _UserScreenState extends State<UserScreen> {
           _nameController.text = nomeCompleto;
           _birthDateController.text = dataNasc;
           _emailController.text = user.email ?? ''; // Preenche o email
+          final foto = (data['Foto_url'] ?? '')?.toString();
+          _photoUrl = (foto != null && foto.isNotEmpty) ? foto : null;
+          final banner = (data['banner_url'] ?? '')?.toString();
+          _bannerUrl = (banner != null && banner.isNotEmpty) ? banner : null;
+        });
+      }
+    }
+  }
+
+  Future<void> _pickAndUploadBanner() async {
+    final picker = ImagePicker();
+    final picked = await picker.pickImage(source: ImageSource.gallery, imageQuality: 85);
+    if (picked == null) return;
+    setState(() {
+      _updatingBanner = true;
+    });
+    try {
+      final url = await AuthService().updateBannerPhoto(File(picked.path));
+      if (!mounted) return;
+      setState(() {
+        _bannerUrl = url;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: AppColors.blue500,
+          duration: const Duration(seconds: 2),
+          behavior: SnackBarBehavior.floating,
+          margin: const EdgeInsets.all(10),
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(10)),
+          ),
+          content: const Text(
+            'Banner atualizado com sucesso!',
+            style: TextStyle(color: AppColors.white100),
+          ),
+        ),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: AppColors.rose500,
+          duration: const Duration(seconds: 3),
+          behavior: SnackBarBehavior.floating,
+          margin: const EdgeInsets.all(10),
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(10)),
+          ),
+          content: Text(
+            'Falha ao atualizar banner: $e',
+            style: const TextStyle(color: AppColors.white100),
+          ),
+        ),
+      );
+    } finally {
+      if (mounted) {
+        setState(() {
+          _updatingBanner = false;
+        });
+      }
+    }
+  }
+
+  Future<void> _pickAndUploadPhoto() async {
+    final picker = ImagePicker();
+    final picked = await picker.pickImage(source: ImageSource.gallery, imageQuality: 85);
+    if (picked == null) return;
+    setState(() {
+      _updatingPhoto = true;
+    });
+    try {
+      final url = await AuthService().updateProfilePhoto(File(picked.path));
+      if (!mounted) return;
+      setState(() {
+        _photoUrl = url;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: AppColors.blue500,
+          duration: const Duration(seconds: 2),
+          behavior: SnackBarBehavior.floating,
+          margin: const EdgeInsets.all(10),
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(10)),
+          ),
+          content: const Text(
+            'Foto atualizada com sucesso!',
+            style: TextStyle(color: AppColors.white100),
+          ),
+        ),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: AppColors.rose500,
+          duration: const Duration(seconds: 3),
+          behavior: SnackBarBehavior.floating,
+          margin: const EdgeInsets.all(10),
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(10)),
+          ),
+          content: Text(
+            'Falha ao atualizar foto: $e',
+            style: const TextStyle(color: AppColors.white100),
+          ),
+        ),
+      );
+    } finally {
+      if (mounted) {
+        setState(() {
+          _updatingPhoto = false;
         });
       }
     }
@@ -82,23 +201,54 @@ class _UserScreenState extends State<UserScreen> {
               Stack(
                 clipBehavior: Clip.none,
                 children: [
-                  Container(
-                    color: AppColors.blue200,
-                    width: double.infinity,
-                    height: 180,
-                    child: ClipRRect(
-                      child: Image.asset(
-                        'assets/images/BannerPerfil.jpg',
-                        fit: BoxFit.cover,
-                      ),
+                  GestureDetector(
+                    onTap: _updatingBanner ? null : _pickAndUploadBanner,
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        Container(
+                          color: AppColors.blue200,
+                          width: double.infinity,
+                          height: 180,
+                          child: ClipRRect(
+                            child: _bannerUrl != null
+                                ? Image.network(
+                                    _bannerUrl!,
+                                    fit: BoxFit.cover,
+                                  )
+                                : Image.asset(
+                                    'assets/images/BannerPerfil.jpg',
+                                    fit: BoxFit.cover,
+                                  ),
+                          ),
+                        ),
+                        if (_updatingBanner)
+                          Container(
+                            height: 180,
+                            color: Colors.black26,
+                            child: const Center(
+                              child: CircularProgressIndicator(
+                                valueColor: AlwaysStoppedAnimation(
+                                  AppColors.white100,
+                                ),
+                              ),
+                            ),
+                          ),
+                      ],
                     ),
                   ),
                   Positioned(
                     bottom: -50,
                     left: MediaQuery.of(context).size.width / 2 - 50,
-                    child: CircleAvatar(
-                      radius: 50,
-                      backgroundImage: AssetImage('assets/images/User.png'),
+                    child: GestureDetector(
+                      onTap: _updatingPhoto ? null : _pickAndUploadPhoto,
+                      child: CircleAvatar(
+                        radius: 50,
+                        backgroundImage:
+                            const AssetImage('assets/images/User.png'),
+                        foregroundImage:
+                            _photoUrl != null ? NetworkImage(_photoUrl!) : null,
+                      ),
                     ),
                   ),
                 ],
