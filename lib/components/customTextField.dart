@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sonoris/theme/colors.dart';
 import 'package:sonoris/theme/text_styles.dart';
+import 'dart:math' as math;
 
 class CustomTextField extends StatelessWidget {
   final String hintText;
@@ -45,6 +46,8 @@ class CustomTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bool isTall = verticalPadding > 24; // heurística para campo "alto"
+    final double tallBottomPad = math.max(7.0, verticalPadding * 2 - 7);
     OutlineInputBorder customBorder() {
       return OutlineInputBorder(
         borderRadius: BorderRadius.circular(15),
@@ -91,6 +94,9 @@ class CustomTextField extends StatelessWidget {
               inputFormatters: inputFormatters,
               onChanged: onChanged,
               enabled: enabled,
+              maxLines: 1,
+              textAlignVertical:
+                  verticalPadding > 10 ? TextAlignVertical.top : TextAlignVertical.center,
               decoration: InputDecoration(
                 border: customBorder(),
                 enabledBorder: customBorder(),
@@ -107,10 +113,12 @@ class CustomTextField extends StatelessWidget {
                         ? Icon(Icons.search, color: AppColors.gray500, size: 20)
                         : null,
                 suffixIcon: suffixIcon,
-                contentPadding: EdgeInsets.symmetric(
-                  vertical: verticalPadding,
-                  horizontal: 15,
-                ),
+        contentPadding: isTall
+          ? EdgeInsets.fromLTRB(15, 7, 15, tallBottomPad)
+                    : EdgeInsets.symmetric(
+                        vertical: verticalPadding,
+                        horizontal: 15,
+                      ),
               ),
             );
 

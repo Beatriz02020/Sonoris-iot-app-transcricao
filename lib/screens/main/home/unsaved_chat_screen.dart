@@ -5,6 +5,7 @@ import 'package:sonoris/theme/colors.dart';
 import 'package:sonoris/theme/text_styles.dart';
 
 import '../../../components/messageBubble.dart';
+import 'saving_chat_screen.dart';
 
 class UnsavedChatScreen extends StatefulWidget {
   const UnsavedChatScreen({super.key});
@@ -96,23 +97,33 @@ class _UnsavedChatScreenState extends State<UnsavedChatScreen> {
                 ),
               ],
             ),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.end,
-              spacing: 4,
-              children: [
-                SvgPicture.asset(
-                  "assets/images/SavedFill.svg",
-                  height: 28,
-                  colorFilter: ColorFilter.mode(
-                    AppColors.blue500,
-                    BlendMode.srcIn,
+            GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const SavingChatScreen(),
                   ),
-                ),
-                Text(
-                  "Salvar",
-                  style: AppTextStyles.body.copyWith(color: AppColors.blue500),
-                ),
-              ],
+                );
+              },
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                spacing: 4,
+                children: [
+                  SvgPicture.asset(
+                    "assets/images/SavedFill.svg",
+                    height: 28,
+                    colorFilter: ColorFilter.mode(
+                      AppColors.blue500,
+                      BlendMode.srcIn,
+                    ),
+                  ),
+                  Text(
+                    "Salvar",
+                    style: AppTextStyles.body.copyWith(color: AppColors.blue500),
+                  ),
+                ],
+              ),
             ),
           ],
         ),
