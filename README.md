@@ -11,7 +11,7 @@
 Sonoris é um aplicativo e dispositivo inovador, desenvolvido ao longo de 2025 em parceria com uma empresa, como parte do Trabalho de Conclusão de Curso (TCC) do curso de Desenvolvimento de Sistemas AMS da Etec da Zona Leste.
 
 <b> Dispositivo: </b> https://github.com/Chrb09/Sonoris-RaspberryPi <br>
-<b> Documentação: </b> https://github.com/Amanda093/PORTIFOLIO-2025-3DS
+<b> Documentação: </b> https://github.com/Beatriz02020/Sonoris-iot-app-transcricao/tree/documentation?tab=readme-ov-file
 
 ### 💻 Tecnologias
 
