@@ -261,7 +261,7 @@ class _UserScreenState extends State<UserScreen> {
                   bottom: 30,
                 ),
                 child: Column(
-                  spacing: 70,
+                  spacing: 45,
                   children: [
                     Column(
                       mainAxisAlignment: MainAxisAlignment.start,
@@ -386,6 +386,15 @@ class _UserScreenState extends State<UserScreen> {
                     Column(
                       spacing: 2,
                       children: [
+                        Text(
+                          'Para alterar foto ou banner, clique sobre eles.',
+                          style: AppTextStyles.medium.copyWith(
+                            fontSize: 15,
+                            color: AppColors.gray700,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+
                         CustomButton(
                           text: 'Salvar',
                           fullWidth: true,

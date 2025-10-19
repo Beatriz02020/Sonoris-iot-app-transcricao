@@ -24,6 +24,14 @@ class SonorisApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Sonoris App',
+      // Envolve toda a árvore de widgets do app com SafeArea
+      builder: (context, child) {
+        return SafeArea(
+          top: false, // Set to true se quiser evitar também a área do notch
+          bottom: true, // Evita sobreposição com a barra de navegação do sistema
+          child: child ?? const SizedBox.shrink(),
+        );
+      },
       // Use a propriedade 'home' para definir o widget inicial.
       // Ele vai decidir qual tela mostrar.
       home: const AuthCheck(),

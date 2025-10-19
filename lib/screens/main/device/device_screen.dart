@@ -95,7 +95,7 @@ class _DeviceScreenState extends State<DeviceScreen> {
                         children: [
                           // nome do dispositivo
                           Text(
-                            'Sonoris v1.0',
+                            'Dispositivo Sonoris',
                             style: AppTextStyles.bold.copyWith(
                               color: AppColors.white100,
                             ),
@@ -140,25 +140,6 @@ class _DeviceScreenState extends State<DeviceScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'Bateria',
-                                style: AppTextStyles.body.copyWith(
-                                  color: AppColors.blue200,
-                                  height: 1,
-                                ),
-                              ),
-                              Text(
-                                '57%',
-                                style: AppTextStyles.bold.copyWith(
-                                  color: AppColors.white100,
-                                ),
-                              ),
-                            ],
-                          ),
-
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
                                 'Conversas',
                                 style: AppTextStyles.body.copyWith(
                                   color: AppColors.blue200,
@@ -166,7 +147,7 @@ class _DeviceScreenState extends State<DeviceScreen> {
                                 ),
                               ),
                               Text(
-                                '185',
+                                '0',
                                 style: AppTextStyles.bold.copyWith(
                                   color: AppColors.white100,
                                 ),
@@ -186,7 +167,7 @@ class _DeviceScreenState extends State<DeviceScreen> {
                                 ),
                               ),
                               Text(
-                                '1230h',
+                                '0h',
                                 style: AppTextStyles.bold.copyWith(
                                   color: AppColors.white100,
                                 ),
