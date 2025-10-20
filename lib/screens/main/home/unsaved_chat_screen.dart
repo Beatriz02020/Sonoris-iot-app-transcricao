@@ -52,8 +52,7 @@ class _UnsavedChatScreenState extends State<UnsavedChatScreen> {
               children: [
                 IconButton(
                   icon: const Icon(Icons.arrow_back),
-                  //TODO: fazer isso voltar para a tela anterior invés de sempre para a home
-                  onPressed: () => {Navigator.of(context).pushNamed('/')},
+                  onPressed: () => {Navigator.pop(context)},
                 ),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,

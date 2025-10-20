@@ -52,7 +52,7 @@ class _SavedChatScreenState extends State<SavedChatScreen> {
               children: [
                 IconButton(
                   icon: const Icon(Icons.arrow_back),
-                  onPressed: () => {Navigator.of(context).pushNamed('/')},
+                  onPressed: () => {Navigator.pop(context)},
                 ),
                 Stack(
                   children: [

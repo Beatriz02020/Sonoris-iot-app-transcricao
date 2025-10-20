@@ -27,39 +27,49 @@ class _BottomNavState extends State<BottomNav> {
     GlobalKey<NavigatorState>(),
   ];
 
-  late final List<Widget Function()> _pageFactories = [
-    () => HomeTabNavigator(
-      key: UniqueKey(),
-      navigatorKey: _navigatorKeys[0],
-      setBottomNavVisibility: _setBottomNavVisibility,
-    ),
-    () => SavedChatsTabNavigator(
-      key: UniqueKey(),
-      navigatorKey: _navigatorKeys[1],
-      setBottomNavVisibility: _setBottomNavVisibility,
-    ),
-    () => DeviceTabNavigator(
-      key: UniqueKey(),
-      navigatorKey: _navigatorKeys[2],
-      setBottomNavVisibility: _setBottomNavVisibility,
-    ),
-    () => UserTabNavigator(
-      key: UniqueKey(),
-      navigatorKey: _navigatorKeys[3],
-      setBottomNavVisibility: _setBottomNavVisibility,
-    ),
-  ];
+  late final List<Widget> _tabs;
+
+  @override
+  void initState() {
+    super.initState();
+    // Cria os navegadores de cada aba uma única vez para manter o histórico
+    _tabs = [
+      HomeTabNavigator(
+        key: UniqueKey(),
+        navigatorKey: _navigatorKeys[0],
+        setBottomNavVisibility: _setBottomNavVisibility,
+      ),
+      SavedChatsTabNavigator(
+        key: UniqueKey(),
+        navigatorKey: _navigatorKeys[1],
+        setBottomNavVisibility: _setBottomNavVisibility,
+      ),
+      DeviceTabNavigator(
+        key: UniqueKey(),
+        navigatorKey: _navigatorKeys[2],
+        setBottomNavVisibility: _setBottomNavVisibility,
+      ),
+      UserTabNavigator(
+        key: UniqueKey(),
+        navigatorKey: _navigatorKeys[3],
+        setBottomNavVisibility: _setBottomNavVisibility,
+      ),
+    ];
+  }
 
   void switchTab(int index) {
     _onItemTapped(index);
   }
 
-  // Função para gerar a página com uma UniqueKey
-  Widget _getPage(int index) {
-    return _pageFactories[index]();
-  }
-
   void _onItemTapped(int index) {
+    if (index == _selectedIndex) {
+      final nav = _navigatorKeys[index].currentState;
+      if (nav != null && nav.canPop()) {
+        nav.popUntil((route) => route.isFirst);
+      }
+      return;
+    }
+
     setState(() {
       _selectedIndex = index;
       _showBottomNav = true; // Sempre mostra ao mudar de aba
@@ -74,16 +84,45 @@ class _BottomNavState extends State<BottomNav> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      // Use apenas a página atual, com UniqueKey
-      body: _getPage(_selectedIndex),
-      bottomNavigationBar:
-          _showBottomNav
-              ? CustomBottomNavBar(
+    final currentNavigator = _navigatorKeys[_selectedIndex].currentState;
+    final bool canCurrentTabPop = currentNavigator?.canPop() ?? false;
+    final bool allowSystemPop = _selectedIndex == 0 && !canCurrentTabPop;
+
+    return PopScope(
+      canPop: allowSystemPop,
+      onPopInvokedWithResult: (didPop, result) async {
+        if (didPop) return; // o sistema já processou o pop (vai sair do app)
+
+        final nav = _navigatorKeys[_selectedIndex].currentState;
+        // Tenta voltar dentro da pilha da aba atual
+        if (nav != null && await nav.maybePop()) {
+          return;
+        }
+
+        // Se estamos na raiz de uma aba diferente da primeira,
+        // apenas troca para a primeira aba.
+        if (_selectedIndex != 0) {
+          setState(() {
+            _selectedIndex = 0;
+            _showBottomNav = true;
+          });
+          return;
+        }
+        // Caso contrário (primeira aba na raiz), allowSystemPop == true
+        // e o sistema fará o pop (fechar app) em uma próxima tentativa.
+      },
+      child: Scaffold(
+        body: IndexedStack(
+          index: _selectedIndex,
+          children: _tabs,
+        ),
+        bottomNavigationBar: _showBottomNav
+            ? CustomBottomNavBar(
                 selectedIndex: _selectedIndex,
                 onItemTapped: _onItemTapped,
               )
-              : null,
+            : null,
+      ),
     );
   }
 }
