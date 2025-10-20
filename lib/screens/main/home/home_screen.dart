@@ -49,10 +49,11 @@ class _HomeScreenState extends State<HomeScreen> {
 
     if (user != null) {
       // ouça as mudanças do usuário (foto e nome) em tempo real
-      _userStream = FirebaseFirestore.instance
-          .collection("Usuario")
-          .doc(user.uid)
-          .snapshots();
+      _userStream =
+          FirebaseFirestore.instance
+              .collection("Usuario")
+              .doc(user.uid)
+              .snapshots();
 
       _userSub = _userStream!.listen((snapshot) {
         if (!mounted) return;
@@ -144,111 +145,114 @@ class _HomeScreenState extends State<HomeScreen> {
                 child:
                     isThisConnected
                         ? Column(
-                      spacing: 8,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            // nome do dispositivo
-                            Row(
-                              spacing: 8,
-                              children: [
-                                SizedBox(
-                                  width: 32,
-                                  child: Image.asset(
-                                    'assets/images/Logo.png',
-                                    fit:
-                                    BoxFit
-                                        .contain, // mantém o aspecto original
-                                  ),
-                                ),
-                                Text(
-                                  'Sonoris v1.0',
-                                  style: AppTextStyles.bold.copyWith(
-                                    color: AppColors.white100,
-                                  ),
-                                ),
-                              ],
-                            ),
-
-
-                            // bateria do dispositivo
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              spacing: 6,
-                              children: [
-                                Text(
-                                  isThisConnected ? 'Conectado' : 'Desconectado',
-                                  style: AppTextStyles.body.copyWith(
-                                    color:
-                                    isThisConnected
-                                        ? AppColors.teal500
-                                        : AppColors.rose500,
-                                  ),
-                                ),
-                                Container(
-                                  height: 9,
-                                  width: 9,
-                                  decoration: BoxDecoration(
-                                    color:
-                                    isThisConnected
-                                        ? AppColors.teal500
-                                        : AppColors.rose500,
-                                    borderRadius: BorderRadius.circular(100),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           spacing: 8,
                           children: [
-                            // quantidade de conversas
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Text(
-                                  'Conversas',
-                                  style: AppTextStyles.body.copyWith(
-                                    color: AppColors.blue200,
-                                    height: 1,
-                                  ),
+                                // nome do dispositivo
+                                Row(
+                                  spacing: 8,
+                                  children: [
+                                    SizedBox(
+                                      width: 32,
+                                      child: Image.asset(
+                                        'assets/images/Logo.png',
+                                        fit:
+                                            BoxFit
+                                                .contain, // mantém o aspecto original
+                                      ),
+                                    ),
+                                    Text(
+                                      'Sonoris v1.0',
+                                      style: AppTextStyles.bold.copyWith(
+                                        color: AppColors.white100,
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                                Text(
-                                  '185',
-                                  style: AppTextStyles.bold.copyWith(
-                                    color: AppColors.white100,
-                                  ),
+
+                                // bateria do dispositivo
+                                Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  spacing: 6,
+                                  children: [
+                                    Text(
+                                      isThisConnected
+                                          ? 'Conectado'
+                                          : 'Desconectado',
+                                      style: AppTextStyles.body.copyWith(
+                                        color:
+                                            isThisConnected
+                                                ? AppColors.teal500
+                                                : AppColors.rose500,
+                                      ),
+                                    ),
+                                    Container(
+                                      height: 9,
+                                      width: 9,
+                                      decoration: BoxDecoration(
+                                        color:
+                                            isThisConnected
+                                                ? AppColors.teal500
+                                                : AppColors.rose500,
+                                        borderRadius: BorderRadius.circular(
+                                          100,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ],
                             ),
 
-                            // tempo ativo no app
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              spacing: 8,
                               children: [
-                                Text(
-                                  'Tempo Ativo',
-                                  style: AppTextStyles.body.copyWith(
-                                    color: AppColors.blue200,
-                                    height: 1,
-                                  ),
+                                // quantidade de conversas
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'Conversas',
+                                      style: AppTextStyles.body.copyWith(
+                                        color: AppColors.blue200,
+                                        height: 1,
+                                      ),
+                                    ),
+                                    Text(
+                                      '185',
+                                      style: AppTextStyles.bold.copyWith(
+                                        color: AppColors.white100,
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                                Text(
-                                  '1230h',
-                                  style: AppTextStyles.bold.copyWith(
-                                    color: AppColors.white100,
-                                  ),
+
+                                // tempo ativo no app
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'Tempo Ativo',
+                                      style: AppTextStyles.body.copyWith(
+                                        color: AppColors.blue200,
+                                        height: 1,
+                                      ),
+                                    ),
+                                    Text(
+                                      '1230h',
+                                      style: AppTextStyles.bold.copyWith(
+                                        color: AppColors.white100,
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ],
                             ),
                           ],
-                        ),
-                      ],
-                    )
+                        )
                         : Text(
                           'Nenhum dispositivo conectado',
                           style: AppTextStyles.body.copyWith(

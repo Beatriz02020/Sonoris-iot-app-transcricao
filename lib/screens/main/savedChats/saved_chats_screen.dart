@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sonoris/components/chatSelect.dart';
@@ -18,6 +19,53 @@ class _SavedChatsScreenState extends State<SavedChatsScreen> {
   // Controlador e estado da pesquisa
   final TextEditingController _searchController = TextEditingController();
   String _query = '';
+
+  // Novo: filtro selecionado (null = nenhum)
+  String? _selectedFilter;
+
+  // Lista de filtros com label e asset e cor (usada para construir a UI)
+  final List<Map<String, dynamic>> _filters = [
+    {
+      'key': 'Favoritos',
+      'asset': 'assets/images/icons/Favoritos.png',
+      'color': AppColors.amber600,
+    },
+    {
+      'key': 'Estudos',
+      'asset': 'assets/images/icons/Estudos.png',
+      'color': AppColors.blue600,
+    },
+    {
+      'key': 'Trabalho',
+      'asset': 'assets/images/icons/Trabalho.png',
+      'color': AppColors.teal600,
+    },
+    {
+      'key': 'Pessoal',
+      'asset': 'assets/images/icons/Pessoal.png',
+      'color': AppColors.rose600,
+    },
+    {
+      'key': 'Reuniao',
+      'asset': 'assets/images/icons/Reuniao.png',
+      'color': AppColors.green600,
+    },
+    {
+      'key': 'Teams',
+      'asset': 'assets/images/icons/Teams.png',
+      'color': AppColors.indigo600,
+    },
+    {
+      'key': 'Outros',
+      'asset': 'assets/images/icons/Outros.png',
+      'color': AppColors.gray700,
+    },
+    {
+      'key': 'Customizado',
+      'asset': 'assets/images/icons/Customizado.png',
+      'color': AppColors.gray700,
+    },
+  ];
 
   // Lista estática temporária de conversas salvas (mock). Em futura integração,
   // isto pode vir do Firestore ou outra fonte dinâmica.
@@ -62,10 +110,29 @@ class _SavedChatsScreenState extends State<SavedChatsScreen> {
     ),
   ];
 
+  // Atualizado: aplica filtro por ícone/favorito e por query de texto combinados
   List<_SavedChat> get _filteredChats {
-    if (_query.isEmpty) return _allChats;
-    final q = _query.toLowerCase();
-    return _allChats.where((c) => c.nome.toLowerCase().contains(q)).toList();
+    Iterable<_SavedChat> list = _allChats;
+
+    // Aplicar filtro de categoria/favorito primeiro (se houver)
+    if (_selectedFilter != null && _selectedFilter!.isNotEmpty) {
+      if (_selectedFilter == 'Favoritos') {
+        list = list.where((c) => c.favorito == true);
+      } else {
+        final key = _selectedFilter!;
+        list = list.where(
+          (c) => (c.image ?? '').toLowerCase() == key.toLowerCase(),
+        );
+      }
+    }
+
+    // Aplicar pesquisa de texto (sempre combinada)
+    if (_query.isNotEmpty) {
+      final q = _query.toLowerCase();
+      list = list.where((c) => c.nome.toLowerCase().contains(q));
+    }
+
+    return list.toList();
   }
 
   @override
@@ -153,123 +220,65 @@ class _SavedChatsScreenState extends State<SavedChatsScreen> {
                         scrollDirection: Axis.horizontal,
                         children: [
                           Row(
-                            spacing: 16,
+                            spacing: 6,
                             children: [
-                              // 1
-                              Column(
-                                children: [
-                                  Image.asset(
-                                    'assets/images/icons/Favoritos.png',
-                                  ),
-                                  Text(
-                                    'Favoritos',
-                                    style: AppTextStyles.bold.copyWith(
-                                      color: AppColors.amber600,
+                              // Construir dinamicamente os filtros a partir de _filters
+                              for (var f in _filters)
+                                GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      // alterna: desmarca se clicar de novo
+                                      if (_selectedFilter == f['key']) {
+                                        _selectedFilter = null;
+                                      } else {
+                                        _selectedFilter = f['key'] as String;
+                                      }
+                                    });
+                                  },
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 6,
+                                    ),
+                                    // estilo visual para filtro selecionado
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: Column(
+                                      children: [
+                                        Opacity(
+                                          opacity:
+                                              _selectedFilter == null ||
+                                                      _selectedFilter ==
+                                                          f['key']
+                                                  ? 1.0
+                                                  : 0.5,
+                                          child: Image.asset(
+                                            f['asset'] as String,
+                                            width: 64,
+                                            height: 64,
+                                          ),
+                                        ),
+                                        Opacity(
+                                          opacity:
+                                              _selectedFilter == null ||
+                                                      _selectedFilter ==
+                                                          f['key']
+                                                  ? 1.0
+                                                  : 0.5,
+                                          child: Text(
+                                            f['key'] as String,
+                                            style: AppTextStyles.bold.copyWith(
+                                              color: f['color'] as Color,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ),
-                                ],
-                              ),
+                                ),
 
-                              // 2
-                              Column(
-                                children: [
-                                  Image.asset(
-                                    'assets/images/icons/Estudos.png',
-                                  ),
-                                  Text(
-                                    'Estudos',
-                                    style: AppTextStyles.bold.copyWith(
-                                      color: AppColors.blue600,
-                                    ),
-                                  ),
-                                ],
-                              ),
-
-                              // 3
-                              Column(
-                                children: [
-                                  Image.asset(
-                                    'assets/images/icons/Trabalho.png',
-                                  ),
-                                  Text(
-                                    'Trabalhos',
-                                    style: AppTextStyles.bold.copyWith(
-                                      color: AppColors.teal600,
-                                    ),
-                                  ),
-                                ],
-                              ),
-
-                              // 4
-                              Column(
-                                children: [
-                                  Image.asset(
-                                    'assets/images/icons/Pessoal.png',
-                                  ),
-                                  Text(
-                                    'Pessoal',
-                                    style: AppTextStyles.bold.copyWith(
-                                      color: AppColors.rose600,
-                                    ),
-                                  ),
-                                ],
-                              ),
-
-                              // 5
-                              Column(
-                                children: [
-                                  Image.asset(
-                                    'assets/images/icons/Reuniao.png',
-                                  ),
-                                  Text(
-                                    'Reunião',
-                                    style: AppTextStyles.bold.copyWith(
-                                      color: AppColors.green600,
-                                    ),
-                                  ),
-                                ],
-                              ),
-
-                              // 6
-                              Column(
-                                children: [
-                                  Image.asset('assets/images/icons/Teams.png'),
-                                  Text(
-                                    'Teams',
-                                    style: AppTextStyles.bold.copyWith(
-                                      color: AppColors.indigo600,
-                                    ),
-                                  ),
-                                ],
-                              ),
-
-                              // 7
-                              Column(
-                                children: [
-                                  Image.asset('assets/images/icons/Outros.png'),
-                                  Text(
-                                    'Outros',
-                                    style: AppTextStyles.bold.copyWith(
-                                      color: AppColors.gray700,
-                                    ),
-                                  ),
-                                ],
-                              ),
-
-                              // 8
-                              Column(
-                                children: [
-                                  Image.asset(
-                                    'assets/images/icons/Customizado.png',
-                                  ),
-                                  Text(
-                                    'Customizado',
-                                    style: AppTextStyles.bold.copyWith(
-                                      color: AppColors.gray700,
-                                    ),
-                                  ),
-                                ],
-                              ),
+                              // Espaço final
+                              const SizedBox(width: 8),
                             ],
                           ),
                         ],
@@ -286,6 +295,7 @@ class _SavedChatsScreenState extends State<SavedChatsScreen> {
                     ),
                   ],
                 ),
+
                 GestureDetector(
                   onTap: () {
                     Navigator.push(

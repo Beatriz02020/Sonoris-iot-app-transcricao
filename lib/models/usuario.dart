@@ -47,6 +47,7 @@ class Usuario {
       // fallback: agora
       return DateTime.now();
     }
+
     return Usuario(
       uid: map['uid'] ?? '',
       nome: map['Nome'] ?? '',

@@ -28,7 +28,8 @@ class SonorisApp extends StatelessWidget {
       builder: (context, child) {
         return SafeArea(
           top: false, // Set to true se quiser evitar também a área do notch
-          bottom: true, // Evita sobreposição com a barra de navegação do sistema
+          bottom:
+              true, // Evita sobreposição com a barra de navegação do sistema
           child: child ?? const SizedBox.shrink(),
         );
       },

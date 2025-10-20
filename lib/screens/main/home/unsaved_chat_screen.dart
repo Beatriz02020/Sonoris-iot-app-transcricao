@@ -120,7 +120,9 @@ class _UnsavedChatScreenState extends State<UnsavedChatScreen> {
                   ),
                   Text(
                     "Salvar",
-                    style: AppTextStyles.body.copyWith(color: AppColors.blue500),
+                    style: AppTextStyles.body.copyWith(
+                      color: AppColors.blue500,
+                    ),
                   ),
                 ],
               ),

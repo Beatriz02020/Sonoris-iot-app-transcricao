@@ -329,9 +329,9 @@ class _DeviceScreenState extends State<DeviceScreen> {
                       spacing: 4,
                       children: [
                         Text(
-                            'Selecione seu dispositivo:',
-                            style: AppTextStyles.bold,
-                          ),
+                          'Selecione seu dispositivo:',
+                          style: AppTextStyles.bold,
+                        ),
                         Column(
                           spacing: 6,
                           crossAxisAlignment: CrossAxisAlignment.start,

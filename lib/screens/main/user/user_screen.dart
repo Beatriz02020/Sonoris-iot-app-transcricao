@@ -76,7 +76,10 @@ class _UserScreenState extends State<UserScreen> {
 
   Future<void> _pickAndUploadBanner() async {
     final picker = ImagePicker();
-    final picked = await picker.pickImage(source: ImageSource.gallery, imageQuality: 85);
+    final picked = await picker.pickImage(
+      source: ImageSource.gallery,
+      imageQuality: 85,
+    );
     if (picked == null) return;
     setState(() {
       _updatingBanner = true;
@@ -130,7 +133,10 @@ class _UserScreenState extends State<UserScreen> {
 
   Future<void> _pickAndUploadPhoto() async {
     final picker = ImagePicker();
-    final picked = await picker.pickImage(source: ImageSource.gallery, imageQuality: 85);
+    final picked = await picker.pickImage(
+      source: ImageSource.gallery,
+      imageQuality: 85,
+    );
     if (picked == null) return;
     setState(() {
       _updatingPhoto = true;
@@ -211,15 +217,16 @@ class _UserScreenState extends State<UserScreen> {
                           width: double.infinity,
                           height: 180,
                           child: ClipRRect(
-                            child: _bannerUrl != null
-                                ? Image.network(
-                                    _bannerUrl!,
-                                    fit: BoxFit.cover,
-                                  )
-                                : Image.asset(
-                                    'assets/images/BannerPerfil.jpg',
-                                    fit: BoxFit.cover,
-                                  ),
+                            child:
+                                _bannerUrl != null
+                                    ? Image.network(
+                                      _bannerUrl!,
+                                      fit: BoxFit.cover,
+                                    )
+                                    : Image.asset(
+                                      'assets/images/BannerPerfil.jpg',
+                                      fit: BoxFit.cover,
+                                    ),
                           ),
                         ),
                         if (_updatingBanner)
@@ -244,8 +251,9 @@ class _UserScreenState extends State<UserScreen> {
                       onTap: _updatingPhoto ? null : _pickAndUploadPhoto,
                       child: CircleAvatar(
                         radius: 50,
-                        backgroundImage:
-                            const AssetImage('assets/images/User.png'),
+                        backgroundImage: const AssetImage(
+                          'assets/images/User.png',
+                        ),
                         foregroundImage:
                             _photoUrl != null ? NetworkImage(_photoUrl!) : null,
                       ),

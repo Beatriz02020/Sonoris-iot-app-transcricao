@@ -32,7 +32,6 @@ class _ConnectionScreenState extends State<ConnectionScreen> {
 
   Future<bool> getPermissions() async {
     if (Platform.isAndroid) {
-
       final statuses =
           await [
             Permission.bluetoothScan,

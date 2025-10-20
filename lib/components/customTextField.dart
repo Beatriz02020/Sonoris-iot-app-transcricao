@@ -96,7 +96,9 @@ class CustomTextField extends StatelessWidget {
               enabled: enabled,
               maxLines: 1,
               textAlignVertical:
-                  verticalPadding > 10 ? TextAlignVertical.top : TextAlignVertical.center,
+                  verticalPadding > 10
+                      ? TextAlignVertical.top
+                      : TextAlignVertical.center,
               decoration: InputDecoration(
                 border: customBorder(),
                 enabledBorder: customBorder(),
@@ -113,12 +115,13 @@ class CustomTextField extends StatelessWidget {
                         ? Icon(Icons.search, color: AppColors.gray500, size: 20)
                         : null,
                 suffixIcon: suffixIcon,
-        contentPadding: isTall
-          ? EdgeInsets.fromLTRB(15, 7, 15, tallBottomPad)
-                    : EdgeInsets.symmetric(
-                        vertical: verticalPadding,
-                        horizontal: 15,
-                      ),
+                contentPadding:
+                    isTall
+                        ? EdgeInsets.fromLTRB(15, 7, 15, tallBottomPad)
+                        : EdgeInsets.symmetric(
+                          vertical: verticalPadding,
+                          horizontal: 15,
+                        ),
               ),
             );
 

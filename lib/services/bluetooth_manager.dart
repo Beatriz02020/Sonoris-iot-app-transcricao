@@ -153,8 +153,7 @@ class BluetoothManager {
 
       // se a characteristic suporta notify, habilita — senão, pula
       final props = characteristic.properties;
-      final supportsNotify =
-          (props.notify) || (props.indicate);
+      final supportsNotify = (props.notify) || (props.indicate);
       if (supportsNotify) {
         try {
           await characteristic.setNotifyValue(true);
