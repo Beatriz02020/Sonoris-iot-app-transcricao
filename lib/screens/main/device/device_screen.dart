@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:sonoris/components/customTextField.dart';
+import 'package:sonoris/components/customSelect.dart';
 import 'package:sonoris/components/customSlider.dart';
 import 'package:sonoris/theme/colors.dart';
 import 'package:sonoris/theme/text_styles.dart';
@@ -207,14 +208,12 @@ class _DeviceScreenState extends State<DeviceScreen> {
                                 color: AppColors.gray900,
                               ),
                             ),
-                            CustomTextField(
-                              isDropdown: true,
-                              fullWidth: true,
-                              dropdownOptions: [
+                            CustomSelect(
+                              options: [
                                 'Transcrição + Respostas Rápidas',
                                 'Apenas Transcrição',
                               ],
-                              selectedValue: 'Transcrição + Respostas Rápidas',
+                              value: 'Transcrição + Respostas Rápidas',
                               onChanged: (value) {},
                             ),
                           ],

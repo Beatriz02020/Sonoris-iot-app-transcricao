@@ -5,7 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sonoris/components/colorSelector.dart';
-import 'package:sonoris/components/customTextField.dart';
+import 'package:sonoris/components/customSelect.dart';
 import 'package:sonoris/components/customSlider.dart';
 import 'package:sonoris/theme/colors.dart';
 import 'package:sonoris/theme/text_styles.dart';
@@ -86,14 +86,19 @@ class _CaptionsScreenState extends State<CaptionsScreen> {
       if (data != null && data.isNotEmpty) {
         final d = data;
         setState(() {
-          selectedColorLinha1 = _colorFromHex(d['textColor']) ?? selectedColorLinha1;
-          selectedColorLinha2 = _colorFromHex(d['bgColor']) ?? selectedColorLinha2;
+          selectedColorLinha1 =
+              _colorFromHex(d['textColor']) ?? selectedColorLinha1;
+          selectedColorLinha2 =
+              _colorFromHex(d['bgColor']) ?? selectedColorLinha2;
           _fontFamily = (d['fontFamily'] ?? _fontFamily).toString();
           _fontSizeValue = _toDouble(d['fontSize'], _fontSizeValue);
           _fontBoldValue = _toDouble(d['fontWeight'], _fontBoldValue);
           _animation = (d['animation'] ?? _animation).toString();
           _verticalValue = _toDouble(d['lineHeight'], _verticalValue);
-          _horizontalValue = _toDouble(d['horizontalSpacing'], _horizontalValue);
+          _horizontalValue = _toDouble(
+            d['horizontalSpacing'],
+            _horizontalValue,
+          );
         });
       }
     } catch (_) {
@@ -127,7 +132,8 @@ class _CaptionsScreenState extends State<CaptionsScreen> {
   }
 
   // Helpers
-  static String _toHex(Color c) => '#${c.value.toRadixString(16).padLeft(8, '0').substring(2)}';
+  static String _toHex(Color c) =>
+      '#${c.value.toRadixString(16).padLeft(8, '0').substring(2)}';
   static Color? _colorFromHex(dynamic v) {
     if (v == null) return null;
     final s = v.toString();
@@ -166,12 +172,7 @@ class _CaptionsScreenState extends State<CaptionsScreen> {
         title: const Text('Customizar Legenda'),
       ),
       body: Padding(
-        padding: const EdgeInsets.only(
-          left: 20,
-          right: 20,
-          top: 10,
-          bottom: 0,
-        ),
+        padding: const EdgeInsets.only(left: 20, right: 20, top: 10, bottom: 0),
         child: Column(
           spacing: 25,
           mainAxisAlignment: MainAxisAlignment.start,
@@ -182,20 +183,20 @@ class _CaptionsScreenState extends State<CaptionsScreen> {
               height: 160, // mantém altura do container constante
               child: Container(
                 width: double.infinity,
-                padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 16),
+                padding: const EdgeInsets.symmetric(
+                  vertical: 18,
+                  horizontal: 16,
+                ),
                 decoration: BoxDecoration(
                   color: selectedColorLinha2,
-                  border: Border.all(
-                    color: AppColors.blue700,
-                    width: 1.5,
-                  ),
+                  border: Border.all(color: AppColors.blue700, width: 1.5),
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: SingleChildScrollView(
                   child: Text(
                     'Este é um texto de exemplo.\n'
-                        'As legendas ficarão assim na tela do seu dispositivo.'
-                        '\n\nCustomize do melhor jeito para você',
+                    'As legendas ficarão assim na tela do seu dispositivo.'
+                    '\n\nCustomize do melhor jeito para você',
                     style: AppTextStyles.body.copyWith(
                       fontSize: _fontSizeValue,
                       fontFamily: _fontFamily,
@@ -253,7 +254,9 @@ class _CaptionsScreenState extends State<CaptionsScreen> {
                                     selectedColor: selectedColorLinha1,
                                     enableCustomPicker: true,
                                     onColorSelected: (color) {
-                                      setState(() => selectedColorLinha1 = color);
+                                      setState(
+                                        () => selectedColorLinha1 = color,
+                                      );
                                       _scheduleSave();
                                     },
                                   ),
@@ -293,7 +296,9 @@ class _CaptionsScreenState extends State<CaptionsScreen> {
                                     selectedColor: selectedColorLinha2,
                                     enableCustomPicker: true,
                                     onColorSelected: (color) {
-                                      setState(() => selectedColorLinha2 = color);
+                                      setState(
+                                        () => selectedColorLinha2 = color,
+                                      );
                                       _scheduleSave();
                                     },
                                   ),
@@ -310,16 +315,15 @@ class _CaptionsScreenState extends State<CaptionsScreen> {
                         ),
                         Padding(
                           padding: const EdgeInsets.only(bottom: 10),
-                          child: CustomTextField(
-                            isDropdown: true,
-                            fullWidth: true,
-                            dropdownOptions: const ['Inter'],
-                            selectedValue: _fontFamily,
+                          child: CustomSelect(
+                            options: const ['Inter'],
+                            value: _fontFamily,
                             onChanged: (value) {
                               if (value == null) return;
                               setState(() => _fontFamily = value);
                               _scheduleSave();
                             },
+                            hintText: '',
                           ),
                         ),
                         CustomSlider(
@@ -351,16 +355,15 @@ class _CaptionsScreenState extends State<CaptionsScreen> {
                         ),
                         Padding(
                           padding: const EdgeInsets.only(bottom: 10),
-                          child: CustomTextField(
-                            isDropdown: true,
-                            fullWidth: true,
-                            dropdownOptions: const ['Sem Animação'],
-                            selectedValue: _animation,
+                          child: CustomSelect(
+                            options: const ['Sem Animação'],
+                            value: _animation,
                             onChanged: (value) {
                               if (value == null) return;
                               setState(() => _animation = value);
                               _scheduleSave();
                             },
+                            hintText: '',
                           ),
                         ),
                         CustomSlider(
@@ -376,7 +379,7 @@ class _CaptionsScreenState extends State<CaptionsScreen> {
                         CustomSlider(
                           label: 'Espaçamento horizontal',
                           value: _horizontalValue,
-                          min: -10,
+                          min: 0,
                           max: 10,
                           onChanged: (value) {
                             setState(() => _horizontalValue = value);
