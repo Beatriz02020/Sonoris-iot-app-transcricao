@@ -112,16 +112,14 @@ class _BottomNavState extends State<BottomNav> {
         // e o sistema fará o pop (fechar app) em uma próxima tentativa.
       },
       child: Scaffold(
-        body: IndexedStack(
-          index: _selectedIndex,
-          children: _tabs,
-        ),
-        bottomNavigationBar: _showBottomNav
-            ? CustomBottomNavBar(
-                selectedIndex: _selectedIndex,
-                onItemTapped: _onItemTapped,
-              )
-            : null,
+        body: IndexedStack(index: _selectedIndex, children: _tabs),
+        bottomNavigationBar:
+            _showBottomNav
+                ? CustomBottomNavBar(
+                  selectedIndex: _selectedIndex,
+                  onItemTapped: _onItemTapped,
+                )
+                : null,
       ),
     );
   }

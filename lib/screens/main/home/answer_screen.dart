@@ -54,7 +54,7 @@ class _AnswerScreenState extends State<AnswerScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'As respostas rápidas são configuradas no aplicativo e exibidas no dispositivo, permitindo que, ao serem selecionadas, emitam um som correspondente à palavra ou frase definida.',
+                    'As respostas rápidas préviamente configuradas, podem ser clicadas, emitindo um som correspondente à palavra ou frase definida.',
                     style: AppTextStyles.body.copyWith(
                       color: AppColors.gray700,
                     ),
@@ -131,52 +131,46 @@ class _AnswerScreenState extends State<AnswerScreen> {
   }
 }
 
-// TODO: Arrumar as cores do dialog
 void _showAddCategoryDialog(BuildContext context) {
   final TextEditingController _categoryController = TextEditingController();
   showDialog(
     context: context,
     builder:
         (context) => AlertDialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(15),
-          ),
-          title: Text(
-            'Adicionar Categoria',
-            style: AppTextStyles.h3.copyWith(color: AppColors.blue500),
-          ),
+          title: Text('Adicionar Categoria'),
+          titleTextStyle: AppTextStyles.h3.copyWith(color: AppColors.blue500),
+          backgroundColor: AppColors.white100,
+          contentPadding: const EdgeInsets.all(16),
+          elevation: 0,
           content: CustomTextField(
             hintText: 'Nome da categoria',
             controller: _categoryController,
             fullWidth: true,
           ),
           actions: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                CustomButton(
-                  text: 'Cancelar',
-                  color: AppColors.rose500,
-                  onPressed: () => Navigator.of(context).pop(),
-                ),
-                CustomButton(
-                  text: 'Salvar',
-                  onPressed: () async {
-                    final user = FirebaseAuth.instance.currentUser;
-                    if (user != null && _categoryController.text.isNotEmpty) {
-                      await FirebaseFirestore.instance
-                          .collection('Usuario')
-                          .doc(user.uid)
-                          .collection('Categorias')
-                          .add({
-                            'nome': _categoryController.text,
-                            'criado_em': FieldValue.serverTimestamp(),
-                          });
-                    }
-                    Navigator.of(context).pop();
-                  },
-                ),
-              ],
+            CustomButton(
+              text: 'Cancelar',
+              fullWidth: true,
+              color: AppColors.rose500,
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+            CustomButton(
+              text: 'Adicionar',
+              fullWidth: true,
+              onPressed: () async {
+                final user = FirebaseAuth.instance.currentUser;
+                if (user != null && _categoryController.text.isNotEmpty) {
+                  await FirebaseFirestore.instance
+                      .collection('Usuario')
+                      .doc(user.uid)
+                      .collection('Categorias')
+                      .add({
+                        'nome': _categoryController.text,
+                        'criado_em': FieldValue.serverTimestamp(),
+                      });
+                }
+                Navigator.of(context).pop();
+              },
             ),
           ],
         ),

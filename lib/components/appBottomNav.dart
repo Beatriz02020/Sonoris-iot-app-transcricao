@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:sonoris/components/customBottomNav.dart';
 import 'package:sonoris/components/bottomNavigationBar.dart';
+import 'package:sonoris/components/customBottomNav.dart';
 
 /// AppBottomNav: bottom navigation reutilizável para colocar em qualquer
 /// Scaffold via `bottomNavigationBar: AppBottomNav(currentIndex: X)`.
@@ -12,11 +12,8 @@ class AppBottomNav extends StatelessWidget {
   final int currentIndex;
   final void Function(BuildContext context, int index)? onTap;
 
-  const AppBottomNav({
-    Key? key,
-    required this.currentIndex,
-    this.onTap,
-  }) : super(key: key);
+  const AppBottomNav({Key? key, required this.currentIndex, this.onTap})
+    : super(key: key);
 
   void _defaultOnTap(BuildContext context, int index) {
     if (index == currentIndex) return; // nada a fazer

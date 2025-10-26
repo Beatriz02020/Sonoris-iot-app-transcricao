@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_tts/flutter_tts.dart';
 import 'package:sonoris/components/answerButton.dart';
 import 'package:sonoris/components/customButton.dart';
 import 'package:sonoris/components/customTextField.dart';
@@ -19,11 +20,40 @@ class AnswerCategoryScreen extends StatefulWidget {
 class _AnswerCategoryScreenState extends State<AnswerCategoryScreen> {
   User? get _user => FirebaseAuth.instance.currentUser;
 
+  late final FlutterTts _flutterTts;
+
   CollectionReference<Map<String, dynamic>> get _categoriaRef {
     return FirebaseFirestore.instance
         .collection('Usuario')
         .doc(_user!.uid)
         .collection('Categorias');
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _flutterTts = FlutterTts();
+    // Configurações básicas (ajuste conforme necessário)
+    _flutterTts.setLanguage('pt-BR');
+    _flutterTts.setSpeechRate(0.55);
+    _flutterTts.setVolume(1.0);
+    _flutterTts.setPitch(1.0);
+  }
+
+  @override
+  void dispose() {
+    _flutterTts.stop();
+    super.dispose();
+  }
+
+  Future<void> _speakText(String text) async {
+    if (text.isEmpty) return;
+    try {
+      await _flutterTts.stop();
+      await _flutterTts.speak(text);
+    } catch (e) {
+      debugPrint('Erro TTS: $e');
+    }
   }
 
   @override
@@ -85,15 +115,20 @@ class _AnswerCategoryScreenState extends State<AnswerCategoryScreen> {
                   },
                 ),
 
-                //TODO: Adicionar confirmação antes de deletar
                 CustomButton(
                   icon: Icons.close,
                   iconSize: 22,
                   color: AppColors.rose500,
                   text: 'Deletar Categoria',
                   onPressed: () async {
-                    await _deleteCategory();
-                    Navigator.of(context).pop();
+                    final shouldDelete = await _showDeleteCategoryDialog(
+                      context,
+                      widget.categoriaId,
+                    );
+                    if (shouldDelete == true) {
+                      await _deleteCategory();
+                      if (mounted) Navigator.of(context).pop();
+                    }
                   },
                 ),
               ],
@@ -123,15 +158,8 @@ class _AnswerCategoryScreenState extends State<AnswerCategoryScreen> {
                       AnswerCategoryButton(
                         icon: Icons.close,
                         title: doc['texto'] ?? '',
-                        onPressed: () {},
+                        onPressed: () => _speakText(doc['texto'] ?? ''),
                         onIconPressed: () => _deleteResponse(doc.id),
-                        onDragIconPressed: () {
-                          _showEditResponseDialog(
-                            context,
-                            doc.id,
-                            doc['texto'] ?? '',
-                          );
-                        },
                       ),
                     CustomButton(
                       icon: Icons.add,
@@ -157,44 +185,38 @@ class _AnswerCategoryScreenState extends State<AnswerCategoryScreen> {
       context: context,
       builder:
           (context) => AlertDialog(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(15),
-            ),
-            title: Text(
-              'Adicionar Resposta',
-              style: AppTextStyles.h3.copyWith(color: AppColors.blue500),
-            ),
+            title: Text('Adicionar Resposta'),
+            titleTextStyle: AppTextStyles.h3.copyWith(color: AppColors.blue500),
+            backgroundColor: AppColors.white100,
+            contentPadding: const EdgeInsets.all(16),
+            elevation: 0,
             content: CustomTextField(
               hintText: 'Texto da resposta',
               controller: _categoryController,
               fullWidth: true,
             ),
             actions: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  CustomButton(
-                    text: 'Cancelar',
-                    color: AppColors.rose500,
-                    onPressed: () => Navigator.of(context).pop(),
-                  ),
-                  CustomButton(
-                    text: 'Salvar',
-                    onPressed: () async {
-                      if (_user != null &&
-                          _categoryController.text.isNotEmpty) {
-                        await _categoriaRef
-                            .doc(categoriaId)
-                            .collection('Respostas')
-                            .add({
-                              'texto': _categoryController.text,
-                              'criado_em': FieldValue.serverTimestamp(),
-                            });
-                      }
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                ],
+              CustomButton(
+                text: 'Cancelar',
+                fullWidth: true,
+                color: AppColors.rose500,
+                onPressed: () => Navigator.of(context).pop(),
+              ),
+              CustomButton(
+                text: 'Adicionar',
+                fullWidth: true,
+                onPressed: () async {
+                  if (_user != null && _categoryController.text.isNotEmpty) {
+                    await _categoriaRef
+                        .doc(categoriaId)
+                        .collection('Respostas')
+                        .add({
+                          'texto': _categoryController.text,
+                          'criado_em': FieldValue.serverTimestamp(),
+                        });
+                  }
+                  Navigator.of(context).pop();
+                },
               ),
             ],
           ),
@@ -207,90 +229,68 @@ class _AnswerCategoryScreenState extends State<AnswerCategoryScreen> {
       context: context,
       builder:
           (context) => AlertDialog(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(15),
-            ),
-            title: Text(
-              'Renomear Categoria',
-              style: AppTextStyles.h3.copyWith(color: AppColors.blue500),
-            ),
+            title: Text('Renomear Categoria'),
+            titleTextStyle: AppTextStyles.h3.copyWith(color: AppColors.blue500),
+            backgroundColor: AppColors.white100,
+            contentPadding: const EdgeInsets.all(16),
+            elevation: 0,
             content: CustomTextField(
               hintText: 'Novo nome da categoria',
               controller: _renameController,
               fullWidth: true,
             ),
             actions: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  CustomButton(
-                    text: 'Cancelar',
-                    color: AppColors.rose500,
-                    onPressed: () => Navigator.of(context).pop(),
-                  ),
-                  CustomButton(
-                    text: 'Salvar',
-                    onPressed: () async {
-                      if (_user != null && _renameController.text.isNotEmpty) {
-                        await _categoriaRef.doc(categoriaId).update({
-                          'nome': _renameController.text,
-                        });
-                      }
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                ],
+              CustomButton(
+                text: 'Cancelar',
+                fullWidth: true,
+                color: AppColors.rose500,
+                onPressed: () => Navigator.of(context).pop(),
+              ),
+              CustomButton(
+                text: 'Salvar',
+                fullWidth: true,
+                onPressed: () async {
+                  if (_user != null && _renameController.text.isNotEmpty) {
+                    await _categoriaRef.doc(categoriaId).update({
+                      'nome': _renameController.text,
+                    });
+                  }
+                  Navigator.of(context).pop();
+                },
               ),
             ],
           ),
     );
   }
 
-  void _showEditResponseDialog(
+  Future<bool?> _showDeleteCategoryDialog(
     BuildContext context,
-    String respostaId,
-    String textoAtual,
+    String categoriaId,
   ) {
-    final controller = TextEditingController(text: textoAtual);
-    showDialog(
+    return showDialog<bool>(
       context: context,
       builder:
           (context) => AlertDialog(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(15),
-            ),
-            title: Text(
-              'Editar Resposta',
-              style: AppTextStyles.h3.copyWith(color: AppColors.blue500),
-            ),
-            content: CustomTextField(
-              hintText: 'Texto da resposta',
-              controller: controller,
-              fullWidth: true,
+            title: Text('Deletar categoria'),
+            titleTextStyle: AppTextStyles.h3.copyWith(color: AppColors.blue500),
+            backgroundColor: AppColors.white100,
+            contentPadding: const EdgeInsets.all(16),
+            elevation: 0,
+            content: Text(
+              'Tem certeza que deseja deletar esta categoria e todas as respostas associadas?',
+              style: AppTextStyles.body,
             ),
             actions: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  CustomButton(
-                    text: 'Cancelar',
-                    color: AppColors.rose500,
-                    onPressed: () => Navigator.of(context).pop(),
-                  ),
-                  CustomButton(
-                    text: 'Salvar',
-                    onPressed: () async {
-                      if (_user != null && controller.text.isNotEmpty) {
-                        await _categoriaRef
-                            .doc(widget.categoriaId)
-                            .collection('Respostas')
-                            .doc(respostaId)
-                            .update({'texto': controller.text});
-                        if (mounted) Navigator.of(context).pop();
-                      }
-                    },
-                  ),
-                ],
+              CustomButton(
+                text: 'Cancelar',
+                fullWidth: true,
+                color: AppColors.rose500,
+                onPressed: () => Navigator.of(context).pop(false),
+              ),
+              CustomButton(
+                text: 'Deletar',
+                fullWidth: true,
+                onPressed: () => Navigator.of(context).pop(true),
               ),
             ],
           ),
