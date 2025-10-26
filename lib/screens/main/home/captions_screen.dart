@@ -25,7 +25,6 @@ class _CaptionsScreenState extends State<CaptionsScreen> {
   // Sliders
   double _fontSizeValue = 18;
   double _fontBoldValue = 50; // 1-100 -> mapped to w400..w900
-  double _txtSpeedValue = 10; // characters per second (stored only)
   double _verticalValue = 1.3; // line height
   double _horizontalValue = 0; // letter spacing
 
@@ -92,7 +91,6 @@ class _CaptionsScreenState extends State<CaptionsScreen> {
           _fontFamily = (d['fontFamily'] ?? _fontFamily).toString();
           _fontSizeValue = _toDouble(d['fontSize'], _fontSizeValue);
           _fontBoldValue = _toDouble(d['fontWeight'], _fontBoldValue);
-          _txtSpeedValue = _toDouble(d['speed'], _txtSpeedValue);
           _animation = (d['animation'] ?? _animation).toString();
           _verticalValue = _toDouble(d['lineHeight'], _verticalValue);
           _horizontalValue = _toDouble(d['horizontalSpacing'], _horizontalValue);
@@ -118,7 +116,6 @@ class _CaptionsScreenState extends State<CaptionsScreen> {
         'fontFamily': _fontFamily,
         'fontSize': _fontSizeValue,
         'fontWeight': _fontBoldValue,
-        'speed': _txtSpeedValue,
         'animation': _animation,
         'lineHeight': _verticalValue,
         'horizontalSpacing': _horizontalValue,
@@ -198,7 +195,7 @@ class _CaptionsScreenState extends State<CaptionsScreen> {
                   child: Text(
                     'Este é um texto de exemplo.\n'
                         'As legendas ficarão assim na tela do seu dispositivo.'
-                        '\n\n Customize do melhor jeito para você',
+                        '\n\nCustomize do melhor jeito para você',
                     style: AppTextStyles.body.copyWith(
                       fontSize: _fontSizeValue,
                       fontFamily: _fontFamily,
@@ -249,7 +246,9 @@ class _CaptionsScreenState extends State<CaptionsScreen> {
                                       AppColors.blue600,
                                       AppColors.green500,
                                       AppColors.rose600,
-                                      AppColors.rose500,
+                                      AppColors.amber600,
+                                      AppColors.indigo600,
+                                      AppColors.teal600,
                                     ],
                                     selectedColor: selectedColorLinha1,
                                     enableCustomPicker: true,
@@ -287,7 +286,9 @@ class _CaptionsScreenState extends State<CaptionsScreen> {
                                       AppColors.blue600,
                                       AppColors.green500,
                                       AppColors.rose600,
-                                      AppColors.rose500,
+                                      AppColors.amber600,
+                                      AppColors.indigo600,
+                                      AppColors.teal600,
                                     ],
                                     selectedColor: selectedColorLinha2,
                                     enableCustomPicker: true,
@@ -312,7 +313,7 @@ class _CaptionsScreenState extends State<CaptionsScreen> {
                           child: CustomTextField(
                             isDropdown: true,
                             fullWidth: true,
-                            dropdownOptions: const ['Inter', 'Comic Sans Ms'],
+                            dropdownOptions: const ['Inter'],
                             selectedValue: _fontFamily,
                             onChanged: (value) {
                               if (value == null) return;
@@ -342,17 +343,6 @@ class _CaptionsScreenState extends State<CaptionsScreen> {
                             _scheduleSave();
                           },
                         ),
-                        CustomSlider(
-                          label: 'Velocidade do texto',
-                          value: _txtSpeedValue,
-                          min: 1,
-                          max: 20,
-                          onChanged: (value) {
-                            setState(() => _txtSpeedValue = value);
-                            _scheduleSave();
-                          },
-                          valueLabel: '${_txtSpeedValue.round()} carácteres por segundo',
-                        ),
                         Text(
                           'Animação',
                           style: AppTextStyles.bold.copyWith(
@@ -364,7 +354,7 @@ class _CaptionsScreenState extends State<CaptionsScreen> {
                           child: CustomTextField(
                             isDropdown: true,
                             fullWidth: true,
-                            dropdownOptions: const ['Sem Animação', 'Com Animação'],
+                            dropdownOptions: const ['Sem Animação'],
                             selectedValue: _animation,
                             onChanged: (value) {
                               if (value == null) return;
