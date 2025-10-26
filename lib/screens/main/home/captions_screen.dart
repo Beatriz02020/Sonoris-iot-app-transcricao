@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sonoris/components/colorSelector.dart';
 import 'package:sonoris/components/customTextField.dart';
-import 'package:sonoris/components/custom_slider.dart';
+import 'package:sonoris/components/customSlider.dart';
 import 'package:sonoris/theme/colors.dart';
 import 'package:sonoris/theme/text_styles.dart';
 
@@ -170,7 +170,7 @@ class _CaptionsScreenState extends State<CaptionsScreen> {
           left: 20,
           right: 20,
           top: 10,
-          bottom: 30,
+          bottom: 0,
         ),
         child: Column(
           spacing: 25,
@@ -216,7 +216,7 @@ class _CaptionsScreenState extends State<CaptionsScreen> {
               child: ListView(
                 children: [
                   Padding(
-                    padding: const EdgeInsets.only(top: 15),
+                    padding: const EdgeInsets.only(top: 15, bottom: 20),
                     child: Column(
                       spacing: 10,
                       mainAxisAlignment: MainAxisAlignment.start,

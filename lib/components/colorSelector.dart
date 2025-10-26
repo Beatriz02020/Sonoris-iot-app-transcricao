@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:sonoris/theme/colors.dart';
+import 'package:sonoris/theme/text_styles.dart';
+
+import 'customButton.dart';
 
 class ColorSelector extends StatefulWidget {
   final List<Color> colors;
@@ -32,26 +35,35 @@ class _ColorSelectorState extends State<ColorSelector> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text('Escolha uma cor'),
+          title: Text('Escolha uma cor:'),
+          titleTextStyle: AppTextStyles.h3.copyWith(color: AppColors.blue500),
+          backgroundColor: AppColors.white100,
+          contentPadding: const EdgeInsets.all(16),
+          elevation: 0,
           content: SingleChildScrollView(
             child: ColorPicker(
               pickerColor: customColor,
               onColorChanged: (color) => customColor = color,
               enableAlpha: false,
+              labelTypes: [],
+              pickerAreaBorderRadius: BorderRadius.circular(8),
               pickerAreaHeightPercent: 0.8,
             ),
           ),
           actions: [
-            TextButton(
+            CustomButton(
+              color: AppColors.rose500,
+              fullWidth: true,
+              text: 'Cancelar',
               onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Cancelar'),
             ),
-            TextButton(
+            CustomButton(
+              text: 'Selecionar',
+              fullWidth: true,
               onPressed: () {
                 widget.onColorSelected(customColor);
                 Navigator.of(context).pop();
               },
-              child: const Text('Selecionar'),
             ),
           ],
         );
@@ -72,7 +84,10 @@ class _ColorSelectorState extends State<ColorSelector> {
         width: widget.size,
         height: widget.size,
         decoration: BoxDecoration(
-          color: color,
+          color:
+              (index == 0 && widget.enableCustomPicker && isSelected)
+                  ? widget.selectedColor
+                  : color,
           shape: BoxShape.circle,
           border: Border.all(
             color: isSelected ? AppColors.gray900 : Colors.transparent,
@@ -89,13 +104,22 @@ class _ColorSelectorState extends State<ColorSelector> {
                   ]
                   : null,
         ),
-        child: _buildCircleContent(color, index, isSelected),
+        child: _buildCircleContent(
+          (index == 0 && widget.enableCustomPicker && isSelected)
+              ? widget.selectedColor
+              : color,
+          index,
+          isSelected,
+        ),
       ),
     );
   }
 
   Widget _buildCircleContent(Color color, int index, bool isSelected) {
-    if (index == 0 && widget.enableCustomPicker) {
+    // For the first swatch (custom picker): show the PNG icon when not selected,
+    // but when selected, show the chosen custom color (handled by the container
+    // background) and the selected check icon below.
+    if (index == 0 && widget.enableCustomPicker && !isSelected) {
       return ClipOval(
         child: Image.asset('assets/images/icons/cores.png', fit: BoxFit.cover),
       );
@@ -122,7 +146,21 @@ class _ColorSelectorState extends State<ColorSelector> {
           widget.colors.asMap().entries.map((entry) {
             int index = entry.key;
             Color color = entry.value;
-            bool isSelected = widget.selectedColor == color;
+
+            // Determine if current color is selected.
+            // For the first swatch (index 0) when custom picker is enabled,
+            // consider it selected when the widget.selectedColor isn't present
+            // in the provided colors list — this indicates a custom color was
+            // chosen via the picker.
+            bool isSelected;
+            if (index == 0 && widget.enableCustomPicker) {
+              final contains = widget.colors.any(
+                (c) => c.value == widget.selectedColor.value,
+              );
+              isSelected = !contains;
+            } else {
+              isSelected = widget.selectedColor.value == color.value;
+            }
 
             return _buildColorCircle(color, index, isSelected);
           }).toList(),
