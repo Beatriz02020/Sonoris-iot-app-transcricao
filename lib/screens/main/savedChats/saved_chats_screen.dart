@@ -290,6 +290,7 @@ class _SavedChatsScreenState extends State<SavedChatsScreen> {
                   ],
                 ),
 
+                // TODO: ajustar esse botao para trocar de aba
                 GestureDetector(
                   onTap: () {
                     Navigator.push(

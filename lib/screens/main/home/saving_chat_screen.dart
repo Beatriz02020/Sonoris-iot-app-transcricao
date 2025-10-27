@@ -120,8 +120,7 @@ class _SavingChatScreenState extends State<SavingChatScreen> {
             children: [
               SizedBox(
                 height: 95,
-                child:
-                ListView(
+                child: ListView(
                   scrollDirection: Axis.horizontal,
                   children: [
                     Row(
