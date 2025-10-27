@@ -45,41 +45,21 @@ class _CaptionsScreenState extends State<CaptionsScreen> {
     super.dispose();
   }
 
-  // Firestore doc: Usuario/{uid}/preferencias/config (nova coleção)
+  // Firestore doc: Usuario/{uid}/Legenda/config
   DocumentReference<Map<String, dynamic>>? get _configDoc {
     final uid = FirebaseAuth.instance.currentUser?.uid;
     if (uid == null) return null;
     return FirebaseFirestore.instance
         .collection('Usuario')
         .doc(uid)
-        .collection('preferencias')
-        .doc('config');
-  }
-
-  // Legado: Usuario/{uid}/captions/config (somente leitura para fallback)
-  DocumentReference<Map<String, dynamic>>? get _legacyConfigDoc {
-    final uid = FirebaseAuth.instance.currentUser?.uid;
-    if (uid == null) return null;
-    return FirebaseFirestore.instance
-        .collection('Usuario')
-        .doc(uid)
-        .collection('captions')
+        .collection('Legenda')
         .doc('config');
   }
 
   Future<void> _loadSettings() async {
     try {
-      // Primeiro tenta na nova coleção 'preferencias'
       DocumentSnapshot<Map<String, dynamic>>? snap = await _configDoc?.get();
       Map<String, dynamic>? data = snap?.data();
-
-      // Fallback: se vazio, tenta coleção antiga 'captions'
-      if (data == null || data.isEmpty) {
-        final legacySnap = await _legacyConfigDoc?.get();
-        if (legacySnap != null && legacySnap.exists) {
-          data = legacySnap.data();
-        }
-      }
 
       if (data != null && data.isNotEmpty) {
         final d = data;

@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_tts/flutter_tts.dart';
-import 'package:sonoris/components/answerButton.dart';
+import 'package:sonoris/components/answerCategoryButton.dart';
 import 'package:sonoris/components/customButton.dart';
 import 'package:sonoris/components/customTextField.dart';
 import 'package:sonoris/theme/colors.dart';
@@ -56,6 +56,48 @@ class _AnswerCategoryScreenState extends State<AnswerCategoryScreen> {
     }
   }
 
+  Future<void> _reorderRespostas(
+    List<QueryDocumentSnapshot> respostas,
+    int oldIndex,
+    int newIndex,
+  ) async {
+    if (oldIndex < newIndex) {
+      newIndex -= 1;
+    }
+
+    if (_user == null) return;
+
+    try {
+      final batch = FirebaseFirestore.instance.batch();
+
+      // Atualizar a ordem de todos os itens afetados
+      for (int i = 0; i < respostas.length; i++) {
+        int newOrder;
+        if (i == oldIndex) {
+          newOrder = newIndex;
+        } else if (oldIndex < newIndex) {
+          if (i > oldIndex && i <= newIndex) {
+            newOrder = i - 1;
+          } else {
+            newOrder = i;
+          }
+        } else {
+          if (i >= newIndex && i < oldIndex) {
+            newOrder = i + 1;
+          } else {
+            newOrder = i;
+          }
+        }
+
+        batch.update(respostas[i].reference, {'ordem': newOrder});
+      }
+
+      await batch.commit();
+    } catch (e) {
+      debugPrint('Erro ao reordenar respostas: $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(
@@ -91,89 +133,106 @@ class _AnswerCategoryScreenState extends State<AnswerCategoryScreen> {
           },
         ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.only(
-          left: 15,
-          right: 15,
-          top: 10, // original (55)
-          bottom: 30,
-        ),
-        child: Column(
-          spacing: 15,
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                CustomButton(
-                  icon: Icons.edit,
-                  iconSize: 20,
-                  text: 'Renomear',
-                  onPressed: () {
-                    _showRenameCategoryDialog(context, widget.categoriaId);
-                  },
-                ),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.only(
+            left: 15,
+            right: 15,
+            top: 10, // original (55)
+            bottom: 30,
+          ),
+          child: Column(
+            spacing: 15,
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  CustomButton(
+                    icon: Icons.edit,
+                    iconSize: 20,
+                    text: 'Renomear',
+                    onPressed: () {
+                      _showRenameCategoryDialog(context, widget.categoriaId);
+                    },
+                  ),
 
-                CustomButton(
-                  icon: Icons.close,
-                  iconSize: 22,
-                  color: AppColors.rose500,
-                  text: 'Deletar Categoria',
-                  onPressed: () async {
-                    final shouldDelete = await _showDeleteCategoryDialog(
-                      context,
-                      widget.categoriaId,
-                    );
-                    if (shouldDelete == true) {
-                      await _deleteCategory();
-                      if (mounted) Navigator.of(context).pop();
-                    }
-                  },
-                ),
-              ],
-            ),
-            Text(
-              'Respostas',
-              style: AppTextStyles.bold.copyWith(color: AppColors.blue600),
-            ),
-            StreamBuilder<QuerySnapshot>(
-              stream:
-                  _user == null
-                      ? null
-                      : _categoriaRef
-                          .doc(widget.categoriaId)
-                          .collection('Respostas')
-                          .orderBy('criado_em', descending: true)
-                          .snapshots(),
-              builder: (context, snapshot) {
-                if (!snapshot.hasData) {
-                  return Center(child: CircularProgressIndicator());
-                }
-                final respostas = snapshot.data!.docs;
-                return Column(
-                  spacing: 10,
-                  children: [
-                    for (final doc in respostas)
-                      AnswerCategoryButton(
-                        icon: Icons.close,
-                        title: doc['texto'] ?? '',
-                        onPressed: () => _speakText(doc['texto'] ?? ''),
-                        onIconPressed: () => _deleteResponse(doc.id),
+                  CustomButton(
+                    icon: Icons.close,
+                    iconSize: 22,
+                    color: AppColors.rose500,
+                    text: 'Deletar Categoria',
+                    onPressed: () async {
+                      final shouldDelete = await _showDeleteCategoryDialog(
+                        context,
+                        widget.categoriaId,
+                      );
+                      if (shouldDelete == true) {
+                        await _deleteCategory();
+                        if (mounted) Navigator.of(context).pop();
+                      }
+                    },
+                  ),
+                ],
+              ),
+              Text(
+                'Respostas',
+                style: AppTextStyles.bold.copyWith(color: AppColors.blue600),
+              ),
+              StreamBuilder<QuerySnapshot>(
+                stream:
+                    _user == null
+                        ? null
+                        : _categoriaRef
+                            .doc(widget.categoriaId)
+                            .collection('Respostas')
+                            .orderBy('ordem')
+                            .snapshots(),
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData) {
+                    return Center(child: CircularProgressIndicator());
+                  }
+                  final respostas = snapshot.data!.docs;
+                  return Column(
+                    spacing: 10,
+                    children: [
+                      ReorderableListView.builder(
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                        itemCount: respostas.length,
+                        onReorder: (oldIndex, newIndex) {
+                          _reorderRespostas(respostas, oldIndex, newIndex);
+                        },
+                        itemBuilder: (context, index) {
+                          final doc = respostas[index];
+                          return Padding(
+                            key: ValueKey(doc.id),
+                            padding: const EdgeInsets.only(bottom: 10),
+                            child: AnswerCategoryButton(
+                              icon: Icons.close,
+                              title: doc['texto'] ?? '',
+                              onPressed: () => _speakText(doc['texto'] ?? ''),
+                              onIconPressed: () => _deleteResponse(doc.id),
+                              onDragIconPressed: () {},
+                            ),
+                          );
+                        },
                       ),
-                    CustomButton(
-                      icon: Icons.add,
-                      text: 'Adicionar Resposta',
-                      fullWidth: true,
-                      onPressed: () {
-                        _showAddCategoryDialog(context, widget.categoriaId);
-                      },
-                    ),
-                  ],
-                );
-              },
-            ),
-          ],
+                      CustomButton(
+                        icon: Icons.add,
+                        text: 'Adicionar Resposta',
+                        fullWidth: true,
+                        onPressed: () {
+                          _showAddCategoryDialog(context, widget.categoriaId);
+                        },
+                      ),
+                    ],
+                  );
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -207,12 +266,28 @@ class _AnswerCategoryScreenState extends State<AnswerCategoryScreen> {
                 fullWidth: true,
                 onPressed: () async {
                   if (_user != null && _categoryController.text.isNotEmpty) {
+                    // Obter a última ordem
+                    final snapshot =
+                        await _categoriaRef
+                            .doc(categoriaId)
+                            .collection('Respostas')
+                            .orderBy('ordem', descending: true)
+                            .limit(1)
+                            .get();
+
+                    int novaOrdem = 0;
+                    if (snapshot.docs.isNotEmpty &&
+                        snapshot.docs.first.data().containsKey('ordem')) {
+                      novaOrdem = (snapshot.docs.first['ordem'] as int) + 1;
+                    }
+
                     await _categoriaRef
                         .doc(categoriaId)
                         .collection('Respostas')
                         .add({
                           'texto': _categoryController.text,
                           'criado_em': FieldValue.serverTimestamp(),
+                          'ordem': novaOrdem,
                         });
                   }
                   Navigator.of(context).pop();
