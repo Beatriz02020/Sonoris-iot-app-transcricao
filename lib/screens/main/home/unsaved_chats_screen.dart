@@ -67,7 +67,7 @@ class _UnsavedChatsScreenState extends State<UnsavedChatsScreen> {
         scrolledUnderElevation: 0,
         titleTextStyle: AppTextStyles.h3.copyWith(color: AppColors.blue500),
         title: const Text('Conversas Não Salvas'),
-        /*
+/*
         actions: [
           // Botão de teste para adicionar conversa
           IconButton(
@@ -83,8 +83,7 @@ class _UnsavedChatsScreenState extends State<UnsavedChatsScreen> {
               );
             },
           ),
-        ],
-        */
+        ],*/
       ),
       body: StreamBuilder<List<ConversaNaoSalva>>(
         stream: _conversaService.getConversasNaoSalvasStream(),

@@ -115,3 +115,107 @@ class LinhaConversa {
     );
   }
 }
+
+// Modelo para conversas salvas
+class ConversaSalva {
+  final String id;
+  final String nome;
+  final String descricao;
+  final String
+  categoria; // Favoritos, Estudos, Trabalho, Pessoal, Reunião, Teams, Outros
+  final bool favorito;
+  final DateTime createdAt;
+  final DateTime dataConversa;
+  final List<LinhaConversa> lines;
+
+  ConversaSalva({
+    required this.id,
+    required this.nome,
+    required this.descricao,
+    required this.categoria,
+    required this.favorito,
+    required this.createdAt,
+    required this.dataConversa,
+    required this.lines,
+  });
+
+  String get data {
+    final day = dataConversa.day.toString().padLeft(2, '0');
+    final month = dataConversa.month.toString().padLeft(2, '0');
+    final year = dataConversa.year.toString();
+    return '$day/$month/$year';
+  }
+
+  String get horarioInicial {
+    if (lines.isEmpty) return '--:--';
+    final firstLine = lines.first;
+    final hour = firstLine.timestamp.hour.toString().padLeft(2, '0');
+    final minute = firstLine.timestamp.minute.toString().padLeft(2, '0');
+    return '$hour:$minute';
+  }
+
+  String get horarioFinal {
+    if (lines.isEmpty) return '--:--';
+    final lastLine = lines.last;
+    final hour = lastLine.timestamp.hour.toString().padLeft(2, '0');
+    final minute = lastLine.timestamp.minute.toString().padLeft(2, '0');
+    return '$hour:$minute';
+  }
+
+  // Getter para normalizar categoria para nome do arquivo (sem acentuação)
+  String get categoriaNormalizada {
+    if (categoria == 'Reunião') {
+      return 'Reuniao';
+    }
+    return categoria;
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'nome': nome,
+      'descricao': descricao,
+      'categoria': categoria,
+      'favorito': favorito,
+      'created_at': Timestamp.fromDate(createdAt),
+      'data_conversa': Timestamp.fromDate(dataConversa),
+      'lines': lines.map((line) => line.toMap()).toList(),
+    };
+  }
+
+  factory ConversaSalva.fromMap(String docId, Map<String, dynamic> map) {
+    return ConversaSalva(
+      id: docId,
+      nome: map['nome'] ?? '',
+      descricao: map['descricao'] ?? '',
+      categoria: map['categoria'] ?? 'Outros',
+      favorito: map['favorito'] ?? false,
+      createdAt: (map['created_at'] as Timestamp).toDate(),
+      dataConversa: (map['data_conversa'] as Timestamp).toDate(),
+      lines:
+          (map['lines'] as List<dynamic>?)
+              ?.map((lineMap) => LinhaConversa.fromMap(lineMap))
+              .toList() ??
+          [],
+    );
+  }
+
+  // Criar ConversaSalva a partir de ConversaNaoSalva
+  factory ConversaSalva.fromConversaNaoSalva({
+    required ConversaNaoSalva conversa,
+    required String nome,
+    required String descricao,
+    required String categoria,
+    required bool favorito,
+  }) {
+    return ConversaSalva(
+      id: '',
+      nome: nome,
+      descricao: descricao,
+      categoria: categoria,
+      favorito: favorito,
+      createdAt: DateTime.now(),
+      dataConversa: conversa.createdAt,
+      lines: conversa.lines,
+    );
+  }
+}

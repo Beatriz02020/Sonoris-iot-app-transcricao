@@ -18,6 +18,17 @@ class ConversaService {
         .collection('ConversasNaoSalvas');
   }
 
+  // Obter referência da subcoleção ConversasSalvas do usuário atual
+  CollectionReference? _getConversasSalvasRef() {
+    final user = _auth.currentUser;
+    if (user == null) return null;
+
+    return _firestore
+        .collection('Usuario')
+        .doc(user.uid)
+        .collection('ConversasSalvas');
+  }
+
   // Adicionar uma nova conversa não salva
   Future<String?> addConversaNaoSalva(ConversaNaoSalva conversa) async {
     try {
@@ -156,6 +167,122 @@ class ConversaService {
     } catch (e) {
       print('Erro ao criar conversa de teste: $e');
       return null;
+    }
+  }
+
+  // ===== MÉTODOS PARA CONVERSAS SALVAS =====
+
+  // Salvar conversa (move de ConversasNaoSalvas para ConversasSalvas)
+  Future<String?> salvarConversa({
+    required ConversaNaoSalva conversaNaoSalva,
+    required String nome,
+    required String descricao,
+    required String categoria,
+    required bool favorito,
+  }) async {
+    try {
+      final refSalvas = _getConversasSalvasRef();
+      if (refSalvas == null) {
+        throw Exception('Usuário não autenticado');
+      }
+
+      // Criar conversa salva a partir da não salva
+      final conversaSalva = ConversaSalva.fromConversaNaoSalva(
+        conversa: conversaNaoSalva,
+        nome: nome,
+        descricao: descricao,
+        categoria: categoria,
+        favorito: favorito,
+      );
+
+      // Adicionar na coleção ConversasSalvas
+      final docRef = await refSalvas.add(conversaSalva.toMap());
+
+      // Deletar da coleção ConversasNaoSalvas
+      await deleteConversa(conversaNaoSalva.id);
+
+      print('Conversa salva com sucesso! ID: ${docRef.id}');
+      return docRef.id;
+    } catch (e) {
+      print('Erro ao salvar conversa: $e');
+      return null;
+    }
+  }
+
+  // Stream de conversas salvas do usuário atual
+  Stream<List<ConversaSalva>> getConversasSalvasStream() {
+    final ref = _getConversasSalvasRef();
+    if (ref == null) {
+      return Stream.value([]);
+    }
+
+    return ref.orderBy('created_at', descending: true).snapshots().map((
+      snapshot,
+    ) {
+      return snapshot.docs.map((doc) {
+        return ConversaSalva.fromMap(
+          doc.id,
+          doc.data() as Map<String, dynamic>,
+        );
+      }).toList();
+    });
+  }
+
+  // Buscar uma conversa salva específica por ID
+  Future<ConversaSalva?> getConversaSalvaById(String conversaId) async {
+    try {
+      final ref = _getConversasSalvasRef();
+      if (ref == null) return null;
+
+      final doc = await ref.doc(conversaId).get();
+      if (!doc.exists) return null;
+
+      return ConversaSalva.fromMap(doc.id, doc.data() as Map<String, dynamic>);
+    } catch (e) {
+      print('Erro ao buscar conversa salva: $e');
+      return null;
+    }
+  }
+
+  // Deletar uma conversa salva
+  Future<bool> deleteConversaSalva(String conversaId) async {
+    try {
+      final ref = _getConversasSalvasRef();
+      if (ref == null) return false;
+
+      await ref.doc(conversaId).delete();
+      return true;
+    } catch (e) {
+      print('Erro ao deletar conversa salva: $e');
+      return false;
+    }
+  }
+
+  // Atualizar uma conversa salva
+  Future<bool> updateConversaSalva({
+    required String conversaId,
+    String? nome,
+    String? descricao,
+    String? categoria,
+    bool? favorito,
+  }) async {
+    try {
+      final ref = _getConversasSalvasRef();
+      if (ref == null) return false;
+
+      final Map<String, dynamic> updates = {};
+      if (nome != null) updates['nome'] = nome;
+      if (descricao != null) updates['descricao'] = descricao;
+      if (categoria != null) updates['categoria'] = categoria;
+      if (favorito != null) updates['favorito'] = favorito;
+
+      if (updates.isEmpty) return false;
+
+      await ref.doc(conversaId).update(updates);
+      return true;
+    } catch (e) {
+      print('Erro ao atualizar conversa salva: $e');
+      return false;
     }
   }
 }

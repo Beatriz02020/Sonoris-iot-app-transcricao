@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sonoris/components/chatSelect.dart';
+import 'package:sonoris/models/conversa.dart';
+import 'package:sonoris/services/conversa_service.dart';
 import 'package:sonoris/theme/colors.dart';
 import 'package:sonoris/theme/text_styles.dart';
 
@@ -16,7 +18,9 @@ class SavedChatsScreen extends StatefulWidget {
 class _SavedChatsScreenState extends State<SavedChatsScreen> {
   // Controlador e estado da pesquisa
   final TextEditingController _searchController = TextEditingController();
+  final ConversaService _conversaService = ConversaService();
   String _query = '';
+  List<ConversaSalva> _allConversas = [];
 
   // Novo: filtro selecionado (null = nenhum)
   String? _selectedFilter;
@@ -44,7 +48,7 @@ class _SavedChatsScreenState extends State<SavedChatsScreen> {
       'color': AppColors.rose600,
     },
     {
-      'key': 'Reuniao',
+      'key': 'Reunião',
       'asset': 'assets/images/icons/Reuniao.png',
       'color': AppColors.green600,
     },
@@ -60,52 +64,11 @@ class _SavedChatsScreenState extends State<SavedChatsScreen> {
     },
   ];
 
-  // Lista estática temporária de conversas salvas (mock). Em futura integração,
-  // isto pode vir do Firestore ou outra fonte dinâmica.
-  // Futuras melhorias:
-  // 1. Buscar dados do Firestore ordenando por data/hora.
-  // 2. Adicionar debounce (ex: Timer 300ms) se a coleção ficar grande.
-  // 3. Implementar filtros de categorias (Favoritos, Estudos, etc.) combinando com busca.
-  // 4. Paginação/infinite scroll caso volume cresça.
-  final List<_SavedChat> _allChats = [
-    _SavedChat(
-      nome: 'Reuniao SoftSkills',
-      data: '02/07/2025',
-      horarioInicial: '09:00',
-      horarioFinal: '12:00',
-      image: 'Teams',
-      favorito: true,
-      descricao: 'DescriçãoDescriçãoDescriçasdsada',
-    ),
-    _SavedChat(
-      nome: 'Workshop de Criatividade',
-      data: '02/07/2025',
-      horarioInicial: '09:00',
-      horarioFinal: '12:00',
-      image: 'Reuniao',
-      favorito: true,
-      descricao: 'DescriçãoDescriçãoDescriçasdsada',
-    ),
-    _SavedChat(
-      nome: 'Treinamento de Liderança',
-      data: '02/07/2025',
-      horarioInicial: '09:00',
-      horarioFinal: '12:00',
-      image: 'Trabalho',
-      descricao: 'DescriçãoDescriçãoDescriçasdsada',
-    ),
-    _SavedChat(
-      nome: 'Conversa_01_07_25_13h',
-      data: '02/07/2025',
-      horarioInicial: '09:00',
-      horarioFinal: '12:00',
-      image: 'Outros',
-    ),
-  ];
+  // Atualizado: aplica filtro por categoria/favorito e por query de texto combinados
+  List<ConversaSalva> get _filteredConversas {
+    if (_query.isEmpty && _selectedFilter == null) return _allConversas;
 
-  // Atualizado: aplica filtro por ícone/favorito e por query de texto combinados
-  List<_SavedChat> get _filteredChats {
-    Iterable<_SavedChat> list = _allChats;
+    Iterable<ConversaSalva> list = _allConversas;
 
     // Aplicar filtro de categoria/favorito primeiro (se houver)
     if (_selectedFilter != null && _selectedFilter!.isNotEmpty) {
@@ -114,7 +77,7 @@ class _SavedChatsScreenState extends State<SavedChatsScreen> {
       } else {
         final key = _selectedFilter!;
         list = list.where(
-          (c) => (c.image ?? '').toLowerCase() == key.toLowerCase(),
+          (c) => c.categoria.toLowerCase() == key.toLowerCase(),
         );
       }
     }
@@ -160,136 +123,166 @@ class _SavedChatsScreenState extends State<SavedChatsScreen> {
         title: const Text('Conversas Salvas'),
       ),
 
-      body: ListView(
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(
-              left: 15,
-              right: 15,
-              top: 10, // original (55)
-              bottom: 30,
-            ),
-            child: Column(
-              spacing: 13,
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // input de pesquisa
-                CustomTextField(
-                  hintText: 'Pesquisar',
-                  isSearch: true,
-                  fullWidth: true,
-                  controller: _searchController,
-                  onChanged: (value) {
-                    setState(() {
-                      _query = value?.trim() ?? '';
-                    });
-                  },
-                  suffixIcon:
-                      _query.isNotEmpty
-                          ? IconButton(
-                            icon: Icon(Icons.close, color: AppColors.gray500),
-                            onPressed: () {
-                              _searchController.clear();
-                              setState(() {
-                                _query = '';
-                              });
-                            },
-                          )
-                          : null,
-                ),
+      body: StreamBuilder<List<ConversaSalva>>(
+        stream: _conversaService.getConversasSalvasStream(),
+        builder: (context, snapshot) {
+          // Atualiza _allConversas quando recebe novos dados
+          if (snapshot.hasData) {
+            _allConversas = snapshot.data!;
+          }
 
-                // filtros
-                Column(
-                  spacing: 6,
+          if (snapshot.connectionState == ConnectionState.waiting &&
+              _allConversas.isEmpty) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          if (snapshot.hasError) {
+            return Center(
+              child: Text(
+                'Erro ao carregar conversas: ${snapshot.error}',
+                style: AppTextStyles.body.copyWith(color: AppColors.rose500),
+              ),
+            );
+          }
+
+          return ListView(
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(
+                  left: 15,
+                  right: 15,
+                  top: 10, // original (55)
+                  bottom: 30,
+                ),
+                child: Column(
+                  spacing: 13,
+                  mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Filtrar por', style: AppTextStyles.body),
-                    SizedBox(
-                      height: 95,
-                      child:
-                      //TODO: Fazer essa listview sair para fora do padding
-                      ListView(
-                        scrollDirection: Axis.horizontal,
-                        children: [
-                          Row(
-                            spacing: 6,
-                            children: [
-                              // Construir dinamicamente os filtros a partir de _filters
-                              for (var f in _filters)
-                                GestureDetector(
-                                  onTap: () {
-                                    setState(() {
-                                      // alterna: desmarca se clicar de novo
-                                      if (_selectedFilter == f['key']) {
-                                        _selectedFilter = null;
-                                      } else {
-                                        _selectedFilter = f['key'] as String;
-                                      }
-                                    });
-                                  },
-                                  child: Container(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 6,
-                                    ),
-                                    // estilo visual para filtro selecionado
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                    child: Column(
-                                      children: [
-                                        Opacity(
-                                          opacity:
-                                              _selectedFilter == null ||
-                                                      _selectedFilter ==
-                                                          f['key']
-                                                  ? 1.0
-                                                  : 0.5,
-                                          child: Image.asset(
-                                            f['asset'] as String,
-                                            width: 64,
-                                            height: 64,
-                                          ),
-                                        ),
-                                        Opacity(
-                                          opacity:
-                                              _selectedFilter == null ||
-                                                      _selectedFilter ==
-                                                          f['key']
-                                                  ? 1.0
-                                                  : 0.5,
-                                          child: Text(
-                                            f['key'] as String,
-                                            style: AppTextStyles.bold.copyWith(
-                                              color: f['color'] as Color,
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
+                    // input de pesquisa
+                    CustomTextField(
+                      hintText: 'Pesquisar',
+                      isSearch: true,
+                      fullWidth: true,
+                      controller: _searchController,
+                      onChanged: (value) {
+                        setState(() {
+                          _query = value?.trim() ?? '';
+                        });
+                      },
+                      suffixIcon:
+                          _query.isNotEmpty
+                              ? IconButton(
+                                icon: Icon(
+                                  Icons.close,
+                                  color: AppColors.gray500,
                                 ),
+                                onPressed: () {
+                                  _searchController.clear();
+                                  setState(() {
+                                    _query = '';
+                                  });
+                                },
+                              )
+                              : null,
+                    ),
 
-                              // Espaço final
-                              const SizedBox(width: 8),
+                    // filtros
+                    Column(
+                      spacing: 12,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Filtrar por', style: AppTextStyles.body),
+                        SizedBox(
+                          height: 85,
+                          child:
+                          //TODO: Fazer essa listview sair para fora do padding
+                          ListView(
+                            scrollDirection: Axis.horizontal,
+                            children: [
+                              Row(
+                                spacing: 6,
+                                children: [
+                                  // Construir dinamicamente os filtros a partir de _filters
+                                  for (var f in _filters)
+                                    GestureDetector(
+                                      onTap: () {
+                                        setState(() {
+                                          // alterna: desmarca se clicar de novo
+                                          if (_selectedFilter == f['key']) {
+                                            _selectedFilter = null;
+                                          } else {
+                                            _selectedFilter =
+                                                f['key'] as String;
+                                          }
+                                        });
+                                      },
+                                      child: Container(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 6,
+                                        ),
+                                        // estilo visual para filtro selecionado
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(
+                                            8,
+                                          ),
+                                        ),
+                                        child: Column(
+                                          children: [
+                                            Opacity(
+                                              opacity:
+                                                  _selectedFilter == null ||
+                                                          _selectedFilter ==
+                                                              f['key']
+                                                      ? 1.0
+                                                      : 0.5,
+                                              child: Image.asset(
+                                                f['asset'] as String,
+                                                width: 54,
+                                                height: 54,
+                                              ),
+                                            ),
+                                            Opacity(
+                                              opacity:
+                                                  _selectedFilter == null ||
+                                                          _selectedFilter ==
+                                                              f['key']
+                                                      ? 1.0
+                                                      : 0.5,
+                                              child: Text(
+                                                f['key'] as String,
+                                                style: AppTextStyles.bold
+                                                    .copyWith(
+                                                      color:
+                                                          f['color'] as Color,
+                                                    ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+
+                                  // Espaço final
+                                  const SizedBox(width: 8),
+                                ],
+                              ),
                             ],
                           ),
-                        ],
-                      ),
+                        ),
+                        // conversas não salvas
+                        Container(
+                          height: 2,
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            color: AppColors.blue500,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                      ],
                     ),
-                    // conversas não salvas
-                    Container(
-                      height: 2,
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        color: AppColors.blue500,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                    ),
-                  ],
-                ),
 
-                /*
+                    /*
                 GestureDetector(
                   onTap: () {
                     Navigator.push(
@@ -336,58 +329,47 @@ class _SavedChatsScreenState extends State<SavedChatsScreen> {
                   ),
                 ),*/
 
-                // conversas
-                Text('Conversas', style: AppTextStyles.body),
+                    // conversas
+                    Text('Conversas', style: AppTextStyles.body),
 
-                // Lista filtrada de conversas ou estado vazio
-                if (_filteredChats.isEmpty)
-                  Padding(
-                    padding: const EdgeInsets.only(top: 10),
-                    child: Text(
-                      'Nenhuma conversa encontrada',
-                      style: AppTextStyles.body.copyWith(
-                        color: AppColors.gray500,
+                    // Lista filtrada de conversas ou estado vazio
+                    if (_filteredConversas.isEmpty)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 10),
+                        child: Text(
+                          _allConversas.isEmpty
+                              ? 'Nenhuma conversa salva'
+                              : 'Nenhuma conversa encontrada',
+                          style: AppTextStyles.body.copyWith(
+                            color: AppColors.gray500,
+                          ),
+                        ),
+                      )
+                    else
+                      ..._filteredConversas.map(
+                        (c) => ChatSelect(
+                          nome: c.nome,
+                          data: c.data,
+                          horarioInicial: c.horarioInicial,
+                          horarioFinal: c.horarioFinal,
+                          image: c.categoriaNormalizada,
+                          salvas: true,
+                          favorito: c.favorito,
+                          descricao: c.descricao,
+                          onTap: () {
+                            Navigator.of(
+                              context,
+                            ).pushNamed('/savedchats/chat', arguments: c);
+                          },
+                        ),
                       ),
-                    ),
-                  )
-                else
-                  ..._filteredChats.map(
-                    (c) => ChatSelect(
-                      nome: c.nome,
-                      data: c.data,
-                      horarioInicial: c.horarioInicial,
-                      horarioFinal: c.horarioFinal,
-                      image: c.image,
-                      salvas: true,
-                      favorito: c.favorito,
-                      descricao: c.descricao,
-                    ),
-                  ),
-              ],
-            ),
-          ),
-        ],
+                  ],
+                ),
+              ),
+            ],
+          );
+        },
       ),
     );
   }
-}
-
-// Modelo simples local para mock de conversas salvas
-class _SavedChat {
-  final String nome;
-  final String data;
-  final String horarioInicial;
-  final String horarioFinal;
-  final String? descricao;
-  final String? image;
-  final bool favorito;
-  _SavedChat({
-    required this.nome,
-    required this.data,
-    required this.horarioInicial,
-    required this.horarioFinal,
-    this.descricao,
-    this.image,
-    this.favorito = false,
-  });
 }

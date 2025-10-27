@@ -8,7 +8,6 @@ import 'package:sonoris/theme/text_styles.dart';
 
 import '../../../components/customButton.dart';
 import '../../../components/messageBubble.dart';
-import 'saving_chat_screen.dart';
 
 class UnsavedChatScreen extends StatefulWidget {
   final ConversaNaoSalva conversa;
@@ -159,12 +158,9 @@ class _UnsavedChatScreenState extends State<UnsavedChatScreen> {
               width: 130,
               child: GestureDetector(
                 onTap: () {
-                  Navigator.push(
+                  Navigator.of(
                     context,
-                    MaterialPageRoute(
-                      builder: (context) => const SavingChatScreen(),
-                    ),
-                  );
+                  ).pushNamed('/unsavedchats/chat/saving', arguments: conversa);
                 },
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.end,

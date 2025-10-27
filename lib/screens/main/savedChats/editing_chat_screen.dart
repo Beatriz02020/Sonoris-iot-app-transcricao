@@ -8,16 +8,16 @@ import 'package:sonoris/services/conversa_service.dart';
 import 'package:sonoris/theme/colors.dart';
 import 'package:sonoris/theme/text_styles.dart';
 
-class SavingChatScreen extends StatefulWidget {
-  final ConversaNaoSalva conversa;
+class EditingChatScreen extends StatefulWidget {
+  final ConversaSalva conversa;
 
-  const SavingChatScreen({super.key, required this.conversa});
+  const EditingChatScreen({super.key, required this.conversa});
 
   @override
-  State<SavingChatScreen> createState() => _SavingChatScreenState();
+  State<EditingChatScreen> createState() => _EditingChatScreenState();
 }
 
-class _SavingChatScreenState extends State<SavingChatScreen> {
+class _EditingChatScreenState extends State<EditingChatScreen> {
   final ConversaService _conversaService = ConversaService();
   final TextEditingController _nomeController = TextEditingController();
   final TextEditingController _descricaoController = TextEditingController();
@@ -63,10 +63,18 @@ class _SavingChatScreenState extends State<SavingChatScreen> {
   @override
   void initState() {
     super.initState();
-    // Preencher nome com o nome original da conversa
+    // Preencher campos com os dados atuais da conversa
     _nomeController.text = widget.conversa.nome;
-    // Definir categoria padrão como "Outros" (índice 6)
-    _selectedCategoryIndex = 5;
+    _descricaoController.text = widget.conversa.descricao;
+    _isFavorito = widget.conversa.favorito;
+
+    // Definir categoria atual
+    final categoriaIndex = _categories.indexWhere(
+      (cat) => cat['name'] == widget.conversa.categoria,
+    );
+    _selectedCategoryIndex =
+        categoriaIndex != -1 ? categoriaIndex : 5; // Default: Outros
+    _selectedCategory = widget.conversa.categoria;
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       SystemChrome.setSystemUIOverlayStyle(
@@ -101,8 +109,9 @@ class _SavingChatScreenState extends State<SavingChatScreen> {
     setState(() => _isSaving = true);
 
     try {
-      final conversaId = await _conversaService.salvarConversa(
-        conversaNaoSalva: widget.conversa,
+      // Atualizar conversa existente
+      final sucesso = await _conversaService.updateConversaSalva(
+        conversaId: widget.conversa.id,
         nome: _nomeController.text.trim(),
         descricao: _descricaoController.text.trim(),
         categoria: _selectedCategory,
@@ -111,21 +120,20 @@ class _SavingChatScreenState extends State<SavingChatScreen> {
 
       if (!mounted) return;
 
-      if (conversaId != null) {
-        // Sucesso - volta para a tela anterior (2 vezes para sair do unsaved_chat_screen também)
-        Navigator.of(context).pop();
+      if (sucesso) {
+        // Sucesso - volta para a tela anterior
         Navigator.of(context).pop();
 
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Conversa salva com sucesso!'),
+            content: Text('Conversa atualizada com sucesso!'),
             backgroundColor: AppColors.teal500,
           ),
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Erro ao salvar conversa'),
+            content: Text('Erro ao atualizar conversa'),
             backgroundColor: AppColors.rose500,
           ),
         );
@@ -220,7 +228,7 @@ class _SavingChatScreenState extends State<SavingChatScreen> {
         scrolledUnderElevation: 0,
         iconTheme: const IconThemeData(color: AppColors.blue500),
         titleTextStyle: AppTextStyles.h3.copyWith(color: AppColors.blue500),
-        title: const Text('Salvar Conversa'),
+        title: const Text('Editar Conversa'),
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -328,7 +336,7 @@ class _SavingChatScreenState extends State<SavingChatScreen> {
                 ),
               ),
               CustomButton(
-                text: _isSaving ? 'Salvando...' : 'Salvar Conversa',
+                text: _isSaving ? 'Salvando...' : 'Salvar Alterações',
                 fullWidth: true,
                 onPressed: _isSaving ? null : _salvarConversa,
               ),

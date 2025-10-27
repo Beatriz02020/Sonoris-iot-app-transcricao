@@ -69,7 +69,13 @@ class HomeTabNavigator extends StatelessWidget {
             }
             break;
           case '/unsavedchats/chat/saving':
-            page = const SavingChatScreen();
+            // Recebe a conversa via arguments
+            final conversa = settings.arguments as ConversaNaoSalva?;
+            if (conversa != null) {
+              page = SavingChatScreen(conversa: conversa);
+            } else {
+              page = const HomeScreen(); // Fallback se não houver conversa
+            }
             break;
           case '/':
           default:
