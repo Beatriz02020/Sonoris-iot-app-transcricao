@@ -59,11 +59,6 @@ class _SavedChatsScreenState extends State<SavedChatsScreen> {
       'asset': 'assets/images/icons/Outros.png',
       'color': AppColors.gray700,
     },
-    {
-      'key': 'Customizado',
-      'asset': 'assets/images/icons/Customizado.png',
-      'color': AppColors.gray700,
-    },
   ];
 
   // Lista estática temporária de conversas salvas (mock). Em futura integração,

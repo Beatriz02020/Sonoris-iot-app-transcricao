@@ -23,7 +23,7 @@ class SonorisApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Sonoris App',
+      title: 'Sonoris',
       // Envolve toda a árvore de widgets do app com SafeArea
       builder: (context, child) {
         return SafeArea(

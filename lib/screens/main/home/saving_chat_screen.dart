@@ -73,6 +73,20 @@ class _SavingChatScreenState extends State<SavingChatScreen> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      SystemChrome.setSystemUIOverlayStyle(
+        SystemUiOverlayStyle.dark.copyWith(
+          statusBarColor: AppColors.white100,
+          systemNavigationBarColor: AppColors.blue500,
+          systemNavigationBarIconBrightness: Brightness.light,
+        ),
+      );
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(
       SystemUiOverlayStyle.dark.copyWith(
@@ -107,7 +121,6 @@ class _SavingChatScreenState extends State<SavingChatScreen> {
               SizedBox(
                 height: 95,
                 child:
-                //TODO: Fazer essa listview sair para fora do padding
                 ListView(
                   scrollDirection: Axis.horizontal,
                   children: [
@@ -155,12 +168,6 @@ class _SavingChatScreenState extends State<SavingChatScreen> {
                           label: 'Outros',
                           labelColor: AppColors.gray700,
                           index: 6,
-                        ),
-                        _buildCategoryItem(
-                          assetPath: 'assets/images/icons/Customizado.png',
-                          label: 'Customizado',
-                          labelColor: AppColors.gray700,
-                          index: 7,
                         ),
                       ],
                     ),

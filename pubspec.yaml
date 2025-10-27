@@ -1,5 +1,5 @@
 name: sonoris
-description: "A new Flutter project."
+description: "Aplicativo da Sonoris de transcrição em tempo real para pessoas surdas ou com deficiência auditiva."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: "none" # Remove this line if you wish to publish to pub.dev
@@ -65,6 +65,9 @@ flutter_launcher_icons:
   android: true
   ios: true
   image_path: "assets/images/Icon_Sonoris_App.png"
+  adaptive_icon_background: "#222754"
+  adaptive_icon_foreground: "assets/images/Icon_Sonoris_App.png"
+  remove_alpha_ios: true
   # flutter pub run flutter_launcher_icons:main
 
 # For information on the generic Dart part of this file, see the

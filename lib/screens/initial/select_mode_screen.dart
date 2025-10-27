@@ -5,7 +5,7 @@ import 'package:sonoris/screens/initial/bluetooth_screen.dart';
 import 'package:sonoris/theme/colors.dart';
 import 'package:sonoris/theme/text_styles.dart';
 
-// TODO: Salvar a escolha no firebase
+// Página não utilizada
 
 class SelectModeScreen extends StatefulWidget {
   const SelectModeScreen({super.key});

@@ -46,7 +46,7 @@ class QuickActionsButton extends StatelessWidget {
           spacing: 6,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Image.asset(iconPath), // icone
+            Image(image: AssetImage(iconPath), height: 40, width: 40), // icone
             Text(
               text,
               style: AppTextStyles.bodySmall.copyWith(height: 1.2),

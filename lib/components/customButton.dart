@@ -25,9 +25,6 @@ class CustomButton extends StatelessWidget {
     this.iconSize, // <- Adicionado ao construtor
   });
 
-  // TODO Fazer o arrowCircleButton
-  // TODO Arrumar o estilo do botão pressionado (tirar a sombra)
-
   @override
   Widget build(BuildContext context) {
     final Color mainColor = color ?? AppColors.blue500;

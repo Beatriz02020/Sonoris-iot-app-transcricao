@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:sonoris/components/customButton.dart';
 import 'package:sonoris/components/customTextField.dart';
+import 'package:sonoris/screens/initial/connection_screen.dart';
 import 'package:sonoris/screens/initial/select_mode_screen.dart';
 import 'package:sonoris/services/auth_service.dart';
 import 'package:sonoris/theme/colors.dart';
@@ -72,7 +73,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => SelectModeScreen()),
+        MaterialPageRoute(builder: (context) => ConnectionScreen()),
       );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(

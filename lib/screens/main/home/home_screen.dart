@@ -422,7 +422,6 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
 
                         // button de veja mais
-                        // TODO colocar icone (fazer uma variant dele)
                         CustomButton(
                           text: 'Ver todas',
                           outlined: true,

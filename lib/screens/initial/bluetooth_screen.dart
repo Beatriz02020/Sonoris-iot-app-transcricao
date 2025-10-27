@@ -5,8 +5,7 @@ import 'package:sonoris/screens/initial/connection_screen.dart';
 import 'package:sonoris/theme/colors.dart';
 import 'package:sonoris/theme/text_styles.dart';
 
-// TODO: Só entrar nessa página quando o bluetooth estiver desativado ( e ver se realmente precisa dessa página )
-
+/*Página não utilizada*/
 class BluetoothScreen extends StatefulWidget {
   const BluetoothScreen({super.key});
 
@@ -73,7 +72,7 @@ class _BluetoothScreenState extends State<BluetoothScreen> {
             CustomButton(
               text: 'Habilitar o Bluetooth',
               fullWidth: true,
-              onPressed: (/*TODO: Ativar o bluetooth*/) {
+              onPressed: (/* Lógica */) {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => ConnectionScreen()),
