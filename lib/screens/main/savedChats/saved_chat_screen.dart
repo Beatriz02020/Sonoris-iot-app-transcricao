@@ -15,8 +15,7 @@ class SavedChatScreen extends StatefulWidget {
 }
 
 class _SavedChatScreenState extends State<SavedChatScreen> {
-  // TODO Descobrir um jeito melhor de trocar a cor quando entrar nessa página
-  // TODO Fazer o botão de scrollar para cima e para baixo
+  // TODO: Fazer o botão de scrollar para cima e para baixo
   @override
   void initState() {
     super.initState();

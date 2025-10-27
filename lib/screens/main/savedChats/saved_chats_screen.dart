@@ -5,7 +5,6 @@ import 'package:sonoris/theme/colors.dart';
 import 'package:sonoris/theme/text_styles.dart';
 
 import '../../../components/customTextField.dart';
-import '../home/unsaved_chats_screen.dart';
 
 class SavedChatsScreen extends StatefulWidget {
   const SavedChatsScreen({super.key});
@@ -290,7 +289,7 @@ class _SavedChatsScreenState extends State<SavedChatsScreen> {
                   ],
                 ),
 
-                // TODO: ajustar esse botao para trocar de aba
+                /*
                 GestureDetector(
                   onTap: () {
                     Navigator.push(
@@ -335,7 +334,7 @@ class _SavedChatsScreenState extends State<SavedChatsScreen> {
                       ],
                     ),
                   ),
-                ),
+                ),*/
 
                 // conversas
                 Text('Conversas', style: AppTextStyles.body),

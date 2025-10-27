@@ -13,7 +13,9 @@ import 'package:sonoris/screens/main/home/captions_screen.dart';
 import 'package:sonoris/theme/colors.dart';
 import 'package:sonoris/theme/text_styles.dart';
 
+import '../../../models/conversa.dart';
 import '../../../services/bluetooth_manager.dart';
+import '../../../services/conversa_service.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -26,6 +28,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final BluetoothManager _manager =
       BluetoothManager(); // Certifique-se de inicializar o BluetoothManager
   BluetoothConnectionState _connState = BluetoothConnectionState.disconnected;
+  final ConversaService _conversaService = ConversaService();
 
   String _userName = ""; // Nome do usuário
   String? _photoUrl; // Foto do usuário
@@ -317,122 +320,151 @@ class _HomeScreenState extends State<HomeScreen> {
                 children: [
                   Text('Conversas não salvas', style: AppTextStyles.body),
 
-                  // card com as conversas
-                  // TODO: Pegar informações do Firebase
-                  // TODO fazer as conversas serem clicaveis
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: AppColors.white100,
-                      borderRadius: BorderRadius.circular(16),
-                      boxShadow: [
-                        BoxShadow(
-                          color: AppColors.gray900.withAlpha(18),
-                          blurRadius: 18.5,
-                          spreadRadius: 1,
-                          offset: const Offset(0, 6),
-                        ),
-                      ],
-                    ),
-
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      spacing: 10,
-                      children: [
-                        // conversa 1
-                        Container(
-                          // borda
-                          padding: EdgeInsets.symmetric(
-                            vertical: 10,
-                            horizontal: 14,
-                          ),
+                  // card com as conversas do Firebase
+                  StreamBuilder<List<ConversaNaoSalva>>(
+                    stream: _conversaService.getConversasNaoSalvasStream(),
+                    builder: (context, snapshot) {
+                      // Mostra loading enquanto carrega
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return Container(
+                          padding: const EdgeInsets.all(24),
                           decoration: BoxDecoration(
                             color: AppColors.white100,
-                            border: Border.all(
-                              color: AppColors.gray300,
-                              width: 1.5, // stroke width
-                            ),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                'Conversa_04_07_25_8h',
-                                style: AppTextStyles.bold.copyWith(
-                                  color: AppColors.gray900,
-                                ),
-                              ),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                children: [
-                                  Text(
-                                    '04/07/2025',
-                                    style: AppTextStyles.medium,
-                                  ),
-                                  Text(
-                                    '08:30 - 11:30',
-                                    style: AppTextStyles.medium,
-                                  ),
-                                ],
+                            borderRadius: BorderRadius.circular(16),
+                            boxShadow: [
+                              BoxShadow(
+                                color: AppColors.gray900.withAlpha(18),
+                                blurRadius: 18.5,
+                                spreadRadius: 1,
+                                offset: const Offset(0, 6),
                               ),
                             ],
                           ),
-                        ),
-
-                        // conversa 2
-                        Container(
-                          // borda
-                          padding: EdgeInsets.symmetric(
-                            vertical: 10,
-                            horizontal: 14,
+                          child: const Center(
+                            child: CircularProgressIndicator(),
                           ),
+                        );
+                      }
+
+                      // Se não tem conversas
+                      if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                        return Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(24),
                           decoration: BoxDecoration(
                             color: AppColors.white100,
-                            border: Border.all(
-                              color: AppColors.gray300,
-                              width: 1.5, // stroke width
-                            ),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                'Conversa_04_07_25_8h',
-                                style: AppTextStyles.bold.copyWith(
-                                  color: AppColors.gray900,
-                                ),
-                              ),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                children: [
-                                  Text(
-                                    '04/07/2025',
-                                    style: AppTextStyles.medium,
-                                  ),
-                                  Text(
-                                    '08:30 - 11:30',
-                                    style: AppTextStyles.medium,
-                                  ),
-                                ],
+                            borderRadius: BorderRadius.circular(16),
+                            boxShadow: [
+                              BoxShadow(
+                                color: AppColors.gray900.withAlpha(18),
+                                blurRadius: 18.5,
+                                spreadRadius: 1,
+                                offset: const Offset(0, 6),
                               ),
                             ],
                           ),
-                        ),
+                          child: Text(
+                            'Nenhuma conversa não salva',
+                            style: AppTextStyles.body.copyWith(
+                              color: AppColors.gray500,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        );
+                      }
 
-                        // button de veja mais
-                        CustomButton(
-                          text: 'Ver todas',
-                          outlined: true,
-                          fullWidth: false,
-                          onPressed: () {
-                            Navigator.of(context).pushNamed('/unsavedchats');
-                          },
-                          // Icon(Icons.circle_outlined, color: AppColors.blue500),
+                      // Pega as 2 conversas mais recentes
+                      final conversas = snapshot.data!.take(2).toList();
+
+                      return Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: AppColors.white100,
+                          borderRadius: BorderRadius.circular(16),
+                          boxShadow: [
+                            BoxShadow(
+                              color: AppColors.gray900.withAlpha(18),
+                              blurRadius: 18.5,
+                              spreadRadius: 1,
+                              offset: const Offset(0, 6),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          spacing: 10,
+                          children: [
+                            // Mapeia as conversas
+                            ...conversas.map((conversa) {
+                              return GestureDetector(
+                                onTap: () {
+                                  // Navega para a tela de chat específica
+                                  Navigator.of(context).pushNamed(
+                                    '/unsavedchats/chat',
+                                    arguments: conversa,
+                                  );
+                                },
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 10,
+                                    horizontal: 14,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: AppColors.white100,
+                                    border: Border.all(
+                                      color: AppColors.gray300,
+                                      width: 1.5,
+                                    ),
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Expanded(
+                                        child: Text(
+                                          conversa.nome,
+                                          style: AppTextStyles.bold.copyWith(
+                                            color: AppColors.gray900,
+                                          ),
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.end,
+                                        children: [
+                                          Text(
+                                            conversa.data,
+                                            style: AppTextStyles.medium,
+                                          ),
+                                          Text(
+                                            '${conversa.horarioInicial} - ${conversa.horarioFinal}',
+                                            style: AppTextStyles.medium,
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            }),
+
+                            // button de ver todas
+                            CustomButton(
+                              text: 'Ver todas',
+                              outlined: true,
+                              fullWidth: false,
+                              onPressed: () {
+                                Navigator.of(
+                                  context,
+                                ).pushNamed('/unsavedchats');
+                              },
+                            ),
+                          ],
+                        ),
+                      );
+                    },
                   ),
                 ],
               ),

@@ -9,6 +9,8 @@ import 'package:sonoris/theme/text_styles.dart';
 import '../../../components/customButton.dart';
 import '../../../services/bluetooth_manager.dart';
 
+// TODO: Filtrar apenas dispositivos Sonoris
+
 class DeviceScreen extends StatefulWidget {
   const DeviceScreen({super.key});
 

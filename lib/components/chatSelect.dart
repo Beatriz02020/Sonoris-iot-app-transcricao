@@ -13,6 +13,7 @@ class ChatSelect extends StatelessWidget {
   final String? image;
   final bool salvas;
   final bool favorito;
+  final VoidCallback? onTap;
 
   const ChatSelect({
     super.key,
@@ -24,24 +25,27 @@ class ChatSelect extends StatelessWidget {
     this.image,
     this.salvas = false,
     this.favorito = false,
+    this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
     final String imagePath = 'assets/images/icons/$image.png';
 
-    String limitarTexto(String text, {int maxLength = 20}) {
+    String limitarTexto(String text, {int maxLength = 18}) {
       return (text.length <= maxLength)
           ? text
           : '${text.substring(0, maxLength)}...';
     }
 
     return GestureDetector(
-      onTap: () {
-        Navigator.of(
-          context,
-        ).pushNamed(salvas != false ? '/chat' : '/unsavedchats/chat');
-      },
+      onTap:
+          onTap ??
+          () {
+            Navigator.of(
+              context,
+            ).pushNamed(salvas != false ? '/chat' : '/unsavedchats/chat');
+          },
 
       // respostas rápidas
       child: Container(
@@ -95,7 +99,7 @@ class ChatSelect extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      limitarTexto(nome, maxLength: 18),
+                      limitarTexto(nome, maxLength: image != null ? 17 : 24),
                       maxLines: 1,
                       style: AppTextStyles.bold.copyWith(
                         color: AppColors.gray900,

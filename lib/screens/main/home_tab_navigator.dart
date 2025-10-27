@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sonoris/models/conversa.dart';
 import 'package:sonoris/screens/main/home/answer_category_screen.dart';
 import 'package:sonoris/screens/main/home/answer_screen.dart';
 import 'package:sonoris/screens/main/home/captions_screen.dart';
@@ -59,7 +60,13 @@ class HomeTabNavigator extends StatelessWidget {
             page = const UnsavedChatsScreen();
             break;
           case '/unsavedchats/chat':
-            page = const UnsavedChatScreen();
+            // Recebe a conversa via arguments
+            final conversa = settings.arguments as ConversaNaoSalva?;
+            if (conversa != null) {
+              page = UnsavedChatScreen(conversa: conversa);
+            } else {
+              page = const HomeScreen(); // Fallback se não houver conversa
+            }
             break;
           case '/unsavedchats/chat/saving':
             page = const SavingChatScreen();

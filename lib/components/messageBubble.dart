@@ -1,9 +1,8 @@
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
 import '../theme/colors.dart';
 import '../theme/text_styles.dart';
 
-// TODO: deixar componente responsivo
 class Messagebubble extends StatelessWidget {
   final String texto;
   final String horario;
@@ -18,6 +17,10 @@ class Messagebubble extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Obtém a largura da tela para calcular o tamanho máximo da bolha
+    final screenWidth = MediaQuery.of(context).size.width;
+    final maxBubbleWidth = screenWidth * 0.75; // 75% da largura da tela
+
     return Column(
       spacing: 5,
       crossAxisAlignment:
@@ -28,14 +31,18 @@ class Messagebubble extends StatelessWidget {
               isBlue ? MainAxisAlignment.end : MainAxisAlignment.start,
           children: [
             Container(
-              padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+              constraints: BoxConstraints(
+                maxWidth: maxBubbleWidth,
+                minWidth: 0,
+              ),
+              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
               decoration: BoxDecoration(
                 color: isBlue ? AppColors.blue600 : AppColors.white100,
                 borderRadius: BorderRadius.only(
-                  topLeft: isBlue ? Radius.circular(16) : Radius.zero,
-                  topRight: isBlue ? Radius.zero : Radius.circular(16),
-                  bottomLeft: Radius.circular(16),
-                  bottomRight: Radius.circular(16),
+                  topLeft: isBlue ? const Radius.circular(16) : Radius.zero,
+                  topRight: isBlue ? Radius.zero : const Radius.circular(16),
+                  bottomLeft: const Radius.circular(16),
+                  bottomRight: const Radius.circular(16),
                 ),
                 boxShadow: [
                   BoxShadow(
@@ -51,6 +58,8 @@ class Messagebubble extends StatelessWidget {
                 style: AppTextStyles.body.copyWith(
                   color: isBlue ? AppColors.white100 : AppColors.gray700,
                 ),
+                softWrap: true,
+                overflow: TextOverflow.visible,
               ),
             ),
           ],

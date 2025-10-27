@@ -7,8 +7,8 @@ import 'package:sonoris/screens/initial/initial_screen.dart';
 
 import 'firebase_options.dart';
 
-// TODO arrumar botão de voltar saindo do aplicativo
-// TODO consertar o icone e tela de inicio do aplicativo
+//TODO: Arrumar botão de voltar saindo do aplicativo
+//TODO: Concertar os erros de cor nos botões de navegação do android
 //TODO: Customizar as mensagens de erro do Firebase no geral
 
 void main() async {

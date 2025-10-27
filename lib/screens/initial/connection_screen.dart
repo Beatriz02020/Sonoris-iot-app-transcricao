@@ -12,6 +12,8 @@ import 'package:sonoris/theme/colors.dart';
 import 'package:sonoris/theme/text_styles.dart';
 
 // TODO: Filtrar apenas dispositivos Sonoris
+// TODO: Não permitir voltar para a página de cadastro
+// TODO: Adicionar botão de pular conexão
 
 class ConnectionScreen extends StatefulWidget {
   const ConnectionScreen({super.key});

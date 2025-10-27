@@ -19,7 +19,7 @@ class CaptionsScreen extends StatefulWidget {
 
 class _CaptionsScreenState extends State<CaptionsScreen> {
   // Colors
-  Color _textColorValue = AppColors.blue600;
+  Color _textColorValue = AppColors.gray900;
   Color _bgColorValue = AppColors.white100;
 
   // Sliders
