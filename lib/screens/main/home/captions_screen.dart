@@ -19,18 +19,16 @@ class CaptionsScreen extends StatefulWidget {
 
 class _CaptionsScreenState extends State<CaptionsScreen> {
   // Colors
-  Color selectedColorLinha1 = AppColors.blue600;
-  Color selectedColorLinha2 = AppColors.white100;
+  Color _textColorValue = AppColors.blue600;
+  Color _bgColorValue = AppColors.white100;
 
   // Sliders
-  double _fontSizeValue = 18;
-  double _fontBoldValue = 50; // 1-100 -> mapped to w400..w900
-  double _verticalValue = 1.3; // line height
-  double _horizontalValue = 0; // letter spacing
+  double _fontSizeValue = 36;
+  double _fontWeightValue = 400;
+  double _verticalValue = 1.2; // line height
 
   // Dropdowns
   String _fontFamily = 'Inter';
-  String _animation = 'Sem Animação';
 
   // Persistence debounce
   Timer? _debounce;
@@ -86,19 +84,12 @@ class _CaptionsScreenState extends State<CaptionsScreen> {
       if (data != null && data.isNotEmpty) {
         final d = data;
         setState(() {
-          selectedColorLinha1 =
-              _colorFromHex(d['textColor']) ?? selectedColorLinha1;
-          selectedColorLinha2 =
-              _colorFromHex(d['bgColor']) ?? selectedColorLinha2;
+          _textColorValue = _colorFromHex(d['textColor']) ?? _textColorValue;
+          _bgColorValue = _colorFromHex(d['bgColor']) ?? _bgColorValue;
           _fontFamily = (d['fontFamily'] ?? _fontFamily).toString();
           _fontSizeValue = _toDouble(d['fontSize'], _fontSizeValue);
-          _fontBoldValue = _toDouble(d['fontWeight'], _fontBoldValue);
-          _animation = (d['animation'] ?? _animation).toString();
+          _fontWeightValue = _toDouble(d['fontWeight'], _fontWeightValue);
           _verticalValue = _toDouble(d['lineHeight'], _verticalValue);
-          _horizontalValue = _toDouble(
-            d['horizontalSpacing'],
-            _horizontalValue,
-          );
         });
       }
     } catch (_) {
@@ -116,14 +107,12 @@ class _CaptionsScreenState extends State<CaptionsScreen> {
     if (doc == null) return;
     try {
       await doc.set({
-        'textColor': _toHex(selectedColorLinha1),
-        'bgColor': _toHex(selectedColorLinha2),
+        'textColor': _toHex(_textColorValue),
+        'bgColor': _toHex(_bgColorValue),
         'fontFamily': _fontFamily,
         'fontSize': _fontSizeValue,
-        'fontWeight': _fontBoldValue,
-        'animation': _animation,
+        'fontWeight': _fontWeightValue,
         'lineHeight': _verticalValue,
-        'horizontalSpacing': _horizontalValue,
         'updatedAt': FieldValue.serverTimestamp(),
       }, SetOptions(merge: true));
     } catch (_) {
@@ -188,7 +177,7 @@ class _CaptionsScreenState extends State<CaptionsScreen> {
                   horizontal: 16,
                 ),
                 decoration: BoxDecoration(
-                  color: selectedColorLinha2,
+                  color: _bgColorValue,
                   border: Border.all(color: AppColors.blue700, width: 1.5),
                   borderRadius: BorderRadius.circular(20),
                 ),
@@ -198,16 +187,13 @@ class _CaptionsScreenState extends State<CaptionsScreen> {
                     'As legendas ficarão assim na tela do seu dispositivo.'
                     '\n\nCustomize do melhor jeito para você',
                     style: AppTextStyles.body.copyWith(
-                      fontSize: _fontSizeValue,
-                      fontFamily: _fontFamily,
-                      fontWeight: FontWeight.lerp(
-                        FontWeight.w400,
-                        FontWeight.w900,
-                        (_fontBoldValue.clamp(1, 100)) / 100.0,
-                      ),
-                      color: selectedColorLinha1,
+                      fontSize: _fontSizeValue * 0.65,
+                      fontFamily: '${_fontFamily}Variavel',
+                      fontVariations: <FontVariation>[
+                        FontVariation('wght', _fontWeightValue),
+                      ],
+                      color: _textColorValue,
                       height: _verticalValue,
-                      letterSpacing: _horizontalValue,
                     ),
                   ),
                 ),
@@ -251,12 +237,10 @@ class _CaptionsScreenState extends State<CaptionsScreen> {
                                       AppColors.indigo600,
                                       AppColors.teal600,
                                     ],
-                                    selectedColor: selectedColorLinha1,
+                                    selectedColor: _textColorValue,
                                     enableCustomPicker: true,
                                     onColorSelected: (color) {
-                                      setState(
-                                        () => selectedColorLinha1 = color,
-                                      );
+                                      setState(() => _textColorValue = color);
                                       _scheduleSave();
                                     },
                                   ),
@@ -293,12 +277,10 @@ class _CaptionsScreenState extends State<CaptionsScreen> {
                                       AppColors.indigo600,
                                       AppColors.teal600,
                                     ],
-                                    selectedColor: selectedColorLinha2,
+                                    selectedColor: _bgColorValue,
                                     enableCustomPicker: true,
                                     onColorSelected: (color) {
-                                      setState(
-                                        () => selectedColorLinha2 = color,
-                                      );
+                                      setState(() => _bgColorValue = color);
                                       _scheduleSave();
                                     },
                                   ),
@@ -316,7 +298,7 @@ class _CaptionsScreenState extends State<CaptionsScreen> {
                         Padding(
                           padding: const EdgeInsets.only(bottom: 10),
                           child: CustomSelect(
-                            options: const ['Inter'],
+                            options: const ['Inter', 'Roboto', 'Poppins'],
                             value: _fontFamily,
                             onChanged: (value) {
                               if (value == null) return;
@@ -329,8 +311,8 @@ class _CaptionsScreenState extends State<CaptionsScreen> {
                         CustomSlider(
                           label: 'Tamanho da Fonte',
                           value: _fontSizeValue,
-                          min: 1,
-                          max: 36,
+                          min: 16,
+                          max: 56,
                           onChanged: (value) {
                             setState(() => _fontSizeValue = value);
                             _scheduleSave();
@@ -339,50 +321,23 @@ class _CaptionsScreenState extends State<CaptionsScreen> {
                         ),
                         CustomSlider(
                           label: 'Grossura da Fonte',
-                          value: _fontBoldValue,
-                          min: 1,
-                          max: 100,
+                          value: _fontWeightValue,
+                          min: 100,
+                          max: 900,
+                          step: 100,
                           onChanged: (value) {
-                            setState(() => _fontBoldValue = value);
+                            setState(() => _fontWeightValue = value);
                             _scheduleSave();
                           },
-                        ),
-                        Text(
-                          'Animação',
-                          style: AppTextStyles.bold.copyWith(
-                            color: AppColors.gray900,
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(bottom: 10),
-                          child: CustomSelect(
-                            options: const ['Sem Animação'],
-                            value: _animation,
-                            onChanged: (value) {
-                              if (value == null) return;
-                              setState(() => _animation = value);
-                              _scheduleSave();
-                            },
-                            hintText: '',
-                          ),
                         ),
                         CustomSlider(
                           label: 'Tamanho da linha',
                           value: _verticalValue,
-                          min: 1,
-                          max: 2,
+                          min: 0.8,
+                          max: 1.6,
+                          step: 0.1,
                           onChanged: (value) {
                             setState(() => _verticalValue = value);
-                            _scheduleSave();
-                          },
-                        ),
-                        CustomSlider(
-                          label: 'Espaçamento horizontal',
-                          value: _horizontalValue,
-                          min: 0,
-                          max: 10,
-                          onChanged: (value) {
-                            setState(() => _horizontalValue = value);
                             _scheduleSave();
                           },
                         ),

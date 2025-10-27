@@ -35,9 +35,8 @@ class _DeviceScreenState extends State<DeviceScreen> {
   }
 
   // Adicione estes estados para os sliders:
-  double _standbyValue = 5;
-  double _conversaValue = 10;
-  double _deletarValue = 30;
+  double _conversaValue = 5;
+  double _deletarValue = 7;
 
   @override
   Widget build(BuildContext context) {
@@ -193,12 +192,13 @@ class _DeviceScreenState extends State<DeviceScreen> {
                               ),
                             ),
                             CustomTextField(
-                              hintText: 'Sonoris v1.23.9',
+                              hintText: 'Nome do dispositivo',
                               fullWidth: true,
                             ),
                           ],
                         ),
 
+                        /*
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -219,7 +219,7 @@ class _DeviceScreenState extends State<DeviceScreen> {
                           ],
                         ),
 
-                        /*
+
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   spacing: 6,
@@ -291,7 +291,7 @@ class _DeviceScreenState extends State<DeviceScreen> {
                     ),
                   ],
                 ),
-                */
+
                         CustomSlider(
                           label: 'Entrar em Standby após',
                           value: _standbyValue,
@@ -302,7 +302,7 @@ class _DeviceScreenState extends State<DeviceScreen> {
                           valueLabel:
                               '${_standbyValue.round()} minutos sem fala',
                         ),
-
+*/
                         CustomSlider(
                           label: 'Tempo entre conversas',
                           value: _conversaValue,
@@ -317,7 +317,7 @@ class _DeviceScreenState extends State<DeviceScreen> {
                           label: 'Deletar conversas não salvas após',
                           value: _deletarValue,
                           min: 1,
-                          max: 100,
+                          max: 30,
                           onChanged:
                               (value) => setState(() => _deletarValue = value),
                           valueLabel: '${_deletarValue.round()} dias',

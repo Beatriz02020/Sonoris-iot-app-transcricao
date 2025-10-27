@@ -118,5 +118,17 @@ flutter:
       fonts:
         - asset: assets/fonts/SourceSans3-Variable.ttf
 
+    - family: InterVariavel
+      fonts:
+        - asset: assets/fonts/Inter-Variable.ttf
+
+    - family: RobotoVariavel
+      fonts:
+        - asset: assets/fonts/Roboto-Variable.ttf
+
+    - family: PoppinsVariavel
+      fonts:
+        - asset: assets/fonts/Poppins-Variable.ttf
+
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
