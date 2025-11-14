@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
@@ -22,13 +24,15 @@ class _DeviceScreenState extends State<DeviceScreen> {
   final BluetoothManager _manager =
       BluetoothManager(); // Certifique-se de inicializar o BluetoothManager
   BluetoothConnectionState _connState = BluetoothConnectionState.disconnected;
+  StreamSubscription<BluetoothConnectionState>? _connStateSub;
 
   @override
   void initState() {
     super.initState();
 
     // Assine o estado de conexão para atualizar a UI
-    _manager.connectionStateStream.listen((state) {
+    _connStateSub = _manager.connectionStateStream.listen((state) {
+      if (!mounted) return;
       setState(() {
         _connState = state;
       });
@@ -38,6 +42,12 @@ class _DeviceScreenState extends State<DeviceScreen> {
   // Adicione estes estados para os sliders:
   double _conversaValue = 5;
   double _deletarValue = 7;
+  
+  @override
+  void dispose() {
+    _connStateSub?.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -435,6 +445,11 @@ class _DeviceScreenState extends State<DeviceScreen> {
                                                   onPressed: () async {
                                                     final dev =
                                                         templist[index].device;
+                                                    
+                                                    // Guarda referências antes do async
+                                                    final navigator = Navigator.of(context);
+                                                    final scaffoldMessenger = ScaffoldMessenger.of(context);
+                                                    
                                                     showDialog(
                                                       context: context,
                                                       barrierDismissible: false,
@@ -452,24 +467,24 @@ class _DeviceScreenState extends State<DeviceScreen> {
                                                             autoReconnect: true,
                                                           );
 
-                                                      if (Navigator.of(
-                                                        context,
-                                                      ).canPop())
-                                                        Navigator.of(
-                                                          context,
-                                                        ).pop();
-                                                      // Opcional: mostrar sucesso ou atualizar a tela
-                                                      setState(() {});
+                                                      if (!mounted) return;
+                                                      
+                                                      if (navigator.canPop()) {
+                                                        navigator.pop();
+                                                      }
+                                                      
+                                                      // Atualizar UI se ainda montado
+                                                      if (mounted) {
+                                                        setState(() {});
+                                                      }
                                                     } catch (e) {
-                                                      if (Navigator.of(
-                                                        context,
-                                                      ).canPop())
-                                                        Navigator.of(
-                                                          context,
-                                                        ).pop();
-                                                      ScaffoldMessenger.of(
-                                                        context,
-                                                      ).showSnackBar(
+                                                      if (!mounted) return;
+                                                      
+                                                      if (navigator.canPop()) {
+                                                        navigator.pop();
+                                                      }
+                                                      
+                                                      scaffoldMessenger.showSnackBar(
                                                         SnackBar(
                                                           content: Text(
                                                             'Falha ao conectar/enviar START: ${e.toString()}',

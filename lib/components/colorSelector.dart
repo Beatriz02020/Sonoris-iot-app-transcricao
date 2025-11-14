@@ -61,7 +61,9 @@ class _ColorSelectorState extends State<ColorSelector> {
               text: 'Selecionar',
               fullWidth: true,
               onPressed: () {
+                debugPrint('[ColorSelector] 🎨 CUSTOM COLOR PICKER - Cor selecionada: ${customColor.toString()}');
                 widget.onColorSelected(customColor);
+                debugPrint('[ColorSelector] 🎨 CUSTOM COLOR PICKER - Callback executado!');
                 Navigator.of(context).pop();
               },
             ),
@@ -74,10 +76,14 @@ class _ColorSelectorState extends State<ColorSelector> {
   Widget _buildColorCircle(Color color, int index, bool isSelected) {
     return GestureDetector(
       onTap: () {
+        debugPrint('[ColorSelector] 🖱️ CÍRCULO TOCADO! Index=$index, Color=${color.toString()}, CustomPicker=${widget.enableCustomPicker}');
         if (index == 0 && widget.enableCustomPicker) {
+          debugPrint('[ColorSelector] 🎨 Abrindo color picker customizado...');
           _openColorPicker();
         } else {
+          debugPrint('[ColorSelector] ✅ Chamando onColorSelected callback com cor: ${color.toString()}');
           widget.onColorSelected(color);
+          debugPrint('[ColorSelector] ✅ Callback onColorSelected executado!');
         }
       },
       child: Container(

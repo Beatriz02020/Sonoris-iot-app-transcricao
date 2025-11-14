@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -32,6 +33,9 @@ class _UserScreenState extends State<UserScreen> {
   bool _updatingPhoto = false;
   bool _updatingBanner = false;
   final _birthDateFormatter = _BirthDateInputFormatter();
+  
+  Stream<DocumentSnapshot>? _userStream;
+  StreamSubscription<DocumentSnapshot>? _userStreamSub;
 
   @override
   void initState() {
@@ -44,35 +48,48 @@ class _UserScreenState extends State<UserScreen> {
     final user = FirebaseAuth.instance.currentUser;
 
     if (user != null) {
-      // print("Usuário logado: ${user.uid}"); // depuração
+      // Cancelar listener anterior se existir
+      _userStreamSub?.cancel();
+      
+      // Configurar listener em tempo real
+      _userStream = FirebaseFirestore.instance
+          .collection("Usuario")
+          .doc(user.uid)
+          .snapshots();
+      
+      _userStreamSub = _userStream!.listen((snapshot) {
+        if (!mounted) return;
+        
+        if (snapshot.exists) {
+          final data = snapshot.data() as Map<String, dynamic>?;
+          if (data == null) return;
 
-      final snapshot =
-          await FirebaseFirestore.instance
-              .collection("Usuario")
-              .doc(user.uid)
-              .get();
+          final nomeCompleto = (data['Nome'] ?? '').toString();
+          final primeiroNome = nomeCompleto.split(' ').first;
+          final dataNasc = (data['DataNasc'] ?? '').toString();
 
-      if (snapshot.exists) {
-        final data = snapshot.data()!;
-        // print("Dados recebidos: $data");
-
-        final nomeCompleto = (data['Nome'] ?? '').toString();
-        final primeiroNome = nomeCompleto.split(' ').first;
-        final dataNasc = (data['DataNasc'] ?? '').toString();
-        // final email = (data['Email'] ?? '').toString();
-
-        setState(() {
-          _userName = primeiroNome;
-          _nameController.text = nomeCompleto;
-          _birthDateController.text = dataNasc;
-          _emailController.text = user.email ?? ''; // Preenche o email
-          final foto = (data['Foto_url'] ?? '')?.toString();
-          _photoUrl = (foto != null && foto.isNotEmpty) ? foto : null;
-          final banner = (data['banner_url'] ?? '')?.toString();
-          _bannerUrl = (banner != null && banner.isNotEmpty) ? banner : null;
-        });
-      }
+          setState(() {
+            _userName = primeiroNome;
+            _nameController.text = nomeCompleto;
+            _birthDateController.text = dataNasc;
+            _emailController.text = user.email ?? ''; // Preenche o email
+            final foto = (data['Foto_url'] ?? '')?.toString();
+            _photoUrl = (foto != null && foto.isNotEmpty) ? foto : null;
+            final banner = (data['banner_url'] ?? '')?.toString();
+            _bannerUrl = (banner != null && banner.isNotEmpty) ? banner : null;
+          });
+        }
+      });
     }
+  }
+
+  @override
+  void dispose() {
+    _userStreamSub?.cancel();
+    _nameController.dispose();
+    _birthDateController.dispose();
+    _emailController.dispose();
+    super.dispose();
   }
 
   Future<void> _pickAndUploadBanner() async {

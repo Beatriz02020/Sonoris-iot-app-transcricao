@@ -34,6 +34,7 @@ class _HomeScreenState extends State<HomeScreen> {
   String? _photoUrl; // Foto do usuário
   Stream<DocumentSnapshot<Map<String, dynamic>>>? _userStream;
   StreamSubscription<DocumentSnapshot<Map<String, dynamic>>>? _userSub;
+  StreamSubscription<BluetoothConnectionState>? _connStateSub;
 
   @override
   void initState() {
@@ -41,7 +42,8 @@ class _HomeScreenState extends State<HomeScreen> {
     _loadUserData();
 
     // Assine o estado de conexão para atualizar a UI
-    _manager.connectionStateStream.listen((state) {
+    _connStateSub = _manager.connectionStateStream.listen((state) {
+      if (!mounted) return;
       setState(() {
         _connState = state;
       });
@@ -77,6 +79,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void dispose() {
     _userSub?.cancel();
+    _connStateSub?.cancel();
     super.dispose();
   }
 

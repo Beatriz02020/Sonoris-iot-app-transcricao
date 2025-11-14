@@ -156,12 +156,40 @@ class _ConnectionScreenState extends State<ConnectionScreen> {
                       initialData: const [],
                       builder: (c, snapshot) {
                         List<ScanResult> scanresults = snapshot.data!;
-                        List<ScanResult> templist = [];
-                        for (var element in scanresults) {
-                          if (element.device.platformName != "") {
-                            templist.add(element);
+                        // Deduplicate by device id string and prefer devices with a human-friendly name
+                        final Map<String, ScanResult> byId = {};
+                        String _displayNameFor(ScanResult r) {
+                          final n = r.device.name.toString();
+                          final pn = r.device.platformName.toString();
+                          if (n.isNotEmpty) return n;
+                          if (pn.isNotEmpty) return pn;
+                          return r.device.id.toString();
+                        }
+
+                        for (var r in scanresults) {
+                          final key = r.device.id.toString();
+                          if (!byId.containsKey(key)) {
+                            byId[key] = r;
+                          } else {
+                            final existing = byId[key]!;
+                            final existingName = _displayNameFor(existing);
+                            final newName = _displayNameFor(r);
+                            if (existingName.isEmpty && newName.isNotEmpty) {
+                              byId[key] = r;
+                            }
                           }
                         }
+
+                        List<ScanResult> templist = byId.values.toList();
+                        templist.sort((a, b) {
+                          final aName = _displayNameFor(a);
+                          final bName = _displayNameFor(b);
+                          final aEmpty = aName.isEmpty;
+                          final bEmpty = bName.isEmpty;
+                          if (aEmpty && !bEmpty) return 1;
+                          if (!aEmpty && bEmpty) return -1;
+                          return aName.compareTo(bName);
+                        });
 
                         return SizedBox(
                           height: 190,
@@ -201,7 +229,12 @@ class _ConnectionScreenState extends State<ConnectionScreen> {
                                           ),
                                         ),
                                         Text(
-                                          templist[index].device.platformName,
+                                          // Prefer device.name, then platformName, then id as fallback
+                                          (templist[index].device.name.toString().isNotEmpty)
+                                              ? templist[index].device.name.toString()
+                                              : (templist[index].device.platformName.toString().isNotEmpty
+                                                  ? templist[index].device.platformName.toString()
+                                                  : templist[index].device.id.toString()),
                                           style: AppTextStyles.body,
                                         ),
                                       ],
@@ -218,7 +251,12 @@ class _ConnectionScreenState extends State<ConnectionScreen> {
                                               : "Conectar",
                                       onPressed: () async {
                                         final dev = templist[index].device;
-                                        // mostra loading (opcional)
+                                        
+                                        // Guarda referência do context antes do async
+                                        final navigator = Navigator.of(context);
+                                        final scaffoldMessenger = ScaffoldMessenger.of(context);
+                                        
+                                        // mostra loading
                                         showDialog(
                                           context: context,
                                           barrierDismissible: false,
@@ -236,22 +274,26 @@ class _ConnectionScreenState extends State<ConnectionScreen> {
                                             autoReconnect: true,
                                           );
 
+                                          // Verifica se o widget ainda está montado
+                                          if (!mounted) return;
+                                          
                                           // se chegou aqui, START foi enviado com sucesso -> navega
-                                          Navigator.of(
-                                            context,
-                                          ).pop(); // fecha o dialog
-                                          Navigator.of(context).pushReplacement(
+                                          navigator.pop(); // fecha o dialog
+                                          navigator.pushReplacement(
                                             MaterialPageRoute(
                                               builder:
                                                   (_) => const FinishedScreen(),
                                             ),
                                           );
                                         } catch (e) {
-                                          if (Navigator.of(context).canPop())
-                                            Navigator.of(context).pop();
-                                          ScaffoldMessenger.of(
-                                            context,
-                                          ).showSnackBar(
+                                          // Verifica se o widget ainda está montado
+                                          if (!mounted) return;
+                                          
+                                          if (navigator.canPop()) {
+                                            navigator.pop(); // fecha o dialog
+                                          }
+                                          
+                                          scaffoldMessenger.showSnackBar(
                                             SnackBar(
                                               content: Text(
                                                 'Falha ao conectar/enviar START: ${e.toString()}',
