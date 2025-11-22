@@ -2,6 +2,8 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 
@@ -38,20 +40,20 @@ class BluetoothManager {
 
   // completor para quando a UI chama connect() e aguarda handshake (START enviado)
   Completer<void>? _connectCompleter;
-  
+
   // Callback chamado após START ser enviado com sucesso
   Function()? onConnectionEstablished;
 
-  // UUIDs do peripheral
+  // Callback chamado quando dispositivo desconecta
+  Function()? onDisconnected;
+
+  // UUIDs do peripheral (públicos para serem usados em filtros de scan)
   static const String SERVICE_UUID = "12345678-1234-5678-1234-56789abcdef0";
   static const String CHAR_UUID = "12345678-1234-5678-1234-56789abcdef1";
 
   /// Conecta ao device. Retorna quando a sequência de discover + (notify se houver) + write("START")
   /// for concluída com sucesso (ou lança erro).
-  Future<void> connect(
-    BluetoothDevice device, {
-    bool autoReconnect = true,
-  }) async {
+  Future<void> connect(BluetoothDevice device) async {
     // se já estamos conectados ao mesmo device e já processamos connected, apenas retorna
     if (_device != null && _device!.id == device.id && !_hasSentStart) {
       // existe o device, mas talvez ainda não tenhamos completado handshake
@@ -72,19 +74,23 @@ class BluetoothManager {
     _connectCompleter ??= Completer<void>();
 
     try {
-      debugPrint('[BT_MANAGER] 📞 Chamando device.connect() com timeout de 15s...');
-      
+      debugPrint(
+        '[BT_MANAGER] 📞 Chamando device.connect() com timeout de 15s...',
+      );
+
       // conecta sem autoConnect
       // NOTA: O RPi está desconectando quando recebe requestMtu automático
       await device.connect(
         autoConnect: false,
         timeout: const Duration(seconds: 15),
       );
-      
+
       debugPrint('[BT_MANAGER] ✅ device.connect() retornou com sucesso!');
-      
+
       // Aguarda conexão estabilizar ANTES de qualquer operação GATT
-      debugPrint('[BT_MANAGER] ⏳ Aguardando 800ms pós-conexão (evitar requestMtu prematuro)...');
+      debugPrint(
+        '[BT_MANAGER] ⏳ Aguardando 800ms pós-conexão (evitar requestMtu prematuro)...',
+      );
       await Future.delayed(const Duration(milliseconds: 800));
       debugPrint('[BT_MANAGER] ✅ Estabilização completa');
     } catch (e) {
@@ -101,31 +107,23 @@ class BluetoothManager {
       if (state == BluetoothConnectionState.connected) {
         debugPrint('[BT_MANAGER] ✅ CONECTADO! Iniciando _handleConnected...');
         // quando receber connected, dispara handler (debounced)
-        _handleConnected(device, autoReconnect: autoReconnect);
+        _handleConnected(device);
       } else if (state == BluetoothConnectionState.disconnected) {
-        debugPrint('[BT_MANAGER] ❌ DESCONECTADO! _hasSentStart=$_hasSentStart, _processingConnected=$_processingConnected');
+        debugPrint(
+          '[BT_MANAGER] ❌ DESCONECTADO! _hasSentStart=$_hasSentStart, _processingConnected=$_processingConnected',
+        );
+
+        // Chama callback de desconexão se existir
+        if (onDisconnected != null) {
+          onDisconnected!();
+        }
+
         // reset flags para próxima conexão
         _hasSentStart = false;
         _processingConnected = false;
         // cancelar stream da char (se houver)
         await _charSub?.cancel();
         _charSub = null;
-
-        // se autoReconnect habilitado, tenta reconectar com backoff
-        if (autoReconnect) {
-          debugPrint('[BT_MANAGER] 🔁 Auto-reconexão ativada, aguardando 2s...');
-          // backoff simples (poderia ser exponencial)
-          await Future.delayed(const Duration(seconds: 2));
-          if (_device != null) {
-            try {
-              debugPrint('[BT_MANAGER] 🔁 Tentando reconectar...');
-              // tenta reconectar (chamada recursiva controlada)
-              await connect(_device!, autoReconnect: autoReconnect);
-            } catch (e) {
-              debugPrint('[BT_MANAGER] ❌ Reconnect falhou: $e');
-            }
-          }
-        }
       }
     });
 
@@ -143,14 +141,15 @@ class BluetoothManager {
 
   /// Handler que executa discoverServices, configura notification (se suportado)
   /// e envia START. É garantido que só um handler execute por vez (debounce).
-  Future<void> _handleConnected(
-    BluetoothDevice device, {
-    bool autoReconnect = true,
-  }) async {
-    debugPrint('[_handleConnected] 🚀 INICIANDO handler. Device: ${device.remoteId}');
-    
+  Future<void> _handleConnected(BluetoothDevice device) async {
+    debugPrint(
+      '[_handleConnected] 🚀 INICIANDO handler. Device: ${device.remoteId}',
+    );
+
     if (_processingConnected) {
-      debugPrint('[_handleConnected] ⚠️ Já processando connected — ignorando evento duplicado.');
+      debugPrint(
+        '[_handleConnected] ⚠️ Já processando connected — ignorando evento duplicado.',
+      );
       return;
     }
     _processingConnected = true;
@@ -159,24 +158,34 @@ class BluetoothManager {
     try {
       // CRITICAL: Aguarda MUITO MAIS tempo - o requestMtu pode estar atrasando tudo
       // O requestMtu deu timeout de 15s, então aguardamos ele terminar completamente
-      debugPrint('[_handleConnected] ⏳ Aguardando 3s para requestMtu/conexão estabilizar completamente...');
+      debugPrint(
+        '[_handleConnected] ⏳ Aguardando 3s para requestMtu/conexão estabilizar completamente...',
+      );
       await Future.delayed(const Duration(milliseconds: 3000));
-      
+
       // Verifica se ainda está conectado antes de descobrir serviços
       var currentState = await device.connectionState.first;
-      debugPrint('[_handleConnected] 🔍 Estado atual da conexão: $currentState');
+      debugPrint(
+        '[_handleConnected] 🔍 Estado atual da conexão: $currentState',
+      );
       if (currentState != BluetoothConnectionState.connected) {
-        throw Exception('Dispositivo não está mais conectado (estado: $currentState)');
+        throw Exception(
+          'Dispositivo não está mais conectado (estado: $currentState)',
+        );
       }
-      
+
       // discover services (retry até 5 vezes com delay crescente)
       List<BluetoothService> services = [];
       for (int attempt = 1; attempt <= 5; attempt++) {
-        debugPrint('[_handleConnected] 🔍 discoverServices tentativa $attempt/5');
+        debugPrint(
+          '[_handleConnected] 🔍 discoverServices tentativa $attempt/5',
+        );
         try {
           services = await device.discoverServices();
-          debugPrint('[_handleConnected] 📡 Retornou ${services.length} serviços');
-          
+          debugPrint(
+            '[_handleConnected] 📡 Retornou ${services.length} serviços',
+          );
+
           // Log DETALHADO dos UUIDs encontrados
           if (services.isNotEmpty) {
             debugPrint('[_handleConnected] ✅ Serviços descobertos:');
@@ -187,33 +196,39 @@ class BluetoothManager {
               }
             }
           } else {
-            debugPrint('[_handleConnected] ❌ ZERO serviços retornados (GATT vazio) - pode ser timing issue');
+            debugPrint(
+              '[_handleConnected] ❌ ZERO serviços retornados (GATT vazio) - pode ser timing issue',
+            );
           }
-          
+
           if (services.isNotEmpty) break;
         } catch (e) {
           debugPrint('[_handleConnected] ⚠️ Exceção no discoverServices: $e');
         }
-        
+
         if (attempt < 5) {
           final delayMs = 1500 + (attempt * 500); // 2s, 2.5s, 3s, 3.5s
-          debugPrint('[_handleConnected] ⏱️ Aguardando ${delayMs}ms antes de próxima tentativa...');
+          debugPrint(
+            '[_handleConnected] ⏱️ Aguardando ${delayMs}ms antes de próxima tentativa...',
+          );
           await Future.delayed(Duration(milliseconds: delayMs));
         }
       }
-      
+
       if (services.isEmpty) {
         throw Exception(
-          '❌ Nenhum serviço GATT encontrado após 5 tentativas. RPi pode estar offline ou serviços não anunciados.'
+          '❌ Nenhum serviço GATT encontrado após 5 tentativas. RPi pode estar offline ou serviços não anunciados.',
         );
       }
-      
+
       final service = services.firstWhere(
         (s) => s.uuid.toString().toLowerCase() == SERVICE_UUID.toLowerCase(),
-        orElse: () => throw Exception(
-          'Serviço $SERVICE_UUID não encontrado.\n'
-          'Serviços disponíveis: ${services.map((s) => s.uuid).join(", ")}'
-        ),
+        orElse:
+            () =>
+                throw Exception(
+                  'Serviço $SERVICE_UUID não encontrado.\n'
+                  'Serviços disponíveis: ${services.map((s) => s.uuid).join(", ")}',
+                ),
       );
 
       final characteristic = service.characteristics.firstWhere(
@@ -275,12 +290,17 @@ class BluetoothManager {
         _hasSentStart = true;
         _lastStartSentAt = DateTime.now();
         debugPrint('START enviado com sucesso.');
-        
+
         // Chama callback após conexão estabelecida com sucesso
         if (onConnectionEstablished != null) {
-          debugPrint('[BT_MANAGER] 🔔 Chamando onConnectionEstablished callback...');
+          debugPrint(
+            '[BT_MANAGER] 🔔 Chamando onConnectionEstablished callback...',
+          );
           onConnectionEstablished!();
         }
+
+        // Envia configurações de legenda automaticamente ao conectar
+        await _sendCaptionSettingsOnConnect();
       } catch (e) {
         debugPrint('Falha ao enviar START: $e');
         // rethrow para informar erro pro completor
@@ -453,6 +473,59 @@ class BluetoothManager {
   }
 
   BluetoothDevice? get connectedDevice => _device;
+
+  /// Carrega configurações de legenda do Firebase e envia via Bluetooth
+  Future<void> _sendCaptionSettingsOnConnect() async {
+    try {
+      final uid = FirebaseAuth.instance.currentUser?.uid;
+      if (uid == null) {
+        debugPrint(
+          '[BT_MANAGER] ⚠️ Usuário não autenticado - pulando envio de settings',
+        );
+        return;
+      }
+
+      debugPrint('[BT_MANAGER] 📥 Carregando settings do Firebase...');
+
+      final configDoc = FirebaseFirestore.instance
+          .collection('Usuario')
+          .doc(uid)
+          .collection('Legenda')
+          .doc('config');
+
+      final snap = await configDoc.get();
+      final data = snap.data();
+
+      if (data == null || data.isEmpty) {
+        debugPrint(
+          '[BT_MANAGER] ℹ️ Nenhuma configuração de legenda encontrada no Firebase',
+        );
+        return;
+      }
+
+      // Remove updatedAt que não é necessário para o dispositivo
+      final bleSettings = Map<String, dynamic>.from(data);
+      bleSettings.remove('updatedAt');
+
+      // Converte para JSON
+      final jsonStr = jsonEncode(bleSettings);
+
+      // Envia com prefixo SETTINGS:
+      final message = 'SETTINGS:$jsonStr';
+
+      debugPrint(
+        '[BT_MANAGER] 📤 Enviando settings via BLE (${message.length} chars)',
+      );
+      debugPrint('[BT_MANAGER] 📦 Payload: $message');
+
+      await writeString(message);
+
+      debugPrint('[BT_MANAGER] ✅ Settings enviados com sucesso!');
+    } catch (e) {
+      debugPrint('[BT_MANAGER] ❌ Erro ao enviar caption settings: $e');
+      // Não propaga o erro - envio é best-effort
+    }
+  }
 
   void dispose() {
     _deviceController.close();

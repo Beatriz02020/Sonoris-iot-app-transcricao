@@ -41,12 +41,27 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     _loadUserData();
 
+    // Deletar conversas expiradas ao iniciar a tela
+    _conversaService.deleteExpiredConversas();
+
     // Assine o estado de conexão para atualizar a UI
     _connStateSub = _manager.connectionStateStream.listen((state) {
       if (!mounted) return;
       setState(() {
         _connState = state;
       });
+
+      // Notifica o usuário quando o dispositivo for desconectado
+      if (state == BluetoothConnectionState.disconnected &&
+          _manager.connectedDevice != null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Dispositivo Sonoris desconectado'),
+            backgroundColor: Colors.red,
+            duration: Duration(seconds: 3),
+          ),
+        );
+      }
     });
   }
 
@@ -171,7 +186,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       ),
                                     ),
                                     Text(
-                                      'Sonoris v1.0',
+                                      'Sonoris Device',
                                       style: AppTextStyles.bold.copyWith(
                                         color: AppColors.white100,
                                       ),
@@ -229,7 +244,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       ),
                                     ),
                                     Text(
-                                      '185',
+                                      '97',
                                       style: AppTextStyles.bold.copyWith(
                                         color: AppColors.white100,
                                       ),
@@ -249,7 +264,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       ),
                                     ),
                                     Text(
-                                      '1230h',
+                                      '3h',
                                       style: AppTextStyles.bold.copyWith(
                                         color: AppColors.white100,
                                       ),
@@ -366,12 +381,28 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                             ],
                           ),
-                          child: Text(
-                            'Nenhuma conversa não salva',
-                            style: AppTextStyles.body.copyWith(
-                              color: AppColors.gray500,
-                            ),
-                            textAlign: TextAlign.center,
+                          child: Column(
+                            spacing: 10,
+                            children: [
+                              Text(
+                                'Nenhuma conversa não salva',
+                                style: AppTextStyles.body.copyWith(
+                                  color: AppColors.gray500,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+
+                              CustomButton(
+                                text: 'Ver todas',
+                                outlined: true,
+                                fullWidth: false,
+                                onPressed: () {
+                                  Navigator.of(
+                                    context,
+                                  ).pushNamed('/unsavedchats');
+                                },
+                              ),
+                            ],
                           ),
                         );
                       }

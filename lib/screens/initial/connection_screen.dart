@@ -30,7 +30,6 @@ class _ConnectionScreenState extends State<ConnectionScreen> {
   StreamSubscription<String>? _valueSub;
 
   String _lastValue = '';
-  BluetoothConnectionState _connState = BluetoothConnectionState.disconnected;
 
   Future<bool> getPermissions() async {
     if (Platform.isAndroid) {
@@ -65,7 +64,7 @@ class _ConnectionScreenState extends State<ConnectionScreen> {
       setState(() {});
     });
     _connStateSub = _manager.connectionStateStream.listen((s) {
-      setState(() => _connState = s);
+      setState(() {});
     });
     _valueSub = _manager.valueStream.listen((v) {
       setState(() => _lastValue = v);
@@ -96,6 +95,7 @@ class _ConnectionScreenState extends State<ConnectionScreen> {
         scrolledUnderElevation: 0,
         iconTheme: const IconThemeData(color: AppColors.blue500),
         titleTextStyle: AppTextStyles.h3.copyWith(color: AppColors.blue500),
+        automaticallyImplyLeading: false,
         title: const Text(''),
       ),
       body: Padding(
@@ -133,181 +133,270 @@ class _ConnectionScreenState extends State<ConnectionScreen> {
                   stream: FlutterBluePlus.isScanning,
                   initialData: false,
                   builder: (c, snapshot) {
-                    if (snapshot.data!) {
-                      return CustomButton(
-                        onPressed: () => FlutterBluePlus.stopScan(),
-                        text: 'Parar',
-                      );
-                    } else {
-                      return CustomButton(
-                        onPressed:
-                            () => FlutterBluePlus.startScan(
-                              timeout: const Duration(seconds: 25),
-                            ),
-                        text: 'Procurar',
-                      );
-                    }
+                    final isScanning = snapshot.data ?? false;
+                    return CustomButton(
+                      onPressed: () {
+                        if (isScanning) {
+                          FlutterBluePlus.stopScan();
+                          // Atualiza UI para remover dispositivos da lista
+                          setState(() {});
+                        } else {
+                          FlutterBluePlus.startScan(
+                            timeout: const Duration(seconds: 25),
+                          );
+                        }
+                      },
+                      text: isScanning ? 'Parar' : 'Procurar',
+                      isLoading: isScanning,
+                    );
                   },
                 ),
                 Column(
                   children: [
-                    StreamBuilder<List<ScanResult>>(
-                      stream: FlutterBluePlus.scanResults,
-                      initialData: const [],
-                      builder: (c, snapshot) {
-                        List<ScanResult> scanresults = snapshot.data!;
-                        // Deduplicate by device id string and prefer devices with a human-friendly name
-                        final Map<String, ScanResult> byId = {};
-                        String _displayNameFor(ScanResult r) {
-                          final n = r.device.name.toString();
-                          final pn = r.device.platformName.toString();
-                          if (n.isNotEmpty) return n;
-                          if (pn.isNotEmpty) return pn;
-                          return r.device.id.toString();
-                        }
+                    StreamBuilder<bool>(
+                      stream: FlutterBluePlus.isScanning,
+                      initialData: false,
+                      builder: (context, scanningSnapshot) {
+                        final isScanning = scanningSnapshot.data ?? false;
 
-                        for (var r in scanresults) {
-                          final key = r.device.id.toString();
-                          if (!byId.containsKey(key)) {
-                            byId[key] = r;
-                          } else {
-                            final existing = byId[key]!;
-                            final existingName = _displayNameFor(existing);
-                            final newName = _displayNameFor(r);
-                            if (existingName.isEmpty && newName.isNotEmpty) {
-                              byId[key] = r;
+                        return StreamBuilder<List<ScanResult>>(
+                          stream: FlutterBluePlus.scanResults,
+                          initialData: const [],
+                          builder: (c, snapshot) {
+                            List<ScanResult> scanresults = snapshot.data!;
+                            // Filtrar apenas dispositivos com SERVICE_UUID correto
+                            const String SERVICE_UUID =
+                                "12345678-1234-5678-1234-56789abcdef0";
+
+                            // Se não está escaneando, limpa a lista
+                            List<ScanResult> templist = [];
+
+                            if (isScanning) {
+                              // Deduplicate by device id string and prefer devices with a human-friendly name
+                              final Map<String, ScanResult> byId = {};
+                              String _displayNameFor(ScanResult r) {
+                                final n = r.device.name.toString();
+                                final pn = r.device.platformName.toString();
+                                if (n.isNotEmpty) return n;
+                                if (pn.isNotEmpty) return pn;
+                                return r.device.id.toString();
+                              }
+
+                              for (var r in scanresults) {
+                                // Verifica se o dispositivo anuncia o SERVICE_UUID
+                                final hasCorrectService = r
+                                    .advertisementData
+                                    .serviceUuids
+                                    .any(
+                                      (uuid) =>
+                                          uuid.toString().toLowerCase() ==
+                                          SERVICE_UUID.toLowerCase(),
+                                    );
+
+                                if (!hasCorrectService)
+                                  continue; // Pula dispositivos sem o serviço correto
+
+                                final key = r.device.id.toString();
+                                if (!byId.containsKey(key)) {
+                                  byId[key] = r;
+                                } else {
+                                  final existing = byId[key]!;
+                                  final existingName = _displayNameFor(
+                                    existing,
+                                  );
+                                  final newName = _displayNameFor(r);
+                                  if (existingName.isEmpty &&
+                                      newName.isNotEmpty) {
+                                    byId[key] = r;
+                                  }
+                                }
+                              }
+
+                              templist = byId.values.toList();
+                              templist.sort((a, b) {
+                                final aName = _displayNameFor(a);
+                                final bName = _displayNameFor(b);
+                                final aEmpty = aName.isEmpty;
+                                final bEmpty = bName.isEmpty;
+                                if (aEmpty && !bEmpty) return 1;
+                                if (!aEmpty && bEmpty) return -1;
+                                return aName.compareTo(bName);
+                              });
                             }
-                          }
-                        }
 
-                        List<ScanResult> templist = byId.values.toList();
-                        templist.sort((a, b) {
-                          final aName = _displayNameFor(a);
-                          final bName = _displayNameFor(b);
-                          final aEmpty = aName.isEmpty;
-                          final bEmpty = bName.isEmpty;
-                          if (aEmpty && !bEmpty) return 1;
-                          if (!aEmpty && bEmpty) return -1;
-                          return aName.compareTo(bName);
-                        });
-
-                        return SizedBox(
-                          height: 190,
-                          child: ListView.builder(
-                            itemCount: templist.length,
-                            itemBuilder: (context, index) {
-                              return Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 10,
-                                  vertical: 12,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: AppColors.white100,
-                                  borderRadius: BorderRadius.circular(14),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black.withAlpha(18),
-                                      blurRadius: 18.5,
-                                      spreadRadius: 1,
-                                      offset: const Offset(0, 6),
+                            return SizedBox(
+                              height: 190,
+                              child: ListView.builder(
+                                itemCount: templist.length,
+                                itemBuilder: (context, index) {
+                                  return Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 10,
+                                      vertical: 12,
                                     ),
-                                  ],
-                                ),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Row(
-                                      spacing: 6,
-                                      children: [
-                                        // Avatar circular
-                                        SizedBox(
-                                          width: 30,
-                                          child: Image.asset(
-                                            'assets/images/Icon.png',
-                                            fit: BoxFit.contain,
-                                          ),
-                                        ),
-                                        Text(
-                                          // Prefer device.name, then platformName, then id as fallback
-                                          (templist[index].device.name.toString().isNotEmpty)
-                                              ? templist[index].device.name.toString()
-                                              : (templist[index].device.platformName.toString().isNotEmpty
-                                                  ? templist[index].device.platformName.toString()
-                                                  : templist[index].device.id.toString()),
-                                          style: AppTextStyles.body,
+                                    decoration: BoxDecoration(
+                                      color: AppColors.white100,
+                                      borderRadius: BorderRadius.circular(14),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.black.withAlpha(18),
+                                          blurRadius: 18.5,
+                                          spreadRadius: 1,
+                                          offset: const Offset(0, 6),
                                         ),
                                       ],
                                     ),
-                                    CustomButton(
-                                      text:
-                                          _manager.connectedDevice?.id ==
-                                                  templist[index].device.id
-                                              ? (_connState ==
-                                                      BluetoothConnectionState
-                                                          .connected
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Row(
+                                          spacing: 6,
+                                          children: [
+                                            // Avatar circular
+                                            SizedBox(
+                                              width: 30,
+                                              child: Image.asset(
+                                                'assets/images/Icon.png',
+                                                fit: BoxFit.contain,
+                                              ),
+                                            ),
+                                            Text(
+                                              // Prefer device.name, then platformName, then id as fallback
+                                              (templist[index].device.name
+                                                      .toString()
+                                                      .isNotEmpty)
+                                                  ? templist[index].device.name
+                                                      .toString()
+                                                  : (templist[index]
+                                                          .device
+                                                          .platformName
+                                                          .toString()
+                                                          .isNotEmpty
+                                                      ? templist[index]
+                                                          .device
+                                                          .platformName
+                                                          .toString()
+                                                      : templist[index]
+                                                          .device
+                                                          .id
+                                                          .toString()),
+                                              style: AppTextStyles.body,
+                                            ),
+                                          ],
+                                        ),
+                                        CustomButton(
+                                          text:
+                                              _manager.connectedDevice?.id ==
+                                                      templist[index].device.id
                                                   ? "Selecionado"
-                                                  : "Conectando")
-                                              : "Conectar",
-                                      onPressed: () async {
-                                        final dev = templist[index].device;
-                                        
-                                        // Guarda referência do context antes do async
-                                        final navigator = Navigator.of(context);
-                                        final scaffoldMessenger = ScaffoldMessenger.of(context);
-                                        
-                                        // mostra loading
-                                        showDialog(
-                                          context: context,
-                                          barrierDismissible: false,
-                                          builder:
-                                              (_) => const Center(
-                                                child:
-                                                    CircularProgressIndicator(),
-                                              ),
-                                        );
+                                                  : "Conectar",
+                                          onPressed: () async {
+                                            final dev = templist[index].device;
 
-                                        try {
-                                          // conecte e aguarde até o manager ter enviado START
-                                          await BluetoothManager().connect(
-                                            dev,
-                                            autoReconnect: true,
-                                          );
+                                            // Guarda referência do context antes do async
+                                            final navigator = Navigator.of(
+                                              context,
+                                            );
+                                            final scaffoldMessenger =
+                                                ScaffoldMessenger.of(context);
 
-                                          // Verifica se o widget ainda está montado
-                                          if (!mounted) return;
-                                          
-                                          // se chegou aqui, START foi enviado com sucesso -> navega
-                                          navigator.pop(); // fecha o dialog
-                                          navigator.pushReplacement(
-                                            MaterialPageRoute(
+                                            // mostra loading customizado
+                                            showDialog(
+                                              context: context,
+                                              barrierDismissible: false,
                                               builder:
-                                                  (_) => const FinishedScreen(),
-                                            ),
-                                          );
-                                        } catch (e) {
-                                          // Verifica se o widget ainda está montado
-                                          if (!mounted) return;
-                                          
-                                          if (navigator.canPop()) {
-                                            navigator.pop(); // fecha o dialog
-                                          }
-                                          
-                                          scaffoldMessenger.showSnackBar(
-                                            SnackBar(
-                                              content: Text(
-                                                'Falha ao conectar/enviar START: ${e.toString()}',
-                                              ),
-                                            ),
-                                          );
-                                        }
-                                      },
+                                                  (_) => Center(
+                                                    child: Container(
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                            24,
+                                                          ),
+                                                      decoration: BoxDecoration(
+                                                        color:
+                                                            AppColors.white100,
+                                                        borderRadius:
+                                                            BorderRadius.circular(
+                                                              16,
+                                                            ),
+                                                      ),
+                                                      child: Column(
+                                                        mainAxisSize:
+                                                            MainAxisSize.min,
+                                                        children: [
+                                                          const CircularProgressIndicator(
+                                                            valueColor:
+                                                                AlwaysStoppedAnimation<
+                                                                  Color
+                                                                >(
+                                                                  AppColors
+                                                                      .blue500,
+                                                                ),
+                                                          ),
+                                                          const SizedBox(
+                                                            height: 16,
+                                                          ),
+                                                          Text(
+                                                            'Conectando...',
+                                                            style: AppTextStyles
+                                                                .body
+                                                                .copyWith(
+                                                                  color:
+                                                                      AppColors
+                                                                          .blue700,
+                                                                ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ),
+                                            );
+
+                                            try {
+                                              // conecte e aguarde até o manager ter enviado START
+                                              await BluetoothManager().connect(
+                                                dev,
+                                              );
+
+                                              // Verifica se o widget ainda está montado
+                                              if (!mounted) return;
+
+                                              // se chegou aqui, START foi enviado com sucesso -> navega
+                                              navigator.pop(); // fecha o dialog
+                                              navigator.pushReplacement(
+                                                MaterialPageRoute(
+                                                  builder:
+                                                      (_) =>
+                                                          const FinishedScreen(),
+                                                ),
+                                              );
+                                            } catch (e) {
+                                              // Verifica se o widget ainda está montado
+                                              if (!mounted) return;
+
+                                              if (navigator.canPop()) {
+                                                navigator
+                                                    .pop(); // fecha o dialog
+                                              }
+
+                                              scaffoldMessenger.showSnackBar(
+                                                SnackBar(
+                                                  content: Text(
+                                                    'Falha ao conectar/enviar START: ${e.toString()}',
+                                                  ),
+                                                  backgroundColor: Colors.red,
+                                                ),
+                                              );
+                                            }
+                                          },
+                                        ),
+                                      ],
                                     ),
-                                  ],
-                                ),
-                              );
-                            },
-                          ),
+                                  );
+                                },
+                              ),
+                            );
+                          },
                         );
                       },
                     ),

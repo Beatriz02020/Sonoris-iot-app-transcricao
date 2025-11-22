@@ -12,6 +12,7 @@ class CustomButton extends StatelessWidget {
   final double? width;
   final bool fullWidth;
   final double? iconSize;
+  final bool isLoading;
 
   const CustomButton({
     super.key,
@@ -23,6 +24,7 @@ class CustomButton extends StatelessWidget {
     this.width, // <- Aqui também
     this.fullWidth = false, // valor padrão é false
     this.iconSize, // <- Adicionado ao construtor
+    this.isLoading = false,
   });
 
   @override
@@ -77,7 +79,21 @@ class CustomButton extends StatelessWidget {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
-                  if (icon != null)
+                  if (isLoading)
+                    const Padding(
+                      padding: EdgeInsets.only(right: 8.0),
+                      child: SizedBox(
+                        width: 16,
+                        height: 16,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            AppColors.white100,
+                          ),
+                        ),
+                      ),
+                    )
+                  else if (icon != null)
                     Padding(
                       padding: const EdgeInsets.only(right: 8.0),
                       child: Icon(
