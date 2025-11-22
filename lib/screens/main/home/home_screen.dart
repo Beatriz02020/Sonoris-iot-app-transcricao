@@ -12,6 +12,7 @@ import 'package:sonoris/screens/main/home/answer_screen.dart';
 import 'package:sonoris/screens/main/home/captions_screen.dart';
 import 'package:sonoris/theme/colors.dart';
 import 'package:sonoris/theme/text_styles.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 import '../../../models/conversa.dart';
 import '../../../services/bluetooth_manager.dart';
@@ -81,10 +82,12 @@ class _HomeScreenState extends State<HomeScreen> {
         if (snapshot.exists) {
           final data = snapshot.data()!;
           final primeiroNome = (data['Nome'] ?? '').toString().split(' ').first;
-          final foto = (data['Foto_url'] ?? '')?.toString();
+          final foto = (data['Foto_url'] ?? '').toString();
           setState(() {
             _userName = primeiroNome;
-            _photoUrl = (foto != null && foto.isNotEmpty) ? foto : null;
+            _photoUrl = (foto.isNotEmpty)
+                ? '$foto?v=${DateTime.now().millisecondsSinceEpoch}'
+                : null;
           });
         }
       });
@@ -141,10 +144,12 @@ class _HomeScreenState extends State<HomeScreen> {
                 spacing: 10,
                 children: [
                   CircleAvatar(
+                    key: ValueKey(_photoUrl),
                     radius: 24,
                     backgroundImage: const AssetImage('assets/images/User.png'),
-                    foregroundImage:
-                        _photoUrl != null ? NetworkImage(_photoUrl!) : null,
+                    foregroundImage: _photoUrl != null
+                        ? CachedNetworkImageProvider(_photoUrl!)
+                        : null,
                   ),
                   Text(
                     _userName.isNotEmpty ? _userName : "Carregando...",

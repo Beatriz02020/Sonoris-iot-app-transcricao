@@ -255,19 +255,48 @@ class _CaptionsScreenState extends State<CaptionsScreen> {
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: SingleChildScrollView(
-                  child: Text(
-                    'Este é um texto de exemplo.\n'
-                    'As legendas ficarão assim na tela do seu dispositivo.'
-                    '\n\nCustomize do melhor jeito para você',
-                    style: AppTextStyles.body.copyWith(
-                      fontSize: _fontSizeValue * 0.65,
-                      fontFamily: '${_fontFamily}Variavel',
-                      fontVariations: <FontVariation>[
-                        FontVariation('wght', _fontWeightValue),
-                      ],
-                      color: _textColorValue,
-                      height: _verticalValue,
-                    ),
+                  child: Builder(
+                    builder: (context) {
+                      debugPrint('[Captions] 🎨 Preview renderizando com: font=$_fontFamily, size=${_fontSizeValue.round()}, weight=${_fontWeightValue.round()}');
+                      
+                      // Mapeia o valor numérico para FontWeight
+                      FontWeight fontWeight;
+                      if (_fontWeightValue <= 150) {
+                        fontWeight = FontWeight.w100;
+                      } else if (_fontWeightValue <= 250) {
+                        fontWeight = FontWeight.w200;
+                      } else if (_fontWeightValue <= 350) {
+                        fontWeight = FontWeight.w300;
+                      } else if (_fontWeightValue <= 450) {
+                        fontWeight = FontWeight.w400;
+                      } else if (_fontWeightValue <= 550) {
+                        fontWeight = FontWeight.w500;
+                      } else if (_fontWeightValue <= 650) {
+                        fontWeight = FontWeight.w600;
+                      } else if (_fontWeightValue <= 750) {
+                        fontWeight = FontWeight.w700;
+                      } else if (_fontWeightValue <= 850) {
+                        fontWeight = FontWeight.w800;
+                      } else {
+                        fontWeight = FontWeight.w900;
+                      }
+                      
+                      return Text(
+                        'Este é um texto de exemplo.\n'
+                        'As legendas ficarão assim na tela do seu dispositivo.'
+                        '\n\nCustomize do melhor jeito para você',
+                        style: AppTextStyles.body.copyWith(
+                          fontSize: _fontSizeValue * 0.65,
+                          fontFamily: '${_fontFamily}Variavel',
+                          fontWeight: fontWeight,
+                          fontVariations: <FontVariation>[
+                            FontVariation('wght', _fontWeightValue),
+                          ],
+                          color: _textColorValue,
+                          height: _verticalValue,
+                        ),
+                      );
+                    },
                   ),
                 ),
               ),
@@ -405,9 +434,11 @@ class _CaptionsScreenState extends State<CaptionsScreen> {
                           max: 900,
                           step: 100,
                           onChanged: (value) {
+                            debugPrint('[Captions] ⚖️ WEIGHT MUDOU: ${value.round()}');
                             setState(() => _fontWeightValue = value);
                             _scheduleSave();
                           },
+                          valueLabel: '${_fontWeightValue.round()}',
                         ),
                         CustomSlider(
                           label: 'Tamanho da linha',

@@ -11,6 +11,8 @@ import 'package:sonoris/components/customTextField.dart';
 import 'package:sonoris/services/auth_service.dart';
 import 'package:sonoris/theme/colors.dart';
 import 'package:sonoris/theme/text_styles.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 
 class UserScreen extends StatefulWidget {
   const UserScreen({Key? key}) : super(key: key);
@@ -57,9 +59,9 @@ class _UserScreenState extends State<UserScreen> {
           .doc(user.uid)
           .snapshots();
       
-      _userStreamSub = _userStream!.listen((snapshot) {
+      _userStreamSub = _userStream!.listen((snapshot) async {
         if (!mounted) return;
-        
+
         if (snapshot.exists) {
           final data = snapshot.data() as Map<String, dynamic>?;
           if (data == null) return;
@@ -68,15 +70,50 @@ class _UserScreenState extends State<UserScreen> {
           final primeiroNome = nomeCompleto.split(' ').first;
           final dataNasc = (data['DataNasc'] ?? '').toString();
 
+          final foto = (data['Foto_url'] ?? '').toString();
+          final banner = (data['banner_url'] ?? '').toString();
+
+          // Debug prints to help trace updates
+          debugPrint('[UserScreen] snapshot received. foto: $foto, banner: $banner');
+
+          // Evict cached images for the raw URLs (without our cache-busting param)
+          if (foto.isNotEmpty) {
+            try {
+              await NetworkImage(foto).evict();
+              try {
+                await DefaultCacheManager().removeFile(foto);
+              } catch (e) {
+                debugPrint('[UserScreen] failed to removeFile foto from cache manager: $e');
+              }
+            } catch (e) {
+              debugPrint('[UserScreen] failed to evict foto cache: $e');
+            }
+          }
+          if (banner.isNotEmpty) {
+            try {
+              await NetworkImage(banner).evict();
+              try {
+                await DefaultCacheManager().removeFile(banner);
+              } catch (e) {
+                debugPrint('[UserScreen] failed to removeFile banner from cache manager: $e');
+              }
+            } catch (e) {
+              debugPrint('[UserScreen] failed to evict banner cache: $e');
+            }
+          }
+
           setState(() {
             _userName = primeiroNome;
             _nameController.text = nomeCompleto;
             _birthDateController.text = dataNasc;
             _emailController.text = user.email ?? ''; // Preenche o email
-            final foto = (data['Foto_url'] ?? '')?.toString();
-            _photoUrl = (foto != null && foto.isNotEmpty) ? foto : null;
-            final banner = (data['banner_url'] ?? '')?.toString();
-            _bannerUrl = (banner != null && banner.isNotEmpty) ? banner : null;
+
+            _photoUrl = (foto.isNotEmpty)
+                ? '$foto?v=${DateTime.now().millisecondsSinceEpoch}'
+                : null;
+            _bannerUrl = (banner.isNotEmpty)
+                ? '$banner?v=${DateTime.now().millisecondsSinceEpoch}'
+                : null;
           });
         }
       });
@@ -105,8 +142,19 @@ class _UserScreenState extends State<UserScreen> {
     try {
       final url = await AuthService().updateBannerPhoto(File(picked.path));
       if (!mounted) return;
+      debugPrint('[UserScreen] banner upload returned url: $url');
+      try {
+        await NetworkImage(url).evict();
+        try {
+          await DefaultCacheManager().removeFile(url);
+        } catch (e) {
+          debugPrint('[UserScreen] failed to removeFile banner (post-upload): $e');
+        }
+      } catch (e) {
+        debugPrint('[UserScreen] failed to evict banner (post-upload): $e');
+      }
       setState(() {
-        _bannerUrl = url;
+        _bannerUrl = '$url?v=${DateTime.now().millisecondsSinceEpoch}';
       });
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -150,20 +198,38 @@ class _UserScreenState extends State<UserScreen> {
   }
 
   Future<void> _pickAndUploadPhoto() async {
+    debugPrint('[UserScreen] 📸 _pickAndUploadPhoto INICIADO');
     final picker = ImagePicker();
+    debugPrint('[UserScreen] 📸 Abrindo galeria...');
     final picked = await picker.pickImage(
       source: ImageSource.gallery,
       imageQuality: 85,
     );
-    if (picked == null) return;
+    debugPrint('[UserScreen] 📸 Imagem selecionada: ${picked?.path}');
+    if (picked == null) {
+      debugPrint('[UserScreen] ❌ Nenhuma imagem selecionada');
+      return;
+    }
     setState(() {
       _updatingPhoto = true;
     });
+    debugPrint('[UserScreen] 📸 Iniciando upload para Cloudinary...');
     try {
       final url = await AuthService().updateProfilePhoto(File(picked.path));
       if (!mounted) return;
+      debugPrint('[UserScreen] ✅ photo upload returned url: $url');
+      try {
+        await NetworkImage(url).evict();
+        try {
+          await DefaultCacheManager().removeFile(url);
+        } catch (e) {
+          debugPrint('[UserScreen] failed to removeFile photo (post-upload): $e');
+        }
+      } catch (e) {
+        debugPrint('[UserScreen] failed to evict photo (post-upload): $e');
+      }
       setState(() {
-        _photoUrl = url;
+        _photoUrl = '$url?v=${DateTime.now().millisecondsSinceEpoch}';
       });
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -235,13 +301,23 @@ class _UserScreenState extends State<UserScreen> {
                           width: double.infinity,
                           height: 180,
                           child: ClipRRect(
-                            child:
-                                _bannerUrl != null
-                                    ? Image.network(
-                                      _bannerUrl!,
+                              child: _bannerUrl != null
+                                  ? CachedNetworkImage(
+                                      imageUrl: _bannerUrl!,
+                                      key: ValueKey(_bannerUrl),
                                       fit: BoxFit.cover,
+                                      placeholder: (context, url) => Container(
+                                        color: AppColors.blue200,
+                                        child: const Center(
+                                          child: CircularProgressIndicator(),
+                                        ),
+                                      ),
+                                      errorWidget: (context, url, error) => Image.asset(
+                                        'assets/images/BannerPerfil.jpg',
+                                        fit: BoxFit.cover,
+                                      ),
                                     )
-                                    : Image.asset(
+                                  : Image.asset(
                                       'assets/images/BannerPerfil.jpg',
                                       fit: BoxFit.cover,
                                     ),
@@ -265,16 +341,44 @@ class _UserScreenState extends State<UserScreen> {
                   Positioned(
                     bottom: -50,
                     left: MediaQuery.of(context).size.width / 2 - 50,
-                    child: GestureDetector(
-                      onTap: _updatingPhoto ? null : _pickAndUploadPhoto,
-                      child: CircleAvatar(
-                        radius: 50,
-                        backgroundImage: const AssetImage(
-                          'assets/images/User.png',
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            debugPrint('[UserScreen] 👆 Avatar clicado! _updatingPhoto=$_updatingPhoto');
+                            if (!_updatingPhoto) {
+                              _pickAndUploadPhoto();
+                            }
+                          },
+                          child: CircleAvatar(
+                            key: ValueKey(_photoUrl),
+                            radius: 50,
+                            backgroundImage: const AssetImage(
+                              'assets/images/User.png',
+                            ),
+                            foregroundImage: _photoUrl != null
+                                ? CachedNetworkImageProvider(_photoUrl!)
+                                : null,
+                          ),
                         ),
-                        foregroundImage:
-                            _photoUrl != null ? NetworkImage(_photoUrl!) : null,
-                      ),
+                        if (_updatingPhoto)
+                          Container(
+                            width: 100,
+                            height: 100,
+                            decoration: BoxDecoration(
+                              color: Colors.black54,
+                              shape: BoxShape.circle,
+                            ),
+                            child: const Center(
+                              child: CircularProgressIndicator(
+                                valueColor: AlwaysStoppedAnimation(
+                                  AppColors.white100,
+                                ),
+                              ),
+                            ),
+                          ),
+                      ],
                     ),
                   ),
                 ],
