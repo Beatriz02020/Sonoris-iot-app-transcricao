@@ -27,8 +27,12 @@ class BluetoothManager {
   // internals
   BluetoothDevice? _device;
   BluetoothCharacteristic? _characteristic;
+  BluetoothCharacteristic? _conversationsCharacteristic;
+  BluetoothCharacteristic? _transcriptionStreamCharacteristic;
   StreamSubscription<BluetoothConnectionState>? _connSub;
   StreamSubscription<List<int>>? _charSub;
+  StreamSubscription<List<int>>? _conversationsSub;
+  StreamSubscription<List<int>>? _transcriptionStreamSub;
 
   bool _isConnecting = false;
   bool get isConnecting => _isConnecting;
@@ -47,9 +51,16 @@ class BluetoothManager {
   // Callback chamado quando dispositivo desconecta
   Function()? onDisconnected;
 
+  // Callback chamado quando conversas são recebidas via BLE
+  Function(List<Map<String, dynamic>>)? onConversationsReceived;
+
   // UUIDs do peripheral (públicos para serem usados em filtros de scan)
   static const String SERVICE_UUID = "12345678-1234-5678-1234-56789abcdef0";
   static const String CHAR_UUID = "12345678-1234-5678-1234-56789abcdef1";
+  static const String CONVERSATIONS_UUID =
+      "12345678-1234-5678-1234-56789abcdef4";
+  static const String TRANSCRIPTION_STREAM_UUID =
+      "12345678-1234-5678-1234-56789abcdef5";
 
   /// Conecta ao device. Retorna quando a sequência de discover + (notify se houver) + write("START")
   /// for concluída com sucesso (ou lança erro).
@@ -124,6 +135,10 @@ class BluetoothManager {
         // cancelar stream da char (se houver)
         await _charSub?.cancel();
         _charSub = null;
+        await _conversationsSub?.cancel();
+        _conversationsSub = null;
+        await _transcriptionStreamSub?.cancel();
+        _transcriptionStreamSub = null;
       }
     });
 
@@ -239,6 +254,38 @@ class BluetoothManager {
 
       _characteristic = characteristic;
 
+      // Procura pela characteristic de conversas
+      try {
+        final conversationsChar = service.characteristics.firstWhere(
+          (c) =>
+              c.uuid.toString().toLowerCase() ==
+              CONVERSATIONS_UUID.toLowerCase(),
+        );
+        _conversationsCharacteristic = conversationsChar;
+        debugPrint('[BT_MANAGER] ✅ Conversations characteristic encontrada');
+      } catch (e) {
+        debugPrint(
+          '[BT_MANAGER] ⚠️ Conversations characteristic não encontrada: $e',
+        );
+      }
+
+      // Procura pela characteristic de transcription stream
+      try {
+        final transcriptionStreamChar = service.characteristics.firstWhere(
+          (c) =>
+              c.uuid.toString().toLowerCase() ==
+              TRANSCRIPTION_STREAM_UUID.toLowerCase(),
+        );
+        _transcriptionStreamCharacteristic = transcriptionStreamChar;
+        debugPrint(
+          '[BT_MANAGER] ✅ Transcription stream characteristic encontrada',
+        );
+      } catch (e) {
+        debugPrint(
+          '[BT_MANAGER] ⚠️ Transcription stream characteristic não encontrada: $e',
+        );
+      }
+
       // se a characteristic suporta notify, habilita — senão, pula
       final props = characteristic.properties;
       final supportsNotify = (props.notify) || (props.indicate);
@@ -264,6 +311,27 @@ class BluetoothManager {
         // se não suporta notify, assegure que não exista subscrição antiga
         await _charSub?.cancel();
         _charSub = null;
+      }
+
+      // Habilita notify para conversations characteristic se disponível
+      if (_conversationsCharacteristic != null) {
+        try {
+          final convProps = _conversationsCharacteristic!.properties;
+          if (convProps.notify || convProps.indicate) {
+            await _conversationsCharacteristic!.setNotifyValue(true);
+            await _conversationsSub?.cancel();
+            _conversationsSub = _conversationsCharacteristic!.value.listen((
+              bytes,
+            ) {
+              _handleConversationsData(bytes);
+            });
+            debugPrint('[BT_MANAGER] ✅ Notify habilitado para conversations');
+          }
+        } catch (e) {
+          debugPrint(
+            '[BT_MANAGER] ⚠️ Erro ao habilitar notify para conversations: $e',
+          );
+        }
       }
 
       // DEBOUNCE & prevenção de envios duplicados:
@@ -452,6 +520,10 @@ class BluetoothManager {
     try {
       await _charSub?.cancel();
       _charSub = null;
+      await _conversationsSub?.cancel();
+      _conversationsSub = null;
+      await _transcriptionStreamSub?.cancel();
+      _transcriptionStreamSub = null;
       await _connSub?.cancel();
       _connSub = null;
       if (_device != null) {
@@ -464,6 +536,8 @@ class BluetoothManager {
     } finally {
       if (release) _device = null;
       _characteristic = null;
+      _conversationsCharacteristic = null;
+      _transcriptionStreamCharacteristic = null;
       _deviceController.add(_device);
       _connectionStateController.add(BluetoothConnectionState.disconnected);
       _hasSentStart = false;
@@ -524,6 +598,207 @@ class BluetoothManager {
     } catch (e) {
       debugPrint('[BT_MANAGER] ❌ Erro ao enviar caption settings: $e');
       // Não propaga o erro - envio é best-effort
+    }
+  }
+
+  /// Requisita lista de conversas do dispositivo
+  Future<void> requestConversations() async {
+    try {
+      debugPrint('[BT_MANAGER] 📋 Requisitando conversas do dispositivo...');
+
+      if (_characteristic == null) {
+        throw Exception('Characteristic não configurada');
+      }
+
+      // Envia comando LIST para requisitar conversas
+      await writeString('LIST');
+
+      debugPrint('[BT_MANAGER] ✅ Comando LIST enviado');
+
+      // Aguarda mais tempo para garantir que resposta esteja pronta
+      await Future.delayed(const Duration(milliseconds: 2000));
+
+      if (_conversationsCharacteristic != null) {
+        final bytes = await _conversationsCharacteristic!.read();
+
+        // Processa manualmente sem callback automático
+        if (bytes.isNotEmpty) {
+          final jsonString = utf8.decode(bytes);
+          debugPrint(
+            '[BT_MANAGER] 📥 Lista de conversas recebida (${bytes.length} bytes)',
+          );
+
+          final dynamic decodedJson = jsonDecode(jsonString);
+          List<Map<String, dynamic>> conversations = [];
+
+          if (decodedJson is List) {
+            conversations = decodedJson.cast<Map<String, dynamic>>();
+          } else if (decodedJson is Map) {
+            conversations = [decodedJson.cast<String, dynamic>()];
+          }
+
+          debugPrint(
+            '[BT_MANAGER] 📊 Total de conversas disponíveis: ${conversations.length}',
+          );
+
+          // Chama callback apenas uma vez
+          if (onConversationsReceived != null) {
+            onConversationsReceived!(conversations);
+          }
+        }
+      }
+    } catch (e) {
+      debugPrint('[BT_MANAGER] ❌ Erro ao requisitar conversas: $e');
+    }
+  }
+
+  /// Processa dados de conversas recebidos via BLE
+  void _handleConversationsData(List<int> bytes) {
+    // Este método agora é apenas um placeholder
+    // Não fazemos nada aqui para evitar callbacks automáticos
+    // As leituras são feitas manualmente pelas funções request*
+  }
+
+  /// Requisita metadados de uma conversa específica por ID
+  /// Retorna informações sobre chunks necessários para download
+  Future<Map<String, dynamic>?> requestConversationById(
+    String conversationId,
+  ) async {
+    try {
+      debugPrint('[BT_MANAGER] 📄 Requisitando metadados: $conversationId');
+
+      if (_characteristic == null) {
+        throw Exception('Characteristic não configurada');
+      }
+
+      // Envia comando GET:id para obter metadados
+      await writeString('GET:$conversationId');
+
+      // Aguarda resposta - aumentado para garantir processamento
+      await Future.delayed(const Duration(milliseconds: 2500));
+
+      if (_conversationsCharacteristic != null) {
+        final bytes = await _conversationsCharacteristic!.read();
+        if (bytes.isNotEmpty) {
+          final jsonString = utf8.decode(bytes);
+
+          // Verifica se o JSON está truncado
+          final trimmed = jsonString.trim();
+          if (!trimmed.endsWith(']') && !trimmed.endsWith('}')) {
+            debugPrint(
+              '[BT_MANAGER] ⚠️ JSON truncado detectado para conversa $conversationId',
+            );
+            return null;
+          }
+
+          final decoded = jsonDecode(jsonString);
+
+          // Verifica se é uma lista (erro) ou mapa (correto)
+          if (decoded is List) {
+            debugPrint('[BT_MANAGER] ⚠️ Resposta é uma lista, esperava objeto');
+            return null;
+          }
+
+          debugPrint(
+            '[BT_MANAGER] ✅ Metadados recebidos: ${decoded['total_lines']} linhas, ${decoded['total_chunks']} chunks',
+          );
+          return decoded as Map<String, dynamic>;
+        }
+      }
+
+      return null;
+    } catch (e) {
+      debugPrint(
+        '[BT_MANAGER] ❌ Erro ao requisitar metadados $conversationId: $e',
+      );
+      return null;
+    }
+  }
+
+  /// Requisita um chunk específico de uma conversa
+  Future<Map<String, dynamic>?> requestConversationChunk(
+    String conversationId,
+    int chunkIndex,
+  ) async {
+    try {
+      debugPrint(
+        '[BT_MANAGER] 📦 Requisitando chunk $chunkIndex de: $conversationId',
+      );
+
+      if (_characteristic == null) {
+        throw Exception('Characteristic não configurada');
+      }
+
+      // Envia comando CHUNK:id:index
+      final command = 'CHUNK:$conversationId:$chunkIndex';
+      debugPrint('[BT_MANAGER] 📤 Enviando comando: $command');
+      await writeString(command);
+
+      // Aguarda resposta - aumentado para dar tempo do device processar
+      await Future.delayed(const Duration(milliseconds: 2500));
+
+      if (_conversationsCharacteristic != null) {
+        final bytes = await _conversationsCharacteristic!.read();
+        if (bytes.isNotEmpty) {
+          final jsonString = utf8.decode(bytes);
+
+          debugPrint(
+            '[BT_MANAGER] 📥 JSON recebido para chunk $chunkIndex (${bytes.length} bytes): ${jsonString.substring(0, jsonString.length > 100 ? 100 : jsonString.length)}...',
+          );
+
+          // Verifica se o JSON está truncado
+          final trimmed = jsonString.trim();
+          if (!trimmed.endsWith(']') && !trimmed.endsWith('}')) {
+            debugPrint('[BT_MANAGER] ⚠️ Chunk $chunkIndex truncado');
+            return null;
+          }
+
+          final decoded = jsonDecode(jsonString);
+
+          if (decoded is! Map<String, dynamic>) {
+            debugPrint(
+              '[BT_MANAGER] ⚠️ Formato de chunk inválido - recebido ${decoded.runtimeType}',
+            );
+            debugPrint('[BT_MANAGER] Dados: $decoded');
+            return null;
+          }
+
+          final lines = decoded['lines'] as List?;
+          debugPrint(
+            '[BT_MANAGER] ✅ Chunk $chunkIndex recebido com ${lines?.length ?? 0} linhas',
+          );
+          return decoded;
+        } else {
+          debugPrint('[BT_MANAGER] ⚠️ Resposta vazia para chunk $chunkIndex');
+        }
+      }
+
+      return null;
+    } catch (e) {
+      debugPrint('[BT_MANAGER] ❌ Erro ao requisitar chunk $chunkIndex: $e');
+      return null;
+    }
+  }
+
+  /// Deleta uma conversa do dispositivo
+  Future<bool> deleteConversationFromDevice(String conversationId) async {
+    try {
+      debugPrint(
+        '[BT_MANAGER] 🗑️ Deletando conversa do dispositivo: $conversationId',
+      );
+
+      if (_characteristic == null) {
+        throw Exception('Characteristic não configurada');
+      }
+
+      // Envia comando DEL:id
+      await writeString('DEL:$conversationId');
+
+      debugPrint('[BT_MANAGER] ✅ Comando DEL enviado para $conversationId');
+      return true;
+    } catch (e) {
+      debugPrint('[BT_MANAGER] ❌ Erro ao deletar conversa: $e');
+      return false;
     }
   }
 

@@ -46,6 +46,15 @@ class _HomeScreenState extends State<HomeScreen> {
     // Deletar conversas expiradas ao iniciar a tela
     _conversaService.deleteExpiredConversas();
 
+    // Configura callback para processar conversas recebidas via BLE
+    _manager.onConversationsReceived = _handleConversationsFromBle;
+
+    // Configura callback para requisitar conversas quando conectar
+    _manager.onConnectionEstablished = () {
+      debugPrint('[HOME] 🔗 Dispositivo conectado - requisitando conversas...');
+      _manager.requestConversations();
+    };
+
     // Assine o estado de conexão para atualizar a UI
     _connStateSub = _manager.connectionStateStream.listen((state) {
       if (!mounted) return;
@@ -100,7 +109,152 @@ class _HomeScreenState extends State<HomeScreen> {
   void dispose() {
     _userSub?.cancel();
     _connStateSub?.cancel();
+    _manager.onConversationsReceived = null;
+    _manager.onConnectionEstablished = null;
     super.dispose();
+  }
+
+  /// Processa conversas recebidas do dispositivo via BLE
+  Future<void> _handleConversationsFromBle(
+    List<Map<String, dynamic>> conversations,
+  ) async {
+    try {
+      debugPrint(
+        '[HOME] 📥 Processando ${conversations.length} conversa(s) do dispositivo...',
+      );
+
+      for (final convMeta in conversations) {
+        try {
+          final conversationId = convMeta['conversation_id'] as String?;
+          if (conversationId == null) {
+            debugPrint('[HOME] ⚠️ Conversa sem ID - pulando');
+            continue;
+          }
+
+          debugPrint('[HOME] 📄 Processando conversa: $conversationId');
+
+          // Primeiro, requisita metadados da conversa
+          final metadata = await _manager.requestConversationById(
+            conversationId,
+          );
+
+          if (metadata == null || metadata.isEmpty) {
+            debugPrint(
+              '[HOME] ⚠️ Não foi possível obter metadados de $conversationId',
+            );
+            continue;
+          }
+
+          // Verifica se precisa baixar em chunks
+          final requiresChunking =
+              metadata['requires_chunking'] as bool? ?? false;
+          final totalChunks = metadata['total_chunks'] as int? ?? 1;
+
+          Map<String, dynamic> conversaCompleta;
+
+          if (requiresChunking && totalChunks > 1) {
+            debugPrint(
+              '[HOME] 📦 Conversa requer $totalChunks chunks - baixando...',
+            );
+
+            // Baixa todos os chunks e monta a conversa completa
+            final allLines = <Map<String, dynamic>>[];
+
+            for (int i = 0; i < totalChunks; i++) {
+              final chunk = await _manager.requestConversationChunk(
+                conversationId,
+                i,
+              );
+
+              if (chunk == null) {
+                debugPrint('[HOME] ⚠️ Erro ao baixar chunk $i');
+                break;
+              }
+
+              final lines = chunk['lines'] as List?;
+              if (lines != null) {
+                allLines.addAll(lines.cast<Map<String, dynamic>>());
+              }
+
+              debugPrint('[HOME] ✓ Chunk $i/${totalChunks - 1} baixado');
+
+              // Delay maior entre chunks para evitar sobrecarga BLE
+              if (i < totalChunks - 1) {
+                await Future.delayed(const Duration(milliseconds: 500));
+              }
+            }
+            if (allLines.length < (metadata['total_lines'] as int? ?? 0)) {
+              debugPrint(
+                '[HOME] ⚠️ Download incompleto: ${allLines.length}/${metadata['total_lines']} linhas',
+              );
+              continue;
+            }
+
+            // Monta conversa completa com todos os chunks
+            conversaCompleta = {
+              'conversation_id': metadata['conversation_id'],
+              'created_at': metadata['created_at'],
+              'finalized': metadata['finalized'],
+              'lines': allLines,
+            };
+
+            debugPrint(
+              '[HOME] ✅ Conversa completa montada: ${allLines.length} linhas',
+            );
+          } else {
+            // Conversa pequena, não precisa de chunks
+            // Os metadados já são suficientes, mas precisamos baixar o único chunk
+            debugPrint('[HOME] 📄 Conversa pequena, baixando chunk único');
+
+            final chunk = await _manager.requestConversationChunk(
+              conversationId,
+              0,
+            );
+
+            if (chunk == null) {
+              debugPrint('[HOME] ⚠️ Erro ao baixar conversa');
+              continue;
+            }
+
+            conversaCompleta = {
+              'conversation_id': metadata['conversation_id'],
+              'created_at': metadata['created_at'],
+              'finalized': metadata['finalized'],
+              'lines': chunk['lines'] ?? [],
+            };
+          }
+
+          debugPrint('[HOME] 💾 Salvando conversa no Firebase...');
+
+          // Adiciona conversa ao Firebase
+          final conversaId = await _conversaService.addConversaFromBleJson(
+            conversaCompleta,
+          );
+
+          if (conversaId != null) {
+            debugPrint('[HOME] ✅ Conversa salva com sucesso: $conversaId');
+
+            // Deleta conversa do dispositivo após salvar
+            final deleted = await _manager.deleteConversationFromDevice(
+              conversationId,
+            );
+            if (deleted) {
+              debugPrint('[HOME] 🗑️ Conversa deletada do dispositivo');
+            }
+          } else {
+            debugPrint('[HOME] ❌ Erro ao salvar conversa no Firebase');
+          }
+
+          // Delay entre conversas para evitar sobrecarga BLE
+          await Future.delayed(const Duration(milliseconds: 500));
+        } catch (e) {
+          debugPrint('[HOME] ❌ Erro ao processar conversa: $e');
+        }
+      }
+      debugPrint('[HOME] ✅ Processamento de conversas concluído');
+    } catch (e) {
+      debugPrint('[HOME] ❌ Erro ao processar conversas do BLE: $e');
+    }
   }
 
   @override

@@ -493,15 +493,7 @@ class _DeviceScreenState extends State<DeviceScreen> {
                                                           ],
                                                         ),
                                                         CustomButton(
-                                                          text:
-                                                              _manager
-                                                                          .connectedDevice
-                                                                          ?.id ==
-                                                                      templist[index]
-                                                                          .device
-                                                                          .id
-                                                                  ? "Selecionado"
-                                                                  : "Conectar",
+                                                          text: "Conectar",
                                                           onPressed: () async {
                                                             final dev =
                                                                 templist[index]
