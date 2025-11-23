@@ -1,0 +1,1 @@
+{"flutter":{"platforms":{"android":{"default":{"projectId":"sonoris-app","appId":"1:132562545221:android:105975eec14e46b588112c","fileOutput":"android/app/google-services.json"}},"dart":{"lib/firebase_options.dart":{"projectId":"sonoris-app","configurations":{"android":"1:132562545221:android:105975eec14e46b588112c","ios":"1:132562545221:ios:7310644c0c813fff88112c"}}}}}}

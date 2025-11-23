@@ -4,13 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:sonoris/components/customButton.dart';
+import 'package:sonoris/components/customSnackBar.dart';
 import 'package:sonoris/components/customTextField.dart';
 import 'package:sonoris/screens/initial/connection_screen.dart';
 import 'package:sonoris/services/auth_service.dart';
 import 'package:sonoris/theme/colors.dart';
 import 'package:sonoris/theme/text_styles.dart';
-
-//TODO: Fazer o loading ao clicar em cadastrar
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -54,33 +53,18 @@ class _SignUpScreenState extends State<SignUpScreen> {
         photo: _selectedImage,
       );
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          backgroundColor: AppColors.blue500,
-          duration: Duration(seconds: 3),
-          behavior: SnackBarBehavior.floating,
-          margin: EdgeInsets.all(10),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(10)),
-          ),
-          content: Text(
-            'Cadastrado com sucesso!',
-            style: TextStyle(color: AppColors.white100),
-          ),
-        ),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(CustomSnackBar.success('Conta criada com sucesso!'));
 
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => ConnectionScreen()),
       );
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text("Erro ao cadastrar: $e"),
-          backgroundColor: AppColors.rose600,
-        ),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(CustomSnackBar.error('Falha ao criar conta: $e'));
     }
   }
 

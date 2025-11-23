@@ -195,9 +195,7 @@ class _SavedChatsScreenState extends State<SavedChatsScreen> {
                         Text('Filtrar por', style: AppTextStyles.body),
                         SizedBox(
                           height: 85,
-                          child:
-                          //TODO: Fazer essa listview sair para fora do padding
-                          ListView(
+                          child: ListView(
                             scrollDirection: Axis.horizontal,
                             children: [
                               Row(

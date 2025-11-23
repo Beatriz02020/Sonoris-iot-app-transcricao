@@ -42,9 +42,10 @@ class _CaptionsScreenState extends State<CaptionsScreen> {
       // Após carregar settings, verifica se já há conexão BLE e envia
       _checkAndSendSettingsIfConnected();
     });
-    
+
     // Registra callback para enviar settings ao conectar
-    BluetoothManager().onConnectionEstablished = _sendCurrentSettingsToBluetooth;
+    BluetoothManager().onConnectionEstablished =
+        _sendCurrentSettingsToBluetooth;
   }
 
   @override
@@ -88,7 +89,9 @@ class _CaptionsScreenState extends State<CaptionsScreen> {
   }
 
   void _scheduleSave() {
-    debugPrint('[Captions] 🕐 _scheduleSave() chamado - agendando save em 450ms');
+    debugPrint(
+      '[Captions] 🕐 _scheduleSave() chamado - agendando save em 450ms',
+    );
     _debounce?.cancel();
     _debounce = Timer(const Duration(milliseconds: 450), _saveSettings);
   }
@@ -110,11 +113,11 @@ class _CaptionsScreenState extends State<CaptionsScreen> {
         'lineHeight': _verticalValue,
         'updatedAt': FieldValue.serverTimestamp(),
       };
-      
+
       debugPrint('[Captions] 💾 Salvando no Firestore: $settingsMap');
       await doc.set(settingsMap, SetOptions(merge: true));
       debugPrint('[Captions] ✅ Firestore salvo com sucesso!');
-      
+
       // Envia configurações via Bluetooth para o dispositivo Raspberry Pi
       debugPrint('[Captions] 🔵 Chamando _sendSettingsToBluetooth...');
       await _sendSettingsToBluetooth(settingsMap);
@@ -127,27 +130,33 @@ class _CaptionsScreenState extends State<CaptionsScreen> {
   Future<void> _sendSettingsToBluetooth(Map<String, dynamic> settings) async {
     try {
       final manager = BluetoothManager();
-      
+
       debugPrint('[Captions] 🔍 Verificando conexão BLE...');
-      debugPrint('[Captions] 🔍 connectedDevice: ${manager.connectedDevice?.remoteId}');
-      
+      debugPrint(
+        '[Captions] 🔍 connectedDevice: ${manager.connectedDevice?.remoteId}',
+      );
+
       // Verifica se há dispositivo conectado
       if (manager.connectedDevice == null) {
-        debugPrint('[Captions] ❌ Nenhum dispositivo BLE conectado - pulando envio');
+        debugPrint(
+          '[Captions] ❌ Nenhum dispositivo BLE conectado - pulando envio',
+        );
         return;
       }
-      
+
       // Remove updatedAt que não é necessário para o dispositivo
       final bleSettings = Map<String, dynamic>.from(settings);
       bleSettings.remove('updatedAt');
-      
+
       // Converte para JSON
       final jsonStr = jsonEncode(bleSettings);
-      
+
       // Envia com prefixo SETTINGS:
       final message = 'SETTINGS:$jsonStr';
-      
-      debugPrint('[Captions] 📤 Enviando settings via BLE (${message.length} chars)');
+
+      debugPrint(
+        '[Captions] 📤 Enviando settings via BLE (${message.length} chars)',
+      );
       debugPrint('[Captions] 📦 Payload: $message');
       await manager.writeString(message);
       debugPrint('[Captions] ✅ Settings enviados com sucesso!');
@@ -161,8 +170,10 @@ class _CaptionsScreenState extends State<CaptionsScreen> {
   /// Envia as configurações ATUAIS (em memória) via Bluetooth
   /// Chamado automaticamente quando a conexão BLE é estabelecida
   Future<void> _sendCurrentSettingsToBluetooth() async {
-    debugPrint('[Captions] 🚀 onConnectionEstablished - enviando settings atuais...');
-    
+    debugPrint(
+      '[Captions] 🚀 onConnectionEstablished - enviando settings atuais...',
+    );
+
     final currentSettings = {
       'textColor': _toHex(_textColorValue),
       'bgColor': _toHex(_bgColorValue),
@@ -171,7 +182,7 @@ class _CaptionsScreenState extends State<CaptionsScreen> {
       'fontWeight': _fontWeightValue,
       'lineHeight': _verticalValue,
     };
-    
+
     await _sendSettingsToBluetooth(currentSettings);
   }
 
@@ -179,9 +190,9 @@ class _CaptionsScreenState extends State<CaptionsScreen> {
   /// Chamado quando a tela é carregada
   Future<void> _checkAndSendSettingsIfConnected() async {
     final manager = BluetoothManager();
-    
+
     debugPrint('[Captions] 🔍 Verificando se há conexão BLE ativa...');
-    
+
     if (manager.connectedDevice != null) {
       debugPrint('[Captions] ✅ Dispositivo já conectado! Enviando settings...');
       await _sendCurrentSettingsToBluetooth();
@@ -214,9 +225,13 @@ class _CaptionsScreenState extends State<CaptionsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    debugPrint('[Captions] 🏗️ BUILD CHAMADO - Tela CaptionsScreen está sendo renderizada!');
-    debugPrint('[Captions] 📊 Estado atual: textColor=${_textColorValue.toString()}, bgColor=${_bgColorValue.toString()}');
-    
+    debugPrint(
+      '[Captions] 🏗️ BUILD CHAMADO - Tela CaptionsScreen está sendo renderizada!',
+    );
+    debugPrint(
+      '[Captions] 📊 Estado atual: textColor=${_textColorValue.toString()}, bgColor=${_bgColorValue.toString()}',
+    );
+
     SystemChrome.setSystemUIOverlayStyle(
       SystemUiOverlayStyle.dark.copyWith(
         statusBarColor: AppColors.background,
@@ -257,8 +272,10 @@ class _CaptionsScreenState extends State<CaptionsScreen> {
                 child: SingleChildScrollView(
                   child: Builder(
                     builder: (context) {
-                      debugPrint('[Captions] 🎨 Preview renderizando com: font=$_fontFamily, size=${_fontSizeValue.round()}, weight=${_fontWeightValue.round()}');
-                      
+                      debugPrint(
+                        '[Captions] 🎨 Preview renderizando com: font=$_fontFamily, size=${_fontSizeValue.round()}, weight=${_fontWeightValue.round()}',
+                      );
+
                       // Mapeia o valor numérico para FontWeight
                       FontWeight fontWeight;
                       if (_fontWeightValue <= 150) {
@@ -280,7 +297,7 @@ class _CaptionsScreenState extends State<CaptionsScreen> {
                       } else {
                         fontWeight = FontWeight.w900;
                       }
-                      
+
                       return Text(
                         'Este é um texto de exemplo.\n'
                         'As legendas ficarão assim na tela do seu dispositivo.'
@@ -342,9 +359,13 @@ class _CaptionsScreenState extends State<CaptionsScreen> {
                                     selectedColor: _textColorValue,
                                     enableCustomPicker: true,
                                     onColorSelected: (color) {
-                                      debugPrint('[Captions] 🎨 COR DE TEXTO MUDOU: ${color.toString()}');
+                                      debugPrint(
+                                        '[Captions] 🎨 COR DE TEXTO MUDOU: ${color.toString()}',
+                                      );
                                       setState(() => _textColorValue = color);
-                                      debugPrint('[Captions] 🎨 setState executado, chamando _scheduleSave...');
+                                      debugPrint(
+                                        '[Captions] 🎨 setState executado, chamando _scheduleSave...',
+                                      );
                                       _scheduleSave();
                                     },
                                   ),
@@ -384,9 +405,13 @@ class _CaptionsScreenState extends State<CaptionsScreen> {
                                     selectedColor: _bgColorValue,
                                     enableCustomPicker: true,
                                     onColorSelected: (color) {
-                                      debugPrint('[Captions] 🎨 COR DE FUNDO MUDOU: ${color.toString()}');
+                                      debugPrint(
+                                        '[Captions] 🎨 COR DE FUNDO MUDOU: ${color.toString()}',
+                                      );
                                       setState(() => _bgColorValue = color);
-                                      debugPrint('[Captions] 🎨 setState executado, chamando _scheduleSave...');
+                                      debugPrint(
+                                        '[Captions] 🎨 setState executado, chamando _scheduleSave...',
+                                      );
                                       _scheduleSave();
                                     },
                                   ),
@@ -421,7 +446,9 @@ class _CaptionsScreenState extends State<CaptionsScreen> {
                           min: 16,
                           max: 56,
                           onChanged: (value) {
-                            debugPrint('[Captions] 📏 TAMANHO FONTE MUDOU: ${value.round()}pt');
+                            debugPrint(
+                              '[Captions] 📏 TAMANHO FONTE MUDOU: ${value.round()}pt',
+                            );
                             setState(() => _fontSizeValue = value);
                             _scheduleSave();
                           },
@@ -434,7 +461,9 @@ class _CaptionsScreenState extends State<CaptionsScreen> {
                           max: 900,
                           step: 100,
                           onChanged: (value) {
-                            debugPrint('[Captions] ⚖️ WEIGHT MUDOU: ${value.round()}');
+                            debugPrint(
+                              '[Captions] ⚖️ WEIGHT MUDOU: ${value.round()}',
+                            );
                             setState(() => _fontWeightValue = value);
                             _scheduleSave();
                           },

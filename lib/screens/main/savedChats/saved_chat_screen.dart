@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:sonoris/components/customDivider.dart';
+import 'package:sonoris/components/customSnackBar.dart';
 import 'package:sonoris/models/conversa.dart';
 import 'package:sonoris/services/conversa_service.dart';
 import 'package:sonoris/theme/colors.dart';
@@ -157,9 +158,7 @@ class _SavedChatScreenState extends State<SavedChatScreen> {
                   if (sucesso && mounted) {
                     Navigator.pop(context);
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Conversa deletada com sucesso'),
-                      ),
+                      CustomSnackBar.success('Conversa excluída com sucesso'),
                     );
                   }
                 }
@@ -245,12 +244,10 @@ class _SavedChatScreenState extends State<SavedChatScreen> {
                   });
 
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(
-                        novoEstado
-                            ? 'Adicionado aos favoritos'
-                            : 'Removido dos favoritos',
-                      ),
+                    CustomSnackBar.success(
+                      novoEstado
+                          ? 'Adicionado aos favoritos'
+                          : 'Removido dos favoritos',
                     ),
                   );
                 }

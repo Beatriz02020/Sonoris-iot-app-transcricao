@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -7,12 +8,12 @@ import 'package:flutter/services.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:sonoris/components/bottomNavigationBar.dart';
 import 'package:sonoris/components/customButton.dart';
+import 'package:sonoris/components/customSnackBar.dart';
 import 'package:sonoris/components/quickActionsButton.dart';
 import 'package:sonoris/screens/main/home/answer_screen.dart';
 import 'package:sonoris/screens/main/home/captions_screen.dart';
 import 'package:sonoris/theme/colors.dart';
 import 'package:sonoris/theme/text_styles.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 
 import '../../../models/conversa.dart';
 import '../../../services/bluetooth_manager.dart';
@@ -56,10 +57,10 @@ class _HomeScreenState extends State<HomeScreen> {
       if (state == BluetoothConnectionState.disconnected &&
           _manager.connectedDevice != null) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Dispositivo Sonoris desconectado'),
-            backgroundColor: Colors.red,
-            duration: Duration(seconds: 3),
+          CustomSnackBar.show(
+            message: 'Dispositivo Sonoris desconectado',
+            backgroundColor: AppColors.rose600,
+            duration: const Duration(seconds: 3),
           ),
         );
       }
@@ -85,9 +86,10 @@ class _HomeScreenState extends State<HomeScreen> {
           final foto = (data['Foto_url'] ?? '').toString();
           setState(() {
             _userName = primeiroNome;
-            _photoUrl = (foto.isNotEmpty)
-                ? '$foto?v=${DateTime.now().millisecondsSinceEpoch}'
-                : null;
+            _photoUrl =
+                (foto.isNotEmpty)
+                    ? '$foto?v=${DateTime.now().millisecondsSinceEpoch}'
+                    : null;
           });
         }
       });
@@ -147,9 +149,10 @@ class _HomeScreenState extends State<HomeScreen> {
                     key: ValueKey(_photoUrl),
                     radius: 24,
                     backgroundImage: const AssetImage('assets/images/User.png'),
-                    foregroundImage: _photoUrl != null
-                        ? CachedNetworkImageProvider(_photoUrl!)
-                        : null,
+                    foregroundImage:
+                        _photoUrl != null
+                            ? CachedNetworkImageProvider(_photoUrl!)
+                            : null,
                   ),
                   Text(
                     _userName.isNotEmpty ? _userName : "Carregando...",

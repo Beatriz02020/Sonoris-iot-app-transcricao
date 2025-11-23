@@ -244,8 +244,7 @@ class _EditingChatScreenState extends State<EditingChatScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(
-                height:
-                    95, //TODO: Fazer essa listview sair para fora do padding
+                height: 95,
                 child: ListView(
                   scrollDirection: Axis.horizontal,
                   children: [

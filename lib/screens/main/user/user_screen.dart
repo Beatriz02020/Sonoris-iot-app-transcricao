@@ -1,18 +1,19 @@
-import 'dart:io';
 import 'dart:async';
+import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:sonoris/components/customButton.dart';
+import 'package:sonoris/components/customSnackBar.dart';
 import 'package:sonoris/components/customTextField.dart';
 import 'package:sonoris/services/auth_service.dart';
 import 'package:sonoris/theme/colors.dart';
 import 'package:sonoris/theme/text_styles.dart';
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 
 class UserScreen extends StatefulWidget {
   const UserScreen({Key? key}) : super(key: key);
@@ -35,7 +36,7 @@ class _UserScreenState extends State<UserScreen> {
   bool _updatingPhoto = false;
   bool _updatingBanner = false;
   final _birthDateFormatter = _BirthDateInputFormatter();
-  
+
   Stream<DocumentSnapshot>? _userStream;
   StreamSubscription<DocumentSnapshot>? _userStreamSub;
 
@@ -52,13 +53,14 @@ class _UserScreenState extends State<UserScreen> {
     if (user != null) {
       // Cancelar listener anterior se existir
       _userStreamSub?.cancel();
-      
+
       // Configurar listener em tempo real
-      _userStream = FirebaseFirestore.instance
-          .collection("Usuario")
-          .doc(user.uid)
-          .snapshots();
-      
+      _userStream =
+          FirebaseFirestore.instance
+              .collection("Usuario")
+              .doc(user.uid)
+              .snapshots();
+
       _userStreamSub = _userStream!.listen((snapshot) async {
         if (!mounted) return;
 
@@ -74,7 +76,9 @@ class _UserScreenState extends State<UserScreen> {
           final banner = (data['banner_url'] ?? '').toString();
 
           // Debug prints to help trace updates
-          debugPrint('[UserScreen] snapshot received. foto: $foto, banner: $banner');
+          debugPrint(
+            '[UserScreen] snapshot received. foto: $foto, banner: $banner',
+          );
 
           // Evict cached images for the raw URLs (without our cache-busting param)
           if (foto.isNotEmpty) {
@@ -83,7 +87,9 @@ class _UserScreenState extends State<UserScreen> {
               try {
                 await DefaultCacheManager().removeFile(foto);
               } catch (e) {
-                debugPrint('[UserScreen] failed to removeFile foto from cache manager: $e');
+                debugPrint(
+                  '[UserScreen] failed to removeFile foto from cache manager: $e',
+                );
               }
             } catch (e) {
               debugPrint('[UserScreen] failed to evict foto cache: $e');
@@ -95,7 +101,9 @@ class _UserScreenState extends State<UserScreen> {
               try {
                 await DefaultCacheManager().removeFile(banner);
               } catch (e) {
-                debugPrint('[UserScreen] failed to removeFile banner from cache manager: $e');
+                debugPrint(
+                  '[UserScreen] failed to removeFile banner from cache manager: $e',
+                );
               }
             } catch (e) {
               debugPrint('[UserScreen] failed to evict banner cache: $e');
@@ -108,12 +116,14 @@ class _UserScreenState extends State<UserScreen> {
             _birthDateController.text = dataNasc;
             _emailController.text = user.email ?? ''; // Preenche o email
 
-            _photoUrl = (foto.isNotEmpty)
-                ? '$foto?v=${DateTime.now().millisecondsSinceEpoch}'
-                : null;
-            _bannerUrl = (banner.isNotEmpty)
-                ? '$banner?v=${DateTime.now().millisecondsSinceEpoch}'
-                : null;
+            _photoUrl =
+                (foto.isNotEmpty)
+                    ? '$foto?v=${DateTime.now().millisecondsSinceEpoch}'
+                    : null;
+            _bannerUrl =
+                (banner.isNotEmpty)
+                    ? '$banner?v=${DateTime.now().millisecondsSinceEpoch}'
+                    : null;
           });
         }
       });
@@ -148,7 +158,9 @@ class _UserScreenState extends State<UserScreen> {
         try {
           await DefaultCacheManager().removeFile(url);
         } catch (e) {
-          debugPrint('[UserScreen] failed to removeFile banner (post-upload): $e');
+          debugPrint(
+            '[UserScreen] failed to removeFile banner (post-upload): $e',
+          );
         }
       } catch (e) {
         debugPrint('[UserScreen] failed to evict banner (post-upload): $e');
@@ -156,37 +168,13 @@ class _UserScreenState extends State<UserScreen> {
       setState(() {
         _bannerUrl = '$url?v=${DateTime.now().millisecondsSinceEpoch}';
       });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          backgroundColor: AppColors.blue500,
-          duration: const Duration(seconds: 2),
-          behavior: SnackBarBehavior.floating,
-          margin: const EdgeInsets.all(10),
-          shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(10)),
-          ),
-          content: const Text(
-            'Banner atualizado com sucesso!',
-            style: TextStyle(color: AppColors.white100),
-          ),
-        ),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(CustomSnackBar.success('Banner atualizado com sucesso!'));
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          backgroundColor: AppColors.rose500,
-          duration: const Duration(seconds: 3),
-          behavior: SnackBarBehavior.floating,
-          margin: const EdgeInsets.all(10),
-          shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(10)),
-          ),
-          content: Text(
-            'Falha ao atualizar banner: $e',
-            style: const TextStyle(color: AppColors.white100),
-          ),
-        ),
+        CustomSnackBar.error('Falha ao atualizar banner. Tente novamente.'),
       );
     } finally {
       if (mounted) {
@@ -223,7 +211,9 @@ class _UserScreenState extends State<UserScreen> {
         try {
           await DefaultCacheManager().removeFile(url);
         } catch (e) {
-          debugPrint('[UserScreen] failed to removeFile photo (post-upload): $e');
+          debugPrint(
+            '[UserScreen] failed to removeFile photo (post-upload): $e',
+          );
         }
       } catch (e) {
         debugPrint('[UserScreen] failed to evict photo (post-upload): $e');
@@ -232,35 +222,13 @@ class _UserScreenState extends State<UserScreen> {
         _photoUrl = '$url?v=${DateTime.now().millisecondsSinceEpoch}';
       });
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          backgroundColor: AppColors.blue500,
-          duration: const Duration(seconds: 2),
-          behavior: SnackBarBehavior.floating,
-          margin: const EdgeInsets.all(10),
-          shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(10)),
-          ),
-          content: const Text(
-            'Foto atualizada com sucesso!',
-            style: TextStyle(color: AppColors.white100),
-          ),
-        ),
+        CustomSnackBar.success('Foto de perfil atualizada com sucesso!'),
       );
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          backgroundColor: AppColors.rose500,
-          duration: const Duration(seconds: 3),
-          behavior: SnackBarBehavior.floating,
-          margin: const EdgeInsets.all(10),
-          shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(10)),
-          ),
-          content: Text(
-            'Falha ao atualizar foto: $e',
-            style: const TextStyle(color: AppColors.white100),
-          ),
+        CustomSnackBar.error(
+          'Falha ao atualizar foto de perfil. Tente novamente.',
         ),
       );
     } finally {
@@ -301,23 +269,27 @@ class _UserScreenState extends State<UserScreen> {
                           width: double.infinity,
                           height: 180,
                           child: ClipRRect(
-                              child: _bannerUrl != null
-                                  ? CachedNetworkImage(
+                            child:
+                                _bannerUrl != null
+                                    ? CachedNetworkImage(
                                       imageUrl: _bannerUrl!,
                                       key: ValueKey(_bannerUrl),
                                       fit: BoxFit.cover,
-                                      placeholder: (context, url) => Container(
-                                        color: AppColors.blue200,
-                                        child: const Center(
-                                          child: CircularProgressIndicator(),
-                                        ),
-                                      ),
-                                      errorWidget: (context, url, error) => Image.asset(
-                                        'assets/images/BannerPerfil.jpg',
-                                        fit: BoxFit.cover,
-                                      ),
+                                      placeholder:
+                                          (context, url) => Container(
+                                            color: AppColors.blue200,
+                                            child: const Center(
+                                              child:
+                                                  CircularProgressIndicator(),
+                                            ),
+                                          ),
+                                      errorWidget:
+                                          (context, url, error) => Image.asset(
+                                            'assets/images/BannerPerfil.jpg',
+                                            fit: BoxFit.cover,
+                                          ),
                                     )
-                                  : Image.asset(
+                                    : Image.asset(
                                       'assets/images/BannerPerfil.jpg',
                                       fit: BoxFit.cover,
                                     ),
@@ -346,7 +318,9 @@ class _UserScreenState extends State<UserScreen> {
                       children: [
                         GestureDetector(
                           onTap: () {
-                            debugPrint('[UserScreen] 👆 Avatar clicado! _updatingPhoto=$_updatingPhoto');
+                            debugPrint(
+                              '[UserScreen] 👆 Avatar clicado! _updatingPhoto=$_updatingPhoto',
+                            );
                             if (!_updatingPhoto) {
                               _pickAndUploadPhoto();
                             }
@@ -357,9 +331,10 @@ class _UserScreenState extends State<UserScreen> {
                             backgroundImage: const AssetImage(
                               'assets/images/User.png',
                             ),
-                            foregroundImage: _photoUrl != null
-                                ? CachedNetworkImageProvider(_photoUrl!)
-                                : null,
+                            foregroundImage:
+                                _photoUrl != null
+                                    ? CachedNetworkImageProvider(_photoUrl!)
+                                    : null,
                           ),
                         ),
                         if (_updatingPhoto)
@@ -547,22 +522,8 @@ class _UserScreenState extends State<UserScreen> {
                                   _userName = primeiroNome;
                                 });
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    backgroundColor: AppColors.blue500,
-                                    duration: Duration(seconds: 3),
-                                    behavior: SnackBarBehavior.floating,
-                                    margin: EdgeInsets.all(10),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.all(
-                                        Radius.circular(10),
-                                      ),
-                                    ),
-                                    content: Text(
-                                      'Informações salvas com sucesso!',
-                                      style: TextStyle(
-                                        color: AppColors.white100,
-                                      ),
-                                    ),
+                                  CustomSnackBar.success(
+                                    'Informações atualizadas com sucesso!',
                                   ),
                                 );
                               }

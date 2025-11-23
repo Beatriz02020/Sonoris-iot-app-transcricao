@@ -3,13 +3,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sonoris/components/customButton.dart';
+import 'package:sonoris/components/customSnackBar.dart';
 import 'package:sonoris/components/customTextField.dart';
 import 'package:sonoris/theme/colors.dart';
 import 'package:sonoris/theme/text_styles.dart';
 
 import '../../services/auth_service.dart';
-
-//TODO: Fazer o loading ao clicar em entrar
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -55,21 +54,9 @@ class _LoginScreenState extends State<LoginScreen> {
       }
 
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          backgroundColor: AppColors.blue500,
-          duration: Duration(seconds: 2),
-          behavior: SnackBarBehavior.floating,
-          margin: EdgeInsets.all(10),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(10)),
-          ),
-          content: Text(
-            'Logado com sucesso!',
-            style: TextStyle(color: AppColors.white100),
-          ),
-        ),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(CustomSnackBar.success('Logado com sucesso!'));
 
       Navigator.of(context, rootNavigator: true).pushReplacementNamed('/main');
     } on FirebaseAuthException catch (e) {
@@ -91,18 +78,15 @@ class _LoginScreenState extends State<LoginScreen> {
           message = 'Erro de autenticação: ${e.code}';
       }
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(backgroundColor: AppColors.rose600, content: Text(message)),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(CustomSnackBar.error(message));
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            backgroundColor: AppColors.rose600,
-            content: Text(e.toString()),
-          ),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(CustomSnackBar.error(e.toString()));
       }
     } finally {
       if (mounted) setState(() => _isLoading = false);

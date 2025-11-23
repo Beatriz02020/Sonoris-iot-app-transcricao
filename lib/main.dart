@@ -1,18 +1,21 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:sonoris/components/bottomNavigationBar.dart';
 import 'package:sonoris/screens/initial/connection_screen.dart';
 import 'package:sonoris/screens/initial/initial_screen.dart';
 
 import 'firebase_options.dart';
 
-//TODO: Arrumar botão de voltar saindo do aplicativo
 //TODO: Concertar os erros de cor nos botões de navegação do android
-//TODO: Customizar as mensagens de erro do Firebase no geral
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Carrega as variáveis de ambiente do arquivo .env
+  await dotenv.load(fileName: ".env");
+
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(const SonorisApp());
 }
