@@ -46,15 +46,6 @@ class _HomeScreenState extends State<HomeScreen> {
     // Deletar conversas expiradas ao iniciar a tela
     _conversaService.deleteExpiredConversas();
 
-    // Configura callback para processar conversas recebidas via BLE
-    _manager.onConversationsReceived = _handleConversationsFromBle;
-
-    // Configura callback para requisitar conversas quando conectar
-    _manager.onConnectionEstablished = () {
-      debugPrint('[HOME] 🔗 Dispositivo conectado - requisitando conversas...');
-      _manager.requestConversations();
-    };
-
     // Assine o estado de conexão para atualizar a UI
     _connStateSub = _manager.connectionStateStream.listen((state) {
       if (!mounted) return;
@@ -66,11 +57,7 @@ class _HomeScreenState extends State<HomeScreen> {
       if (state == BluetoothConnectionState.disconnected &&
           _manager.connectedDevice != null) {
         ScaffoldMessenger.of(context).showSnackBar(
-          CustomSnackBar.show(
-            message: 'Dispositivo Sonoris desconectado',
-            backgroundColor: AppColors.rose600,
-            duration: const Duration(seconds: 3),
-          ),
+          CustomSnackBar.error('Dispositivo Sonoris desconectado'),
         );
       }
     });

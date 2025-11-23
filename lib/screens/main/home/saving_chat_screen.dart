@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sonoris/components/customButton.dart';
 import 'package:sonoris/components/customSelect.dart';
+import 'package:sonoris/components/customSnackBar.dart';
 import 'package:sonoris/components/customTextField.dart';
 import 'package:sonoris/models/conversa.dart';
 import 'package:sonoris/services/conversa_service.dart';
@@ -90,10 +91,7 @@ class _SavingChatScreenState extends State<SavingChatScreen> {
     // Validar campos
     if (_nomeController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Por favor, insira um nome para a conversa'),
-          backgroundColor: AppColors.rose500,
-        ),
+        CustomSnackBar.error('Por favor, insira um nome para a conversa'),
       );
       return;
     }
@@ -116,25 +114,19 @@ class _SavingChatScreenState extends State<SavingChatScreen> {
         Navigator.of(context).pop();
         Navigator.of(context).pop();
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Conversa salva com sucesso!'),
-            backgroundColor: AppColors.teal500,
-          ),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(CustomSnackBar.success('Conversa salva com sucesso!'));
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Erro ao salvar conversa'),
-            backgroundColor: AppColors.rose500,
-          ),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(CustomSnackBar.error('Erro ao salvar conversa'));
       }
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Erro: $e'), backgroundColor: AppColors.rose500),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(CustomSnackBar.error('Erro: $e'));
     } finally {
       if (mounted) {
         setState(() => _isSaving = false);

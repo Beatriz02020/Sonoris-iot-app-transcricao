@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sonoris/components/customButton.dart';
 import 'package:sonoris/components/customSelect.dart';
+import 'package:sonoris/components/customSnackBar.dart';
 import 'package:sonoris/components/customTextField.dart';
 import 'package:sonoris/models/conversa.dart';
 import 'package:sonoris/services/conversa_service.dart';
@@ -98,10 +99,7 @@ class _EditingChatScreenState extends State<EditingChatScreen> {
     // Validar campos
     if (_nomeController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Por favor, insira um nome para a conversa'),
-          backgroundColor: AppColors.rose500,
-        ),
+        CustomSnackBar.error('Por favor, insira um nome para a conversa'),
       );
       return;
     }
@@ -125,24 +123,18 @@ class _EditingChatScreenState extends State<EditingChatScreen> {
         Navigator.of(context).pop();
 
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Conversa atualizada com sucesso!'),
-            backgroundColor: AppColors.teal500,
-          ),
+          CustomSnackBar.success('Conversa atualizada com sucesso!'),
         );
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Erro ao atualizar conversa'),
-            backgroundColor: AppColors.rose500,
-          ),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(CustomSnackBar.error('Erro ao atualizar conversa'));
       }
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Erro: $e'), backgroundColor: AppColors.rose500),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(CustomSnackBar.error('Erro: $e'));
     } finally {
       if (mounted) {
         setState(() => _isSaving = false);

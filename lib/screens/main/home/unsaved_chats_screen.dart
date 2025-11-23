@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sonoris/components/chatSelect.dart';
+import 'package:sonoris/components/customSnackBar.dart';
 import 'package:sonoris/models/conversa.dart';
 import 'package:sonoris/services/bluetooth_manager.dart';
 import 'package:sonoris/services/conversa_service.dart';
@@ -245,10 +246,7 @@ class _UnsavedChatsScreenState extends State<UnsavedChatsScreen> {
             onPressed: () async {
               await _conversaService.addTestConversa();
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Conversa de teste adicionada!'),
-                  duration: Duration(seconds: 2),
-                ),
+                CustomSnackBar.success('Conversa de teste adicionada')
               );
             },
           ),

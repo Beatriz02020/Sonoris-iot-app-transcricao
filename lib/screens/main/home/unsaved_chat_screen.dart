@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:sonoris/components/customSnackBar.dart';
 import 'package:sonoris/models/conversa.dart';
 import 'package:sonoris/services/conversa_service.dart';
 import 'package:sonoris/theme/colors.dart';
@@ -125,8 +126,8 @@ class _UnsavedChatScreenState extends State<UnsavedChatScreen> {
                     if (sucesso && mounted) {
                       Navigator.pop(context);
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Conversa deletada com sucesso'),
+                        CustomSnackBar.success(
+                          'Conversa deletada com sucesso!',
                         ),
                       );
                     }

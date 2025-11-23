@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:sonoris/components/customSlider.dart';
+import 'package:sonoris/components/customSnackBar.dart';
 import 'package:sonoris/components/customTextField.dart';
 import 'package:sonoris/theme/colors.dart';
 import 'package:sonoris/theme/text_styles.dart';
@@ -526,21 +527,12 @@ class _DeviceScreenState extends State<DeviceScreen> {
                                                               if (!mounted)
                                                                 return;
 
-                                                              scaffoldMessenger.showSnackBar(
-                                                                const SnackBar(
-                                                                  content: Text(
-                                                                    'Conectado com sucesso!',
-                                                                  ),
-                                                                  backgroundColor:
-                                                                      Colors
-                                                                          .green,
-                                                                  duration:
-                                                                      Duration(
-                                                                        seconds:
-                                                                            2,
-                                                                      ),
-                                                                ),
-                                                              );
+                                                              scaffoldMessenger
+                                                                  .showSnackBar(
+                                                                    CustomSnackBar.success(
+                                                                      'Conectado com sucesso!',
+                                                                    ),
+                                                                  );
 
                                                               // Atualizar UI se ainda montado
                                                               if (mounted) {
@@ -558,21 +550,12 @@ class _DeviceScreenState extends State<DeviceScreen> {
                                                               if (!mounted)
                                                                 return;
 
-                                                              scaffoldMessenger.showSnackBar(
-                                                                SnackBar(
-                                                                  content: Text(
-                                                                    'Falha ao conectar: ${e.toString()}',
-                                                                  ),
-                                                                  backgroundColor:
-                                                                      Colors
-                                                                          .red,
-                                                                  duration:
-                                                                      const Duration(
-                                                                        seconds:
-                                                                            4,
-                                                                      ),
-                                                                ),
-                                                              );
+                                                              scaffoldMessenger
+                                                                  .showSnackBar(
+                                                                    CustomSnackBar.error(
+                                                                      'Falha ao conectar: $e',
+                                                                    ),
+                                                                  );
 
                                                               // Garante que a UI seja atualizada após erro
                                                               if (mounted) {
