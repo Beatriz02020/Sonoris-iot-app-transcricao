@@ -26,6 +26,6 @@ class CustomSnackBar {
   }
 
   static SnackBar error(String message) {
-    return show(message: message, backgroundColor: AppColors.rose600);
+    return show(message: message, backgroundColor: AppColors.rose500);
   }
 }

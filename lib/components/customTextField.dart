@@ -12,6 +12,7 @@ class CustomTextField extends StatelessWidget {
   final TextEditingController? controller;
   final TextInputType? keyboardType;
   final void Function(String?)? onChanged;
+  final void Function(String)? onSubmitted;
   final bool fullWidth;
   final double verticalPadding;
   final bool obscureText;
@@ -27,6 +28,7 @@ class CustomTextField extends StatelessWidget {
     this.controller,
     this.keyboardType,
     this.onChanged,
+    this.onSubmitted,
     this.fullWidth = false,
     this.verticalPadding = 0.0,
     this.obscureText = false,
@@ -57,6 +59,7 @@ class CustomTextField extends StatelessWidget {
       obscureText: obscureText,
       inputFormatters: inputFormatters,
       onChanged: onChanged,
+      onFieldSubmitted: onSubmitted,
       enabled: enabled,
       maxLines: 1,
       textAlignVertical:

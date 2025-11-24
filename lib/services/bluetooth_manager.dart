@@ -18,15 +18,19 @@ class BluetoothManager {
   final _connectionStateController =
       StreamController<BluetoothConnectionState>.broadcast();
   final _valueController = StreamController<String>.broadcast();
+  final _deviceNameController = StreamController<String>.broadcast();
 
   Stream<BluetoothDevice?> get deviceStream => _deviceController.stream;
   Stream<BluetoothConnectionState> get connectionStateStream =>
       _connectionStateController.stream;
   Stream<String> get valueStream => _valueController.stream;
+  Stream<String> get deviceNameStream => _deviceNameController.stream;
 
   // internals
   BluetoothDevice? _device;
   BluetoothCharacteristic? _characteristic;
+  BluetoothCharacteristic? _deviceInfoCharacteristic;
+  BluetoothCharacteristic? _deviceNameCharacteristic;
   BluetoothCharacteristic? _conversationsCharacteristic;
   BluetoothCharacteristic? _transcriptionStreamCharacteristic;
   StreamSubscription<BluetoothConnectionState>? _connSub;
@@ -57,6 +61,8 @@ class BluetoothManager {
   // UUIDs do peripheral (públicos para serem usados em filtros de scan)
   static const String SERVICE_UUID = "12345678-1234-5678-1234-56789abcdef0";
   static const String CHAR_UUID = "12345678-1234-5678-1234-56789abcdef1";
+  static const String DEVICE_INFO_UUID = "12345678-1234-5678-1234-56789abcdef2";
+  static const String DEVICE_NAME_UUID = "12345678-1234-5678-1234-56789abcdef3";
   static const String CONVERSATIONS_UUID =
       "12345678-1234-5678-1234-56789abcdef4";
   static const String TRANSCRIPTION_STREAM_UUID =
@@ -246,6 +252,13 @@ class BluetoothManager {
                 ),
       );
 
+      debugPrint(
+        '[BT_MANAGER] 🔍 Serviço encontrado! Listando todas as características:',
+      );
+      for (var char in service.characteristics) {
+        debugPrint('[BT_MANAGER]    - ${char.uuid}');
+      }
+
       final characteristic = service.characteristics.firstWhere(
         (c) => c.uuid.toString().toLowerCase() == CHAR_UUID.toLowerCase(),
         orElse:
@@ -253,6 +266,35 @@ class BluetoothManager {
       );
 
       _characteristic = characteristic;
+      debugPrint('[BT_MANAGER] ✅ Main characteristic encontrada');
+
+      // Procura pela characteristic de device info
+      try {
+        final deviceInfoChar = service.characteristics.firstWhere(
+          (c) =>
+              c.uuid.toString().toLowerCase() == DEVICE_INFO_UUID.toLowerCase(),
+        );
+        _deviceInfoCharacteristic = deviceInfoChar;
+        debugPrint('[BT_MANAGER] ✅ Device info characteristic encontrada');
+      } catch (e) {
+        debugPrint(
+          '[BT_MANAGER] ⚠️ Device info characteristic não encontrada: $e',
+        );
+      }
+
+      // Procura pela characteristic de device name
+      try {
+        final deviceNameChar = service.characteristics.firstWhere(
+          (c) =>
+              c.uuid.toString().toLowerCase() == DEVICE_NAME_UUID.toLowerCase(),
+        );
+        _deviceNameCharacteristic = deviceNameChar;
+        debugPrint('[BT_MANAGER] ✅ Device name characteristic encontrada');
+      } catch (e) {
+        debugPrint(
+          '[BT_MANAGER] ⚠️ Device name characteristic não encontrada: $e',
+        );
+      }
 
       // Procura pela characteristic de conversas
       try {
@@ -383,6 +425,15 @@ class BluetoothManager {
       if (_connectCompleter != null && !_connectCompleter!.isCompleted) {
         _connectCompleter!.complete();
       }
+
+      debugPrint(
+        '[BT_MANAGER] ✅ _handleConnected completado com sucesso! '
+        'Características descobertas: '
+        'char=${_characteristic != null}, '
+        'deviceInfo=${_deviceInfoCharacteristic != null}, '
+        'deviceName=${_deviceNameCharacteristic != null}, '
+        'conversations=${_conversationsCharacteristic != null}',
+      );
     } catch (e) {
       debugPrint('_handleConnected erro: $e');
       if (_connectCompleter != null && !_connectCompleter!.isCompleted) {
@@ -802,9 +853,91 @@ class BluetoothManager {
     }
   }
 
+  /// Requisita informações do dispositivo (nome, tempo ativo, conversas)
+  Future<Map<String, dynamic>?> requestDeviceInfo() async {
+    try {
+      debugPrint('[BT_MANAGER] 📱 Requisitando informações do dispositivo...');
+
+      if (_device == null) {
+        debugPrint('[BT_MANAGER] ⚠️ Nenhum dispositivo conectado');
+        return null;
+      }
+
+      if (_deviceInfoCharacteristic == null) {
+        debugPrint('[BT_MANAGER] ⚠️ Device info characteristic não disponível');
+        debugPrint(
+          '[BT_MANAGER] ℹ️ Características disponíveis: '
+          'char=${_characteristic != null}, '
+          'deviceName=${_deviceNameCharacteristic != null}, '
+          'conversations=${_conversationsCharacteristic != null}',
+        );
+        return null;
+      }
+
+      debugPrint(
+        '[BT_MANAGER] 🔍 Lendo device info characteristic (${_deviceInfoCharacteristic!.uuid})...',
+      );
+
+      // Lê a characteristic de device info
+      final bytes = await _deviceInfoCharacteristic!.read();
+
+      debugPrint('[BT_MANAGER] 📦 Bytes recebidos: ${bytes.length} bytes');
+
+      if (bytes.isEmpty) {
+        debugPrint('[BT_MANAGER] ⚠️ Resposta vazia do dispositivo');
+        return null;
+      }
+
+      final jsonString = utf8.decode(bytes);
+      debugPrint('[BT_MANAGER] 📥 Device info JSON: $jsonString');
+
+      final decoded = jsonDecode(jsonString) as Map<String, dynamic>;
+
+      debugPrint(
+        '[BT_MANAGER] ✅ Device info: nome="${decoded['device_name']}", '
+        'tempo=${decoded['total_active_time']}s, '
+        'conversas=${decoded['total_conversations']}',
+      );
+
+      return decoded;
+    } catch (e, stackTrace) {
+      debugPrint('[BT_MANAGER] ❌ Erro ao requisitar device info: $e');
+      debugPrint('[BT_MANAGER] Stack trace: $stackTrace');
+      return null;
+    }
+  }
+
+  /// Atualiza o nome do dispositivo via BLE
+  Future<bool> updateDeviceName(String newName) async {
+    try {
+      debugPrint(
+        '[BT_MANAGER] ✏️ Atualizando nome do dispositivo para: $newName',
+      );
+
+      if (_deviceNameCharacteristic == null) {
+        debugPrint('[BT_MANAGER] ⚠️ Device name characteristic não disponível');
+        return false;
+      }
+
+      // Escreve o novo nome na characteristic
+      final bytes = utf8.encode(newName);
+      await _deviceNameCharacteristic!.write(bytes, withoutResponse: false);
+
+      // Notifica todas as telas que o nome foi atualizado
+      _deviceNameController.add(newName);
+
+      debugPrint('[BT_MANAGER] ✅ Nome do dispositivo atualizado com sucesso');
+      return true;
+    } catch (e) {
+      debugPrint('[BT_MANAGER] ❌ Erro ao atualizar nome do dispositivo: $e');
+      return false;
+    }
+  }
+
   void dispose() {
     _deviceController.close();
     _connectionStateController.close();
     _valueController.close();
+    _deviceNameController.close();
   }
 }

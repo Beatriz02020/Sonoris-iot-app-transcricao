@@ -27,6 +27,14 @@ class _DeviceScreenState extends State<DeviceScreen> {
   StreamSubscription<BluetoothDevice?>? _deviceSub;
   bool _wasConnected = false; // Para rastrear se já esteve conectado
 
+  // Informações do dispositivo
+  String _deviceName = "Dispositivo Sonoris";
+  int _totalActiveTime = 0; // em segundos
+  int _totalConversations = 0;
+
+  // Controller para o campo de nome do dispositivo
+  final TextEditingController _deviceNameController = TextEditingController();
+
   @override
   void initState() {
     super.initState();
@@ -38,11 +46,22 @@ class _DeviceScreenState extends State<DeviceScreen> {
         _connState = state;
       });
 
+      // Requisita informações do dispositivo quando conectar
+      if (state == BluetoothConnectionState.connected && !_wasConnected) {
+        _wasConnected = true;
+        debugPrint(
+          '[DEVICE] 🔵 Dispositivo conectado! Carregando device info...',
+        );
+        // Delay para garantir que a characteristic esteja pronta
+        // O _handleConnected demora ~3s para estabilizar + tempo de discovery
+        Future.delayed(const Duration(milliseconds: 6000), () {
+          _loadDeviceInfo();
+        });
+      }
+
       // Notifica o usuário quando o dispositivo for desconectado
       if (state == BluetoothConnectionState.disconnected && _wasConnected) {
         _wasConnected = false;
-      } else if (state == BluetoothConnectionState.connected) {
-        _wasConnected = true;
       }
     });
 
@@ -53,10 +72,101 @@ class _DeviceScreenState extends State<DeviceScreen> {
         // Força atualização da UI quando o device mudar
       });
     });
+
+    // Se já estiver conectado ao carregar a tela, requisita device info
+    Future.delayed(const Duration(milliseconds: 1000), () {
+      if (_manager.connectedDevice != null &&
+          _connState == BluetoothConnectionState.connected) {
+        debugPrint('[DEVICE] � Tela carregada com dispositivo já conectado');
+        _loadDeviceInfo();
+      }
+    });
+  }
+
+  /// Requisita informações do dispositivo via BLE
+  Future<void> _loadDeviceInfo() async {
+    try {
+      debugPrint('[DEVICE] 📡 Requisitando device info via BLE...');
+
+      final deviceInfo = await _manager.requestDeviceInfo();
+
+      if (deviceInfo == null) {
+        debugPrint('[DEVICE] ⚠️ Device info retornou null');
+        return;
+      }
+
+      if (deviceInfo.isEmpty) {
+        debugPrint('[DEVICE] ⚠️ Device info está vazio');
+        return;
+      }
+
+      if (mounted) {
+        setState(() {
+          _deviceName = deviceInfo['device_name'] ?? 'Sonoris Device';
+          _totalActiveTime = deviceInfo['total_active_time'] ?? 0;
+          _totalConversations = deviceInfo['total_conversations'] ?? 0;
+
+          // Atualiza o controller com o nome do dispositivo
+          _deviceNameController.text = _deviceName;
+        });
+        debugPrint(
+          '[DEVICE] ✅ Device info carregado: $_deviceName, ${_totalActiveTime}s, $_totalConversations conversas',
+        );
+      }
+    } catch (e, stackTrace) {
+      debugPrint('[DEVICE] ❌ Erro ao carregar device info: $e');
+      debugPrint('[DEVICE] Stack trace: $stackTrace');
+    }
+  }
+
+  /// Atualiza o nome do dispositivo via BLE
+  Future<void> _updateDeviceName(String newName) async {
+    if (newName.isEmpty || newName == _deviceName) return;
+
+    try {
+      debugPrint('[DEVICE] Atualizando nome do dispositivo para: $newName');
+
+      final success = await _manager.updateDeviceName(newName);
+
+      if (success && mounted) {
+        setState(() {
+          _deviceName = newName;
+        });
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          CustomSnackBar.success('Nome do dispositivo atualizado!'),
+        );
+
+        debugPrint('[DEVICE] Nome atualizado com sucesso');
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          CustomSnackBar.error('Erro ao atualizar nome do dispositivo'),
+        );
+      }
+    } catch (e) {
+      debugPrint('[DEVICE] Erro ao atualizar nome: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          CustomSnackBar.error('Erro ao atualizar nome do dispositivo'),
+        );
+      }
+    }
+  }
+
+  /// Formata tempo ativo de segundos para horas
+  String _formatActiveTime(int seconds) {
+    if (seconds < 3600) {
+      // Menos de 1 hora, mostra em minutos
+      final minutes = (seconds / 60).round();
+      return '${minutes}min';
+    } else {
+      // 1 hora ou mais, mostra em horas
+      final hours = (seconds / 3600).round();
+      return '${hours}h';
+    }
   }
 
   // Adicione estes estados para os sliders:
-  double _conversaValue = 5;
   double _deletarValue = 7;
   bool _isConnecting = false; // Controla o overlay de conexão
 
@@ -64,6 +174,7 @@ class _DeviceScreenState extends State<DeviceScreen> {
   void dispose() {
     _connStateSub?.cancel();
     _deviceSub?.cancel();
+    _deviceNameController.dispose();
     super.dispose();
   }
 
@@ -126,7 +237,7 @@ class _DeviceScreenState extends State<DeviceScreen> {
                             children: [
                               // nome do dispositivo
                               Text(
-                                'Dispositivo Sonoris',
+                                _deviceName,
                                 style: AppTextStyles.bold.copyWith(
                                   color: AppColors.white100,
                                 ),
@@ -180,7 +291,7 @@ class _DeviceScreenState extends State<DeviceScreen> {
                                     ),
                                   ),
                                   Text(
-                                    '0',
+                                    '$_totalConversations',
                                     style: AppTextStyles.bold.copyWith(
                                       color: AppColors.white100,
                                     ),
@@ -200,7 +311,7 @@ class _DeviceScreenState extends State<DeviceScreen> {
                                     ),
                                   ),
                                   Text(
-                                    '0h',
+                                    _formatActiveTime(_totalActiveTime),
                                     style: AppTextStyles.bold.copyWith(
                                       color: AppColors.white100,
                                     ),
@@ -227,6 +338,13 @@ class _DeviceScreenState extends State<DeviceScreen> {
                                 CustomTextField(
                                   hintText: 'Nome do dispositivo',
                                   fullWidth: true,
+                                  controller: _deviceNameController,
+                                  onSubmitted: (value) {
+                                    // Atualiza quando o usuário pressiona Enter
+                                    if (value.isNotEmpty) {
+                                      _updateDeviceName(value);
+                                    }
+                                  },
                                 ),
                               ],
                             ),

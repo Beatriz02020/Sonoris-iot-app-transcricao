@@ -359,12 +359,12 @@ class _AnswerCategoryScreenState extends State<AnswerCategoryScreen> {
               CustomButton(
                 text: 'Cancelar',
                 fullWidth: true,
-                color: AppColors.rose500,
                 onPressed: () => Navigator.of(context).pop(false),
               ),
               CustomButton(
                 text: 'Deletar',
                 fullWidth: true,
+                color: AppColors.rose500,
                 onPressed: () => Navigator.of(context).pop(true),
               ),
             ],

@@ -37,6 +37,12 @@ class _HomeScreenState extends State<HomeScreen> {
   Stream<DocumentSnapshot<Map<String, dynamic>>>? _userStream;
   StreamSubscription<DocumentSnapshot<Map<String, dynamic>>>? _userSub;
   StreamSubscription<BluetoothConnectionState>? _connStateSub;
+  StreamSubscription<String>? _deviceNameSub;
+
+  // Informações do dispositivo
+  String _deviceName = "Dispositivo Sonoris";
+  int _totalActiveTime = 0; // em segundos
+  int _totalConversations = 0;
 
   @override
   void initState() {
@@ -53,6 +59,18 @@ class _HomeScreenState extends State<HomeScreen> {
         _connState = state;
       });
 
+      // Requisita informações do dispositivo quando conectar
+      if (state == BluetoothConnectionState.connected) {
+        debugPrint(
+          '[HOME] 🔵 Dispositivo conectado! Carregando device info...',
+        );
+        // Delay para garantir que a characteristic esteja pronta
+        // O _handleConnected demora ~3s para estabilizar + tempo de discovery
+        Future.delayed(const Duration(milliseconds: 6000), () {
+          _loadDeviceInfo();
+        });
+      }
+
       // Notifica o usuário quando o dispositivo for desconectado
       if (state == BluetoothConnectionState.disconnected &&
           _manager.connectedDevice != null) {
@@ -61,6 +79,70 @@ class _HomeScreenState extends State<HomeScreen> {
         );
       }
     });
+
+    // Assine o stream de nome do dispositivo para atualizar quando mudar
+    _deviceNameSub = _manager.deviceNameStream.listen((newName) {
+      if (!mounted) return;
+      setState(() {
+        _deviceName = newName;
+      });
+      debugPrint('[HOME] 📝 Nome do dispositivo atualizado para: $newName');
+    });
+
+    // Se já estiver conectado ao carregar a tela, requisita device info
+    Future.delayed(const Duration(milliseconds: 1000), () {
+      if (_manager.connectedDevice != null &&
+          _connState == BluetoothConnectionState.connected) {
+        debugPrint('[HOME] � Tela carregada com dispositivo já conectado');
+        _loadDeviceInfo();
+      }
+    });
+  }
+
+  /// Requisita informações do dispositivo via BLE
+  Future<void> _loadDeviceInfo() async {
+    try {
+      debugPrint('[HOME] 📡 Requisitando device info via BLE...');
+
+      final deviceInfo = await _manager.requestDeviceInfo();
+
+      if (deviceInfo == null) {
+        debugPrint('[HOME] ⚠️ Device info retornou null');
+        return;
+      }
+
+      if (deviceInfo.isEmpty) {
+        debugPrint('[HOME] ⚠️ Device info está vazio');
+        return;
+      }
+
+      if (mounted) {
+        setState(() {
+          _deviceName = deviceInfo['device_name'] ?? 'Sonoris Device';
+          _totalActiveTime = deviceInfo['total_active_time'] ?? 0;
+          _totalConversations = deviceInfo['total_conversations'] ?? 0;
+        });
+        debugPrint(
+          '[HOME] ✅ Device info carregado: $_deviceName, ${_totalActiveTime}s, $_totalConversations conversas',
+        );
+      }
+    } catch (e, stackTrace) {
+      debugPrint('[HOME] ❌ Erro ao carregar device info: $e');
+      debugPrint('[HOME] Stack trace: $stackTrace');
+    }
+  }
+
+  /// Formata tempo ativo de segundos para horas
+  String _formatActiveTime(int seconds) {
+    if (seconds < 3600) {
+      // Menos de 1 hora, mostra em minutos
+      final minutes = (seconds / 60).round();
+      return '${minutes}min';
+    } else {
+      // 1 hora ou mais, mostra em horas
+      final hours = (seconds / 3600).round();
+      return '${hours}h';
+    }
   }
 
   void _loadUserData() async {
@@ -96,6 +178,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void dispose() {
     _userSub?.cancel();
     _connStateSub?.cancel();
+    _deviceNameSub?.cancel();
     _manager.onConversationsReceived = null;
     _manager.onConnectionEstablished = null;
     super.dispose();
@@ -335,7 +418,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       ),
                                     ),
                                     Text(
-                                      'Sonoris Device',
+                                      _deviceName,
                                       style: AppTextStyles.bold.copyWith(
                                         color: AppColors.white100,
                                       ),
@@ -393,7 +476,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       ),
                                     ),
                                     Text(
-                                      '97',
+                                      '$_totalConversations',
                                       style: AppTextStyles.bold.copyWith(
                                         color: AppColors.white100,
                                       ),
@@ -413,7 +496,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       ),
                                     ),
                                     Text(
-                                      '3h',
+                                      _formatActiveTime(_totalActiveTime),
                                       style: AppTextStyles.bold.copyWith(
                                         color: AppColors.white100,
                                       ),

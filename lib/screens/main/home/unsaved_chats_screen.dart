@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sonoris/components/chatSelect.dart';
-import 'package:sonoris/components/customSnackBar.dart';
 import 'package:sonoris/models/conversa.dart';
 import 'package:sonoris/services/bluetooth_manager.dart';
 import 'package:sonoris/services/conversa_service.dart';
@@ -23,6 +22,12 @@ class _UnsavedChatsScreenState extends State<UnsavedChatsScreen> {
   final BluetoothManager _manager = BluetoothManager();
   String _query = '';
   List<ConversaNaoSalva> _allConversas = [];
+
+  // Estado do progresso do download
+  bool _isDownloading = false;
+  int _totalConversations = 0;
+  int _processedConversations = 0;
+  String _currentConversationId = '';
 
   List<ConversaNaoSalva> get _filteredConversas {
     if (_query.isEmpty) return _allConversas;
@@ -79,18 +84,32 @@ class _UnsavedChatsScreenState extends State<UnsavedChatsScreen> {
   Future<void> _handleConversationsFromBle(
     List<Map<String, dynamic>> conversations,
   ) async {
+    if (!mounted) return;
+
+    setState(() {
+      _isDownloading = true;
+      _totalConversations = conversations.length;
+      _processedConversations = 0;
+    });
+
     try {
       debugPrint(
         '[UNSAVED_CHATS] 📥 Processando ${conversations.length} conversa(s) do dispositivo...',
       );
 
       for (final convMeta in conversations) {
+        if (!mounted) break;
+
         try {
           final conversationId = convMeta['conversation_id'] as String?;
           if (conversationId == null) {
             debugPrint('[UNSAVED_CHATS] ⚠️ Conversa sem ID - pulando');
             continue;
           }
+
+          setState(() {
+            _currentConversationId = conversationId;
+          });
 
           debugPrint(
             '[UNSAVED_CHATS] 📄 Processando conversa: $conversationId',
@@ -215,15 +234,35 @@ class _UnsavedChatsScreenState extends State<UnsavedChatsScreen> {
             debugPrint('[UNSAVED_CHATS] ❌ Erro ao salvar conversa no Firebase');
           }
 
+          // Atualiza contador de progresso
+          if (mounted) {
+            setState(() {
+              _processedConversations++;
+            });
+          }
+
           // Delay entre conversas para evitar sobrecarga BLE
           await Future.delayed(const Duration(milliseconds: 500));
         } catch (e) {
           debugPrint('[UNSAVED_CHATS] ❌ Erro ao processar conversa: $e');
+          // Incrementa contador mesmo em caso de erro
+          if (mounted) {
+            setState(() {
+              _processedConversations++;
+            });
+          }
         }
       }
       debugPrint('[UNSAVED_CHATS] ✅ Processamento de conversas concluído');
     } catch (e) {
       debugPrint('[UNSAVED_CHATS] ❌ Erro ao processar conversas do BLE: $e');
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isDownloading = false;
+          _currentConversationId = '';
+        });
+      }
     }
   }
 
@@ -276,6 +315,84 @@ class _UnsavedChatsScreenState extends State<UnsavedChatsScreen> {
 
           return ListView(
             children: [
+              // Indicador de progresso do download BLE
+              if (_isDownloading)
+                Container(
+                  padding: const EdgeInsets.all(15),
+                  margin: const EdgeInsets.all(15),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: AppColors.blue500,
+                      width: 1,
+                    ),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                AppColors.blue500,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Text(
+                              'Baixando conversas do dispositivo...',
+                              style: AppTextStyles.body.copyWith(
+                                color: AppColors.blue500,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 12),
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(4),
+                        child: LinearProgressIndicator(
+                          value:
+                              _totalConversations > 0
+                                  ? _processedConversations /
+                                      _totalConversations
+                                  : 0,
+                          backgroundColor: AppColors.blue500.withOpacity(0.2),
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            AppColors.blue500,
+                          ),
+                          minHeight: 6,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        '$_processedConversations de $_totalConversations conversas',
+                        style: AppTextStyles.bodySmall.copyWith(
+                          color: AppColors.blue500,
+                        ),
+                      ),
+                      if (_currentConversationId.isNotEmpty)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 4),
+                          child: Text(
+                            'Processando: $_currentConversationId',
+                            style: AppTextStyles.bodySmall.copyWith(
+                              color: AppColors.gray500,
+                              fontSize: 11,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+
               Padding(
                 padding: const EdgeInsets.only(
                   left: 15,
