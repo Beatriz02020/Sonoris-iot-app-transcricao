@@ -77,7 +77,6 @@ class _DeviceScreenState extends State<DeviceScreen> {
     Future.delayed(const Duration(milliseconds: 1000), () {
       if (_manager.connectedDevice != null &&
           _connState == BluetoothConnectionState.connected) {
-        debugPrint('[DEVICE] � Tela carregada com dispositivo já conectado');
         _loadDeviceInfo();
       }
     });
@@ -86,17 +85,17 @@ class _DeviceScreenState extends State<DeviceScreen> {
   /// Requisita informações do dispositivo via BLE
   Future<void> _loadDeviceInfo() async {
     try {
-      debugPrint('[DEVICE] 📡 Requisitando device info via BLE...');
+      debugPrint('Requisitando device info via BLE...');
 
       final deviceInfo = await _manager.requestDeviceInfo();
 
       if (deviceInfo == null) {
-        debugPrint('[DEVICE] ⚠️ Device info retornou null');
+        debugPrint('Device info retornou null');
         return;
       }
 
       if (deviceInfo.isEmpty) {
-        debugPrint('[DEVICE] ⚠️ Device info está vazio');
+        debugPrint('Device info está vazio');
         return;
       }
 
@@ -110,12 +109,11 @@ class _DeviceScreenState extends State<DeviceScreen> {
           _deviceNameController.text = _deviceName;
         });
         debugPrint(
-          '[DEVICE] ✅ Device info carregado: $_deviceName, ${_totalActiveTime}s, $_totalConversations conversas',
+          'Device info carregado: $_deviceName, ${_totalActiveTime}s, $_totalConversations conversas',
         );
       }
-    } catch (e, stackTrace) {
-      debugPrint('[DEVICE] ❌ Erro ao carregar device info: $e');
-      debugPrint('[DEVICE] Stack trace: $stackTrace');
+    } catch (e) {
+      debugPrint('Erro ao carregar device info: $e');
     }
   }
 
@@ -124,8 +122,6 @@ class _DeviceScreenState extends State<DeviceScreen> {
     if (newName.isEmpty || newName == _deviceName) return;
 
     try {
-      debugPrint('[DEVICE] Atualizando nome do dispositivo para: $newName');
-
       final success = await _manager.updateDeviceName(newName);
 
       if (success && mounted) {
@@ -137,14 +133,14 @@ class _DeviceScreenState extends State<DeviceScreen> {
           CustomSnackBar.success('Nome do dispositivo atualizado!'),
         );
 
-        debugPrint('[DEVICE] Nome atualizado com sucesso');
+        debugPrint('Nome atualizado com sucesso');
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           CustomSnackBar.error('Erro ao atualizar nome do dispositivo'),
         );
       }
     } catch (e) {
-      debugPrint('[DEVICE] Erro ao atualizar nome: $e');
+      debugPrint('Erro ao atualizar nome: $e');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           CustomSnackBar.error('Erro ao atualizar nome do dispositivo'),
@@ -348,122 +344,6 @@ class _DeviceScreenState extends State<DeviceScreen> {
                                 ),
                               ],
                             ),
-
-                            /*
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Modo de funcionamento',
-                              style: AppTextStyles.bold.copyWith(
-                                color: AppColors.gray900,
-                              ),
-                            ),
-                            CustomSelect(
-                              options: [
-                                'Transcrição + Respostas Rápidas',
-                                'Apenas Transcrição',
-                              ],
-                              value: 'Transcrição + Respostas Rápidas',
-                              onChanged: (value) {},
-                            ),
-                          ],
-                        ),
-
-
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  spacing: 6,
-                  children: [
-                    Text(
-                      'Línguas',
-                      style: AppTextStyles.bold.copyWith(
-                        color: AppColors.gray900,
-                      ),
-                    ),
-                    Row(
-                      spacing: 10,
-                      children: [
-                        SizedBox(
-                          height: 24.0,
-                          width: 24.0,
-                          child: Checkbox(
-                            value: _isCheckedPt,
-                            onChanged: (bool? value) {
-                              setState(() {
-                                _isCheckedPt = value ?? false;
-                              });
-                            },
-                            activeColor: AppColors.blue500,
-                            checkColor: AppColors.white100,
-                            side: BorderSide(
-                              color: AppColors.blue500,
-                              width: 2,
-                            ),
-                          ),
-                        ),
-
-                        Text(
-                          'Português (Brasileiro)',
-                          style: AppTextStyles.bold.copyWith(
-                            color: AppColors.gray700,
-                          ),
-                        ),
-                      ],
-                    ),
-                    Row(
-                      spacing: 10,
-                      children: [
-                        SizedBox(
-                          height: 24.0,
-                          width: 24.0,
-                          child: Checkbox(
-                            value: _isCheckedEn,
-                            onChanged: (bool? value) {
-                              setState(() {
-                                _isCheckedEn = value ?? false;
-                              });
-                            },
-                            activeColor: AppColors.blue500,
-                            checkColor: AppColors.white100,
-                            side: BorderSide(
-                              color: AppColors.blue500,
-                              width: 2,
-                            ),
-                          ),
-                        ),
-                        Text(
-                          'Inglês',
-                          style: AppTextStyles.bold.copyWith(
-                            color: AppColors.gray700,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-
-                        CustomSlider(
-                          label: 'Entrar em Standby após',
-                          value: _standbyValue,
-                          min: 1,
-                          max: 60,
-                          onChanged:
-                              (value) => setState(() => _standbyValue = value),
-                          valueLabel:
-                              '${_standbyValue.round()} minutos sem fala',
-                        ),
-
-                        CustomSlider(
-                          label: 'Tempo entre conversas',
-                          value: _conversaValue,
-                          min: 1,
-                          max: 60,
-                          onChanged:
-                              (value) => setState(() => _conversaValue = value),
-                          valueLabel: '${_conversaValue.round()} minutos',
-                        ),
-*/
                             CustomSlider(
                               label: 'Deletar conversas não salvas após',
                               value: _deletarValue,

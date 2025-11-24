@@ -171,7 +171,6 @@ class _ConnectionScreenState extends State<ConnectionScreen> {
                               List<ScanResult> templist = [];
 
                               if (isScanning) {
-                                // Deduplicate by device id string and prefer devices with a human-friendly name
                                 final Map<String, ScanResult> byId = {};
                                 String _displayNameFor(ScanResult r) {
                                   final n = r.device.name.toString();

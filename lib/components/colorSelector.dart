@@ -61,13 +61,7 @@ class _ColorSelectorState extends State<ColorSelector> {
               text: 'Selecionar',
               fullWidth: true,
               onPressed: () {
-                debugPrint(
-                  '[ColorSelector] 🎨 CUSTOM COLOR PICKER - Cor selecionada: ${customColor.toString()}',
-                );
                 widget.onColorSelected(customColor);
-                debugPrint(
-                  '[ColorSelector] 🎨 CUSTOM COLOR PICKER - Callback executado!',
-                );
                 Navigator.of(context).pop();
               },
             ),
@@ -80,18 +74,10 @@ class _ColorSelectorState extends State<ColorSelector> {
   Widget _buildColorCircle(Color color, int index, bool isSelected) {
     return GestureDetector(
       onTap: () {
-        debugPrint(
-          '[ColorSelector] 🖱️ CÍRCULO TOCADO! Index=$index, Color=${color.toString()}, CustomPicker=${widget.enableCustomPicker}',
-        );
         if (index == 0 && widget.enableCustomPicker) {
-          debugPrint('[ColorSelector] 🎨 Abrindo color picker customizado...');
           _openColorPicker();
         } else {
-          debugPrint(
-            '[ColorSelector] ✅ Chamando onColorSelected callback com cor: ${color.toString()}',
-          );
           widget.onColorSelected(color);
-          debugPrint('[ColorSelector] ✅ Callback onColorSelected executado!');
         }
       },
       child: Container(
@@ -130,9 +116,6 @@ class _ColorSelectorState extends State<ColorSelector> {
   }
 
   Widget _buildCircleContent(Color color, int index, bool isSelected) {
-    // For the first swatch (custom picker): show the PNG icon when not selected,
-    // but when selected, show the chosen custom color (handled by the container
-    // background) and the selected check icon below.
     if (index == 0 && widget.enableCustomPicker && !isSelected) {
       return ClipOval(
         child: Image.asset('assets/images/icons/cores.png', fit: BoxFit.cover),
@@ -161,11 +144,6 @@ class _ColorSelectorState extends State<ColorSelector> {
             int index = entry.key;
             Color color = entry.value;
 
-            // Determine if current color is selected.
-            // For the first swatch (index 0) when custom picker is enabled,
-            // consider it selected when the widget.selectedColor isn't present
-            // in the provided colors list — this indicates a custom color was
-            // chosen via the picker.
             bool isSelected;
             if (index == 0 && widget.enableCustomPicker) {
               final contains = widget.colors.any(

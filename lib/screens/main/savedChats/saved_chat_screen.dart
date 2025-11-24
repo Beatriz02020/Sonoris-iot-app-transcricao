@@ -23,12 +23,14 @@ class SavedChatScreen extends StatefulWidget {
 class _SavedChatScreenState extends State<SavedChatScreen> {
   final ConversaService _conversaService = ConversaService();
   late ConversaSalva _conversa; // Estado local da conversa
+  final ScrollController _scrollController = ScrollController();
+  bool _isAtBottom = false;
 
-  // TODO: Fazer o botão de scrollar para cima e para baixo
   @override
   void initState() {
-    _conversa = widget.conversa; // Inicializar com a conversa passada
+    _conversa = widget.conversa;
     super.initState();
+    _scrollController.addListener(_updateScrollPosition);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       SystemChrome.setSystemUIOverlayStyle(
         SystemUiOverlayStyle.dark.copyWith(
@@ -37,7 +39,44 @@ class _SavedChatScreenState extends State<SavedChatScreen> {
           systemNavigationBarIconBrightness: Brightness.dark,
         ),
       );
+      _updateScrollPosition();
     });
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _updateScrollPosition() {
+    if (!_scrollController.hasClients) return;
+
+    final maxScroll = _scrollController.position.maxScrollExtent;
+    final currentScroll = _scrollController.position.pixels;
+    final threshold = 100;
+
+    setState(() {
+      _isAtBottom = (maxScroll - currentScroll) < threshold;
+    });
+  }
+
+  void _scrollToTopOrBottom() {
+    if (!_scrollController.hasClients) return;
+
+    if (_isAtBottom) {
+      _scrollController.animateTo(
+        0,
+        duration: const Duration(milliseconds: 500),
+        curve: Curves.easeInOut,
+      );
+    } else {
+      _scrollController.animateTo(
+        _scrollController.position.maxScrollExtent,
+        duration: const Duration(milliseconds: 500),
+        curve: Curves.easeInOut,
+      );
+    }
   }
 
   @override
@@ -273,6 +312,18 @@ class _SavedChatScreenState extends State<SavedChatScreen> {
           ],
         ),
       ),
+      floatingActionButton:
+          conversa.lines.isNotEmpty
+              ? FloatingActionButton(
+                backgroundColor: AppColors.white100,
+                elevation: 4,
+                onPressed: _scrollToTopOrBottom,
+                child: Icon(
+                  _isAtBottom ? Icons.arrow_upward : Icons.arrow_downward,
+                  color: AppColors.gray900,
+                ),
+              )
+              : null,
       body:
           conversa.lines.isEmpty
               ? Center(
@@ -282,6 +333,7 @@ class _SavedChatScreenState extends State<SavedChatScreen> {
                 ),
               )
               : ListView(
+                controller: _scrollController,
                 children: [
                   Padding(
                     padding: const EdgeInsets.only(

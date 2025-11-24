@@ -23,8 +23,6 @@ class Usuario {
       'Nome': nome,
       'DataNasc': Timestamp.fromDate(dataNasc),
       'Email': email,
-      // Inconsistência atual: no signUp é salvo 'Foto_url' e 'Criado_em' (CamelCase inicial),
-      // aqui está sendo usado 'foto_url' e 'criado_em'. Ideal alinhar tudo (ex: padronizar TitleCase ou snake_case).
       'Foto_url': fotoUrl,
       'Criado_em': criadoEm != null ? Timestamp.fromDate(criadoEm!) : null,
     };
@@ -44,7 +42,6 @@ class Usuario {
           }
         }
       }
-      // fallback: agora
       return DateTime.now();
     }
 

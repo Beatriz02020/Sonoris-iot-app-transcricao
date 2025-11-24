@@ -89,18 +89,13 @@ class _CaptionsScreenState extends State<CaptionsScreen> {
   }
 
   void _scheduleSave() {
-    debugPrint(
-      '[Captions] 🕐 _scheduleSave() chamado - agendando save em 450ms',
-    );
     _debounce?.cancel();
     _debounce = Timer(const Duration(milliseconds: 450), _saveSettings);
   }
 
   Future<void> _saveSettings() async {
-    debugPrint('[Captions] 💾 _saveSettings() INICIADO');
     final doc = _configDoc;
     if (doc == null) {
-      debugPrint('[Captions] ❌ _configDoc é NULL - usuário não autenticado?');
       return;
     }
     try {
@@ -113,17 +108,11 @@ class _CaptionsScreenState extends State<CaptionsScreen> {
         'lineHeight': _verticalValue,
         'updatedAt': FieldValue.serverTimestamp(),
       };
-
-      debugPrint('[Captions] 💾 Salvando no Firestore: $settingsMap');
       await doc.set(settingsMap, SetOptions(merge: true));
-      debugPrint('[Captions] ✅ Firestore salvo com sucesso!');
 
-      // Envia configurações via Bluetooth para o dispositivo Raspberry Pi
-      debugPrint('[Captions] 🔵 Chamando _sendSettingsToBluetooth...');
       await _sendSettingsToBluetooth(settingsMap);
-      debugPrint('[Captions] ✅ _sendSettingsToBluetooth completou!');
     } catch (e) {
-      debugPrint('[Captions] ❌ ERRO em _saveSettings: $e');
+      debugPrint('ERRO em _saveSettings: $e');
     }
   }
 
@@ -131,16 +120,8 @@ class _CaptionsScreenState extends State<CaptionsScreen> {
     try {
       final manager = BluetoothManager();
 
-      debugPrint('[Captions] 🔍 Verificando conexão BLE...');
-      debugPrint(
-        '[Captions] 🔍 connectedDevice: ${manager.connectedDevice?.remoteId}',
-      );
-
       // Verifica se há dispositivo conectado
       if (manager.connectedDevice == null) {
-        debugPrint(
-          '[Captions] ❌ Nenhum dispositivo BLE conectado - pulando envio',
-        );
         return;
       }
 
@@ -154,26 +135,15 @@ class _CaptionsScreenState extends State<CaptionsScreen> {
       // Envia com prefixo SETTINGS:
       final message = 'SETTINGS:$jsonStr';
 
-      debugPrint(
-        '[Captions] 📤 Enviando settings via BLE (${message.length} chars)',
-      );
-      debugPrint('[Captions] 📦 Payload: $message');
       await manager.writeString(message);
-      debugPrint('[Captions] ✅ Settings enviados com sucesso!');
     } catch (e) {
-      debugPrint('[Captions] ❌ Erro ao enviar settings via BLE: $e');
-      debugPrint('[Captions] ❌ Stack: ${StackTrace.current}');
-      // Não propaga o erro - envio BLE é best-effort
+      debugPrint('Erro ao enviar settings via BLE: $e');
     }
   }
 
   /// Envia as configurações ATUAIS (em memória) via Bluetooth
   /// Chamado automaticamente quando a conexão BLE é estabelecida
   Future<void> _sendCurrentSettingsToBluetooth() async {
-    debugPrint(
-      '[Captions] 🚀 onConnectionEstablished - enviando settings atuais...',
-    );
-
     final currentSettings = {
       'textColor': _toHex(_textColorValue),
       'bgColor': _toHex(_bgColorValue),
@@ -191,13 +161,8 @@ class _CaptionsScreenState extends State<CaptionsScreen> {
   Future<void> _checkAndSendSettingsIfConnected() async {
     final manager = BluetoothManager();
 
-    debugPrint('[Captions] 🔍 Verificando se há conexão BLE ativa...');
-
     if (manager.connectedDevice != null) {
-      debugPrint('[Captions] ✅ Dispositivo já conectado! Enviando settings...');
       await _sendCurrentSettingsToBluetooth();
-    } else {
-      debugPrint('[Captions] ℹ️ Nenhum dispositivo conectado ainda');
     }
   }
 
@@ -225,13 +190,6 @@ class _CaptionsScreenState extends State<CaptionsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    debugPrint(
-      '[Captions] 🏗️ BUILD CHAMADO - Tela CaptionsScreen está sendo renderizada!',
-    );
-    debugPrint(
-      '[Captions] 📊 Estado atual: textColor=${_textColorValue.toString()}, bgColor=${_bgColorValue.toString()}',
-    );
-
     SystemChrome.setSystemUIOverlayStyle(
       SystemUiOverlayStyle.dark.copyWith(
         statusBarColor: AppColors.background,
@@ -272,10 +230,6 @@ class _CaptionsScreenState extends State<CaptionsScreen> {
                 child: SingleChildScrollView(
                   child: Builder(
                     builder: (context) {
-                      debugPrint(
-                        '[Captions] 🎨 Preview renderizando com: font=$_fontFamily, size=${_fontSizeValue.round()}, weight=${_fontWeightValue.round()}',
-                      );
-
                       // Mapeia o valor numérico para FontWeight
                       FontWeight fontWeight;
                       if (_fontWeightValue <= 150) {
@@ -349,7 +303,7 @@ class _CaptionsScreenState extends State<CaptionsScreen> {
                                       AppColors.gray700,
                                       AppColors.gray500,
                                       AppColors.white100,
-                                      AppColors.blue600,
+                                      AppColors.blue500,
                                       AppColors.green500,
                                       AppColors.rose600,
                                       AppColors.amber600,
@@ -359,13 +313,7 @@ class _CaptionsScreenState extends State<CaptionsScreen> {
                                     selectedColor: _textColorValue,
                                     enableCustomPicker: true,
                                     onColorSelected: (color) {
-                                      debugPrint(
-                                        '[Captions] 🎨 COR DE TEXTO MUDOU: ${color.toString()}',
-                                      );
                                       setState(() => _textColorValue = color);
-                                      debugPrint(
-                                        '[Captions] 🎨 setState executado, chamando _scheduleSave...',
-                                      );
                                       _scheduleSave();
                                     },
                                   ),
@@ -395,7 +343,7 @@ class _CaptionsScreenState extends State<CaptionsScreen> {
                                       AppColors.gray700,
                                       AppColors.gray500,
                                       AppColors.white100,
-                                      AppColors.blue600,
+                                      AppColors.blue500,
                                       AppColors.green500,
                                       AppColors.rose600,
                                       AppColors.amber600,
@@ -405,13 +353,7 @@ class _CaptionsScreenState extends State<CaptionsScreen> {
                                     selectedColor: _bgColorValue,
                                     enableCustomPicker: true,
                                     onColorSelected: (color) {
-                                      debugPrint(
-                                        '[Captions] 🎨 COR DE FUNDO MUDOU: ${color.toString()}',
-                                      );
                                       setState(() => _bgColorValue = color);
-                                      debugPrint(
-                                        '[Captions] 🎨 setState executado, chamando _scheduleSave...',
-                                      );
                                       _scheduleSave();
                                     },
                                   ),
@@ -433,7 +375,6 @@ class _CaptionsScreenState extends State<CaptionsScreen> {
                             value: _fontFamily,
                             onChanged: (value) {
                               if (value == null) return;
-                              debugPrint('[Captions] 🔤 FONTE MUDOU: $value');
                               setState(() => _fontFamily = value);
                               _scheduleSave();
                             },
@@ -446,9 +387,6 @@ class _CaptionsScreenState extends State<CaptionsScreen> {
                           min: 16,
                           max: 56,
                           onChanged: (value) {
-                            debugPrint(
-                              '[Captions] 📏 TAMANHO FONTE MUDOU: ${value.round()}pt',
-                            );
                             setState(() => _fontSizeValue = value);
                             _scheduleSave();
                           },
@@ -461,9 +399,6 @@ class _CaptionsScreenState extends State<CaptionsScreen> {
                           max: 900,
                           step: 100,
                           onChanged: (value) {
-                            debugPrint(
-                              '[Captions] ⚖️ WEIGHT MUDOU: ${value.round()}',
-                            );
                             setState(() => _fontWeightValue = value);
                             _scheduleSave();
                           },

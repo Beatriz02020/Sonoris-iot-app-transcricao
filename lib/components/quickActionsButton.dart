@@ -50,7 +50,7 @@ class QuickActionsButton extends StatelessWidget {
             Text(
               text,
               style: AppTextStyles.bodySmall.copyWith(height: 1.2),
-            ), // texto
+            ), // titulo
           ],
         ),
       ),

@@ -39,7 +39,7 @@ class CustomTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bool isTall = verticalPadding > 24; // heurística para campo "alto"
+    final bool isTall = verticalPadding > 24;
     final double tallBottomPad = math.max(7.0, verticalPadding * 2 - 7);
     OutlineInputBorder customBorder() {
       return OutlineInputBorder(

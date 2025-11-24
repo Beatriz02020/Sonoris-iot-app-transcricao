@@ -21,10 +21,13 @@ class UnsavedChatScreen extends StatefulWidget {
 
 class _UnsavedChatScreenState extends State<UnsavedChatScreen> {
   final ConversaService _conversaService = ConversaService();
-  // TODO: Fazer o botão de scrollar para cima e para baixo
+  final ScrollController _scrollController = ScrollController();
+  bool _isAtBottom = false;
+
   @override
   void initState() {
     super.initState();
+    _scrollController.addListener(_updateScrollPosition);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       SystemChrome.setSystemUIOverlayStyle(
         SystemUiOverlayStyle.dark.copyWith(
@@ -33,7 +36,44 @@ class _UnsavedChatScreenState extends State<UnsavedChatScreen> {
           systemNavigationBarIconBrightness: Brightness.dark,
         ),
       );
+      _updateScrollPosition();
     });
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _updateScrollPosition() {
+    if (!_scrollController.hasClients) return;
+
+    final maxScroll = _scrollController.position.maxScrollExtent;
+    final currentScroll = _scrollController.position.pixels;
+    final threshold = 100;
+
+    setState(() {
+      _isAtBottom = (maxScroll - currentScroll) < threshold;
+    });
+  }
+
+  void _scrollToTopOrBottom() {
+    if (!_scrollController.hasClients) return;
+
+    if (_isAtBottom) {
+      _scrollController.animateTo(
+        0,
+        duration: const Duration(milliseconds: 500),
+        curve: Curves.easeInOut,
+      );
+    } else {
+      _scrollController.animateTo(
+        _scrollController.position.maxScrollExtent,
+        duration: const Duration(milliseconds: 500),
+        curve: Curves.easeInOut,
+      );
+    }
   }
 
   @override
@@ -188,6 +228,18 @@ class _UnsavedChatScreenState extends State<UnsavedChatScreen> {
           ],
         ),
       ),
+      floatingActionButton:
+          conversa.lines.isNotEmpty
+              ? FloatingActionButton(
+                backgroundColor: AppColors.white100,
+                elevation: 4,
+                onPressed: _scrollToTopOrBottom,
+                child: Icon(
+                  _isAtBottom ? Icons.arrow_upward : Icons.arrow_downward,
+                  color: AppColors.gray900,
+                ),
+              )
+              : null,
       body:
           conversa.lines.isEmpty
               ? Center(
@@ -197,6 +249,7 @@ class _UnsavedChatScreenState extends State<UnsavedChatScreen> {
                 ),
               )
               : ListView(
+                controller: _scrollController,
                 children: [
                   Padding(
                     padding: const EdgeInsets.only(

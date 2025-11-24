@@ -82,7 +82,7 @@ class _AnswerScreenState extends State<AnswerScreen> {
           padding: const EdgeInsets.only(
             left: 15,
             right: 15,
-            top: 10, // original (55)
+            top: 10,
             bottom: 30,
           ),
           child: Column(

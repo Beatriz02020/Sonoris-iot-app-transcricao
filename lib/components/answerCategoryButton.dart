@@ -6,9 +6,8 @@ class AnswerCategoryButton extends StatelessWidget {
   final String title;
   final String? answerAmount;
   final VoidCallback onPressed;
-  final VoidCallback? onIconPressed; // ação no ícone principal (ex: deletar)
-  final VoidCallback?
-  onDragIconPressed; // ação no ícone de arrastar (ex: editar)
+  final VoidCallback? onIconPressed; // ação no ícone principal
+  final VoidCallback? onDragIconPressed; // ação no ícone de arrastar
   final IconData? icon;
   final bool outlined;
   final double? width;
@@ -32,7 +31,7 @@ class AnswerCategoryButton extends StatelessWidget {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
         backgroundColor: AppColors.white100,
         padding: EdgeInsets.symmetric(
-          horizontal: MediaQuery.of(context).size.width * 0.031, // ~12px
+          horizontal: MediaQuery.of(context).size.width * 0.031,
         ),
         elevation: 0,
       ),

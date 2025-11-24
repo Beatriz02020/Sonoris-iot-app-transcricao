@@ -31,7 +31,7 @@ class CustomSlider extends StatelessWidget {
     if (_isIntRange) {
       return (max - min).toInt();
     }
-    return 100; // valor padrão para ranges decimais
+    return 100;
   }
 
   String get _defaultValueLabel {
@@ -45,7 +45,6 @@ class CustomSlider extends StatelessWidget {
       return value.round().toString();
     }
 
-    // Para valores decimais, mostrar com precisão adequada
     return value.toStringAsFixed(1);
   }
 

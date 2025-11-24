@@ -1,5 +1,6 @@
 ﻿import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 
 import '../models/conversa.dart';
 
@@ -40,7 +41,7 @@ class ConversaService {
       final docRef = await ref.add(conversa.toMap());
       return docRef.id;
     } catch (e) {
-      print('Erro ao adicionar conversa não salva: $e');
+      debugPrint('Erro ao adicionar conversa não salva: $e');
       return null;
     }
   }
@@ -51,7 +52,7 @@ class ConversaService {
       final conversa = ConversaNaoSalva.fromBleJson(json);
       return await addConversaNaoSalva(conversa);
     } catch (e) {
-      print('Erro ao processar JSON do BLE: $e');
+      debugPrint('Erro ao processar JSON do BLE: $e');
       return null;
     }
   }
@@ -89,7 +90,7 @@ class ConversaService {
         doc.data() as Map<String, dynamic>,
       );
     } catch (e) {
-      print('Erro ao buscar conversa: $e');
+      debugPrint('Erro ao buscar conversa: $e');
       return null;
     }
   }
@@ -103,7 +104,7 @@ class ConversaService {
       await ref.doc(conversaId).delete();
       return true;
     } catch (e) {
-      print('Erro ao deletar conversa: $e');
+      debugPrint('Erro ao deletar conversa: $e');
       return false;
     }
   }
@@ -123,9 +124,8 @@ class ConversaService {
       }
 
       await batch.commit();
-      print('Conversas expiradas deletadas: ${snapshot.docs.length}');
     } catch (e) {
-      print('Erro ao deletar conversas expiradas: $e');
+      debugPrint('Erro ao deletar conversas expiradas: $e');
     }
   }
 
@@ -160,12 +160,9 @@ class ConversaService {
       );
 
       final id = await addConversaNaoSalva(testConversa);
-      if (id != null) {
-        print('Conversa de teste criada com ID: $id');
-      }
       return id;
     } catch (e) {
-      print('Erro ao criar conversa de teste: $e');
+      debugPrint('Erro ao criar conversa de teste: $e');
       return null;
     }
   }
@@ -201,10 +198,9 @@ class ConversaService {
       // Deletar da coleção ConversasNaoSalvas
       await deleteConversa(conversaNaoSalva.id);
 
-      print('Conversa salva com sucesso! ID: ${docRef.id}');
       return docRef.id;
     } catch (e) {
-      print('Erro ao salvar conversa: $e');
+      debugPrint('Erro ao salvar conversa: $e');
       return null;
     }
   }
@@ -239,7 +235,7 @@ class ConversaService {
 
       return ConversaSalva.fromMap(doc.id, doc.data() as Map<String, dynamic>);
     } catch (e) {
-      print('Erro ao buscar conversa salva: $e');
+      debugPrint('Erro ao buscar conversa salva: $e');
       return null;
     }
   }
@@ -253,7 +249,7 @@ class ConversaService {
       await ref.doc(conversaId).delete();
       return true;
     } catch (e) {
-      print('Erro ao deletar conversa salva: $e');
+      debugPrint('Erro ao deletar conversa salva: $e');
       return false;
     }
   }
@@ -281,7 +277,7 @@ class ConversaService {
       await ref.doc(conversaId).update(updates);
       return true;
     } catch (e) {
-      print('Erro ao atualizar conversa salva: $e');
+      debugPrint('Erro ao atualizar conversa salva: $e');
       return false;
     }
   }

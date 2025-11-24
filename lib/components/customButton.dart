@@ -21,9 +21,9 @@ class CustomButton extends StatelessWidget {
     required this.onPressed,
     this.outlined = false,
     this.color,
-    this.width, // <- Aqui também
-    this.fullWidth = false, // valor padrão é false
-    this.iconSize, // <- Adicionado ao construtor
+    this.width,
+    this.fullWidth = false,
+    this.iconSize,
     this.isLoading = false,
   });
 
@@ -112,13 +112,12 @@ class CustomButton extends StatelessWidget {
               ),
             );
 
-    // Agora decidimos o tamanho com base nos parâmetros:
     if (fullWidth) {
       return SizedBox(width: double.infinity, child: button);
     } else if (width != null) {
       return SizedBox(width: width, child: button);
     } else {
-      return button; // tamanho natural do texto
+      return button;
     }
   }
 }

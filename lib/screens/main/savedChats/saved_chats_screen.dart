@@ -22,10 +22,9 @@ class _SavedChatsScreenState extends State<SavedChatsScreen> {
   String _query = '';
   List<ConversaSalva> _allConversas = [];
 
-  // Novo: filtro selecionado (null = nenhum)
   String? _selectedFilter;
 
-  // Lista de filtros com label e asset e cor (usada para construir a UI)
+  // Lista de filtros com label e asset e cor
   final List<Map<String, dynamic>> _filters = [
     {
       'key': 'Favoritos',
@@ -64,13 +63,12 @@ class _SavedChatsScreenState extends State<SavedChatsScreen> {
     },
   ];
 
-  // Atualizado: aplica filtro por categoria/favorito e por query de texto combinados
   List<ConversaSalva> get _filteredConversas {
     if (_query.isEmpty && _selectedFilter == null) return _allConversas;
 
     Iterable<ConversaSalva> list = _allConversas;
 
-    // Aplicar filtro de categoria/favorito primeiro (se houver)
+    // Aplicar filtro de categoria/favorito
     if (_selectedFilter != null && _selectedFilter!.isNotEmpty) {
       if (_selectedFilter == 'Favoritos') {
         list = list.where((c) => c.favorito == true);
@@ -82,7 +80,7 @@ class _SavedChatsScreenState extends State<SavedChatsScreen> {
       }
     }
 
-    // Aplicar pesquisa de texto (sempre combinada)
+    // Aplicar pesquisa de texto
     if (_query.isNotEmpty) {
       final q = _query.toLowerCase();
       list = list.where((c) => c.nome.toLowerCase().contains(q));
@@ -279,53 +277,6 @@ class _SavedChatsScreenState extends State<SavedChatsScreen> {
                         ),
                       ],
                     ),
-
-                    /*
-                GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => UnsavedChatsScreen(),
-                      ),
-                    );
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 6,
-                      horizontal: 20,
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Row(
-                          spacing: 10,
-                          children: [
-                            Image.asset('assets/images/icons/Historico.png'),
-                            Text(
-                              'Conversas Não Salvas',
-                              style: AppTextStyles.bold.copyWith(
-                                color: AppColors.blue700,
-                              ),
-                            ),
-                          ],
-                        ),
-                        Row(
-                          spacing: 10,
-                          children: [
-                            Text(
-                              '3',
-                              style: AppTextStyles.bold.copyWith(
-                                color: AppColors.blue700,
-                              ),
-                            ),
-                            Image.asset('assets/images/icons/Seta.png'),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                ),*/
 
                     // conversas
                     Text('Conversas', style: AppTextStyles.body),

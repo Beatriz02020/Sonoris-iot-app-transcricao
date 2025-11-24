@@ -20,7 +20,6 @@ class CustomSnackBar {
     );
   }
 
-  // Atalhos para tipos comuns
   static SnackBar success(String message) {
     return show(message: message, backgroundColor: AppColors.blue500);
   }

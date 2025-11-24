@@ -61,11 +61,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
       // Requisita informações do dispositivo quando conectar
       if (state == BluetoothConnectionState.connected) {
-        debugPrint(
-          '[HOME] 🔵 Dispositivo conectado! Carregando device info...',
-        );
         // Delay para garantir que a characteristic esteja pronta
-        // O _handleConnected demora ~3s para estabilizar + tempo de discovery
         Future.delayed(const Duration(milliseconds: 6000), () {
           _loadDeviceInfo();
         });
@@ -86,14 +82,12 @@ class _HomeScreenState extends State<HomeScreen> {
       setState(() {
         _deviceName = newName;
       });
-      debugPrint('[HOME] 📝 Nome do dispositivo atualizado para: $newName');
     });
 
     // Se já estiver conectado ao carregar a tela, requisita device info
     Future.delayed(const Duration(milliseconds: 1000), () {
       if (_manager.connectedDevice != null &&
           _connState == BluetoothConnectionState.connected) {
-        debugPrint('[HOME] � Tela carregada com dispositivo já conectado');
         _loadDeviceInfo();
       }
     });
@@ -102,17 +96,15 @@ class _HomeScreenState extends State<HomeScreen> {
   /// Requisita informações do dispositivo via BLE
   Future<void> _loadDeviceInfo() async {
     try {
-      debugPrint('[HOME] 📡 Requisitando device info via BLE...');
-
       final deviceInfo = await _manager.requestDeviceInfo();
 
       if (deviceInfo == null) {
-        debugPrint('[HOME] ⚠️ Device info retornou null');
+        debugPrint('Device info retornou null');
         return;
       }
 
       if (deviceInfo.isEmpty) {
-        debugPrint('[HOME] ⚠️ Device info está vazio');
+        debugPrint('Device info está vazio');
         return;
       }
 
@@ -122,13 +114,9 @@ class _HomeScreenState extends State<HomeScreen> {
           _totalActiveTime = deviceInfo['total_active_time'] ?? 0;
           _totalConversations = deviceInfo['total_conversations'] ?? 0;
         });
-        debugPrint(
-          '[HOME] ✅ Device info carregado: $_deviceName, ${_totalActiveTime}s, $_totalConversations conversas',
-        );
       }
-    } catch (e, stackTrace) {
-      debugPrint('[HOME] ❌ Erro ao carregar device info: $e');
-      debugPrint('[HOME] Stack trace: $stackTrace');
+    } catch (e) {
+      debugPrint('Erro ao carregar device info: $e');
     }
   }
 
@@ -184,149 +172,6 @@ class _HomeScreenState extends State<HomeScreen> {
     super.dispose();
   }
 
-  /// Processa conversas recebidas do dispositivo via BLE
-  Future<void> _handleConversationsFromBle(
-    List<Map<String, dynamic>> conversations,
-  ) async {
-    try {
-      debugPrint(
-        '[HOME] 📥 Processando ${conversations.length} conversa(s) do dispositivo...',
-      );
-
-      for (final convMeta in conversations) {
-        try {
-          final conversationId = convMeta['conversation_id'] as String?;
-          if (conversationId == null) {
-            debugPrint('[HOME] ⚠️ Conversa sem ID - pulando');
-            continue;
-          }
-
-          debugPrint('[HOME] 📄 Processando conversa: $conversationId');
-
-          // Primeiro, requisita metadados da conversa
-          final metadata = await _manager.requestConversationById(
-            conversationId,
-          );
-
-          if (metadata == null || metadata.isEmpty) {
-            debugPrint(
-              '[HOME] ⚠️ Não foi possível obter metadados de $conversationId',
-            );
-            continue;
-          }
-
-          // Verifica se precisa baixar em chunks
-          final requiresChunking =
-              metadata['requires_chunking'] as bool? ?? false;
-          final totalChunks = metadata['total_chunks'] as int? ?? 1;
-
-          Map<String, dynamic> conversaCompleta;
-
-          if (requiresChunking && totalChunks > 1) {
-            debugPrint(
-              '[HOME] 📦 Conversa requer $totalChunks chunks - baixando...',
-            );
-
-            // Baixa todos os chunks e monta a conversa completa
-            final allLines = <Map<String, dynamic>>[];
-
-            for (int i = 0; i < totalChunks; i++) {
-              final chunk = await _manager.requestConversationChunk(
-                conversationId,
-                i,
-              );
-
-              if (chunk == null) {
-                debugPrint('[HOME] ⚠️ Erro ao baixar chunk $i');
-                break;
-              }
-
-              final lines = chunk['lines'] as List?;
-              if (lines != null) {
-                allLines.addAll(lines.cast<Map<String, dynamic>>());
-              }
-
-              debugPrint('[HOME] ✓ Chunk $i/${totalChunks - 1} baixado');
-
-              // Delay maior entre chunks para evitar sobrecarga BLE
-              if (i < totalChunks - 1) {
-                await Future.delayed(const Duration(milliseconds: 500));
-              }
-            }
-            if (allLines.length < (metadata['total_lines'] as int? ?? 0)) {
-              debugPrint(
-                '[HOME] ⚠️ Download incompleto: ${allLines.length}/${metadata['total_lines']} linhas',
-              );
-              continue;
-            }
-
-            // Monta conversa completa com todos os chunks
-            conversaCompleta = {
-              'conversation_id': metadata['conversation_id'],
-              'created_at': metadata['created_at'],
-              'finalized': metadata['finalized'],
-              'lines': allLines,
-            };
-
-            debugPrint(
-              '[HOME] ✅ Conversa completa montada: ${allLines.length} linhas',
-            );
-          } else {
-            // Conversa pequena, não precisa de chunks
-            // Os metadados já são suficientes, mas precisamos baixar o único chunk
-            debugPrint('[HOME] 📄 Conversa pequena, baixando chunk único');
-
-            final chunk = await _manager.requestConversationChunk(
-              conversationId,
-              0,
-            );
-
-            if (chunk == null) {
-              debugPrint('[HOME] ⚠️ Erro ao baixar conversa');
-              continue;
-            }
-
-            conversaCompleta = {
-              'conversation_id': metadata['conversation_id'],
-              'created_at': metadata['created_at'],
-              'finalized': metadata['finalized'],
-              'lines': chunk['lines'] ?? [],
-            };
-          }
-
-          debugPrint('[HOME] 💾 Salvando conversa no Firebase...');
-
-          // Adiciona conversa ao Firebase
-          final conversaId = await _conversaService.addConversaFromBleJson(
-            conversaCompleta,
-          );
-
-          if (conversaId != null) {
-            debugPrint('[HOME] ✅ Conversa salva com sucesso: $conversaId');
-
-            // Deleta conversa do dispositivo após salvar
-            final deleted = await _manager.deleteConversationFromDevice(
-              conversationId,
-            );
-            if (deleted) {
-              debugPrint('[HOME] 🗑️ Conversa deletada do dispositivo');
-            }
-          } else {
-            debugPrint('[HOME] ❌ Erro ao salvar conversa no Firebase');
-          }
-
-          // Delay entre conversas para evitar sobrecarga BLE
-          await Future.delayed(const Duration(milliseconds: 500));
-        } catch (e) {
-          debugPrint('[HOME] ❌ Erro ao processar conversa: $e');
-        }
-      }
-      debugPrint('[HOME] ✅ Processamento de conversas concluído');
-    } catch (e) {
-      debugPrint('[HOME] ❌ Erro ao processar conversas do BLE: $e');
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final isThisConnected =
@@ -342,16 +187,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return Scaffold(
       backgroundColor: AppColors.background,
-      /*appBar: AppBar(
-        backgroundColor: AppColors.white100,
-        iconTheme: const IconThemeData(
-          color: AppColors.blue500,
-        ),
-        titleTextStyle: AppTextStyles.h3.copyWith(color: AppColors.blue500),
-        title: const Text(
-            'Titulo da pagina'
-        ),
-      ),*/
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.only(
@@ -361,7 +196,7 @@ class _HomeScreenState extends State<HomeScreen> {
             bottom: 30,
           ),
           child: Column(
-            spacing: 10, // 20 padrão
+            spacing: 10,
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [

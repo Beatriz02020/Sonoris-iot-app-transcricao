@@ -91,10 +91,6 @@ class BluetoothManager {
     _connectCompleter ??= Completer<void>();
 
     try {
-      debugPrint(
-        '[BT_MANAGER] 📞 Chamando device.connect() com timeout de 15s...',
-      );
-
       // conecta sem autoConnect
       // NOTA: O RPi está desconectando quando recebe requestMtu automático
       await device.connect(
@@ -102,34 +98,22 @@ class BluetoothManager {
         timeout: const Duration(seconds: 15),
       );
 
-      debugPrint('[BT_MANAGER] ✅ device.connect() retornou com sucesso!');
-
       // Aguarda conexão estabilizar ANTES de qualquer operação GATT
-      debugPrint(
-        '[BT_MANAGER] ⏳ Aguardando 800ms pós-conexão (evitar requestMtu prematuro)...',
-      );
       await Future.delayed(const Duration(milliseconds: 800));
-      debugPrint('[BT_MANAGER] ✅ Estabilização completa');
     } catch (e) {
       // se já estava conectado, device.connect pode lançar; permitimos continuar
-      debugPrint('[BT_MANAGER] ⚠️ device.connect erro/aviso: $e');
+      debugPrint('[BT_MANAGER] device.connect erro/aviso: $e');
     }
 
     // cancelar subscrição anterior se houver e criar nova
     await _connSub?.cancel();
     _connSub = device.connectionState.listen((state) async {
-      debugPrint('[BT_MANAGER] 🔄 Estado de conexão mudou: $state');
       _connectionStateController.add(state);
 
       if (state == BluetoothConnectionState.connected) {
-        debugPrint('[BT_MANAGER] ✅ CONECTADO! Iniciando _handleConnected...');
         // quando receber connected, dispara handler (debounced)
         _handleConnected(device);
       } else if (state == BluetoothConnectionState.disconnected) {
-        debugPrint(
-          '[BT_MANAGER] ❌ DESCONECTADO! _hasSentStart=$_hasSentStart, _processingConnected=$_processingConnected',
-        );
-
         // Chama callback de desconexão se existir
         if (onDisconnected != null) {
           onDisconnected!();
@@ -163,32 +147,18 @@ class BluetoothManager {
   /// Handler que executa discoverServices, configura notification (se suportado)
   /// e envia START. É garantido que só um handler execute por vez (debounce).
   Future<void> _handleConnected(BluetoothDevice device) async {
-    debugPrint(
-      '[_handleConnected] 🚀 INICIANDO handler. Device: ${device.remoteId}',
-    );
-
     if (_processingConnected) {
-      debugPrint(
-        '[_handleConnected] ⚠️ Já processando connected — ignorando evento duplicado.',
-      );
       return;
     }
     _processingConnected = true;
-    debugPrint('[_handleConnected] 🔒 Flag _processingConnected = true');
 
     try {
       // CRITICAL: Aguarda MUITO MAIS tempo - o requestMtu pode estar atrasando tudo
       // O requestMtu deu timeout de 15s, então aguardamos ele terminar completamente
-      debugPrint(
-        '[_handleConnected] ⏳ Aguardando 3s para requestMtu/conexão estabilizar completamente...',
-      );
       await Future.delayed(const Duration(milliseconds: 3000));
 
       // Verifica se ainda está conectado antes de descobrir serviços
       var currentState = await device.connectionState.first;
-      debugPrint(
-        '[_handleConnected] 🔍 Estado atual da conexão: $currentState',
-      );
       if (currentState != BluetoothConnectionState.connected) {
         throw Exception(
           'Dispositivo não está mais conectado (estado: $currentState)',
@@ -198,47 +168,23 @@ class BluetoothManager {
       // discover services (retry até 5 vezes com delay crescente)
       List<BluetoothService> services = [];
       for (int attempt = 1; attempt <= 5; attempt++) {
-        debugPrint(
-          '[_handleConnected] 🔍 discoverServices tentativa $attempt/5',
-        );
         try {
           services = await device.discoverServices();
-          debugPrint(
-            '[_handleConnected] 📡 Retornou ${services.length} serviços',
-          );
-
-          // Log DETALHADO dos UUIDs encontrados
-          if (services.isNotEmpty) {
-            debugPrint('[_handleConnected] ✅ Serviços descobertos:');
-            for (var s in services) {
-              debugPrint('[_handleConnected]    └─ ${s.uuid}');
-              for (var c in s.characteristics) {
-                debugPrint('[_handleConnected]       └─ Char: ${c.uuid}');
-              }
-            }
-          } else {
-            debugPrint(
-              '[_handleConnected] ❌ ZERO serviços retornados (GATT vazio) - pode ser timing issue',
-            );
-          }
 
           if (services.isNotEmpty) break;
         } catch (e) {
-          debugPrint('[_handleConnected] ⚠️ Exceção no discoverServices: $e');
+          debugPrint('[_handleConnected] Exceção no discoverServices: $e');
         }
 
         if (attempt < 5) {
           final delayMs = 1500 + (attempt * 500); // 2s, 2.5s, 3s, 3.5s
-          debugPrint(
-            '[_handleConnected] ⏱️ Aguardando ${delayMs}ms antes de próxima tentativa...',
-          );
           await Future.delayed(Duration(milliseconds: delayMs));
         }
       }
 
       if (services.isEmpty) {
         throw Exception(
-          '❌ Nenhum serviço GATT encontrado após 5 tentativas. RPi pode estar offline ou serviços não anunciados.',
+          'Nenhum serviço GATT encontrado após 5 tentativas. RPi pode estar offline ou serviços não anunciados.',
         );
       }
 
@@ -252,13 +198,6 @@ class BluetoothManager {
                 ),
       );
 
-      debugPrint(
-        '[BT_MANAGER] 🔍 Serviço encontrado! Listando todas as características:',
-      );
-      for (var char in service.characteristics) {
-        debugPrint('[BT_MANAGER]    - ${char.uuid}');
-      }
-
       final characteristic = service.characteristics.firstWhere(
         (c) => c.uuid.toString().toLowerCase() == CHAR_UUID.toLowerCase(),
         orElse:
@@ -266,7 +205,6 @@ class BluetoothManager {
       );
 
       _characteristic = characteristic;
-      debugPrint('[BT_MANAGER] ✅ Main characteristic encontrada');
 
       // Procura pela characteristic de device info
       try {
@@ -275,10 +213,9 @@ class BluetoothManager {
               c.uuid.toString().toLowerCase() == DEVICE_INFO_UUID.toLowerCase(),
         );
         _deviceInfoCharacteristic = deviceInfoChar;
-        debugPrint('[BT_MANAGER] ✅ Device info characteristic encontrada');
       } catch (e) {
         debugPrint(
-          '[BT_MANAGER] ⚠️ Device info characteristic não encontrada: $e',
+          '[BT_MANAGER] Device info characteristic não encontrada: $e',
         );
       }
 
@@ -289,10 +226,9 @@ class BluetoothManager {
               c.uuid.toString().toLowerCase() == DEVICE_NAME_UUID.toLowerCase(),
         );
         _deviceNameCharacteristic = deviceNameChar;
-        debugPrint('[BT_MANAGER] ✅ Device name characteristic encontrada');
       } catch (e) {
         debugPrint(
-          '[BT_MANAGER] ⚠️ Device name characteristic não encontrada: $e',
+          '[BT_MANAGER] Device name characteristic não encontrada: $e',
         );
       }
 
@@ -304,10 +240,9 @@ class BluetoothManager {
               CONVERSATIONS_UUID.toLowerCase(),
         );
         _conversationsCharacteristic = conversationsChar;
-        debugPrint('[BT_MANAGER] ✅ Conversations characteristic encontrada');
       } catch (e) {
         debugPrint(
-          '[BT_MANAGER] ⚠️ Conversations characteristic não encontrada: $e',
+          '[BT_MANAGER] Conversations characteristic não encontrada: $e',
         );
       }
 
@@ -319,12 +254,9 @@ class BluetoothManager {
               TRANSCRIPTION_STREAM_UUID.toLowerCase(),
         );
         _transcriptionStreamCharacteristic = transcriptionStreamChar;
-        debugPrint(
-          '[BT_MANAGER] ✅ Transcription stream characteristic encontrada',
-        );
       } catch (e) {
         debugPrint(
-          '[BT_MANAGER] ⚠️ Transcription stream characteristic não encontrada: $e',
+          '[BT_MANAGER] Transcription stream characteristic não encontrada: $e',
         );
       }
 
@@ -367,11 +299,10 @@ class BluetoothManager {
             ) {
               _handleConversationsData(bytes);
             });
-            debugPrint('[BT_MANAGER] ✅ Notify habilitado para conversations');
           }
         } catch (e) {
           debugPrint(
-            '[BT_MANAGER] ⚠️ Erro ao habilitar notify para conversations: $e',
+            '[BT_MANAGER] Erro ao habilitar notify para conversations: $e',
           );
         }
       }
@@ -382,9 +313,6 @@ class BluetoothManager {
       if (_hasSentStart && _lastStartSentAt != null) {
         final diff = now.difference(_lastStartSentAt!);
         if (diff.inMilliseconds < 800) {
-          debugPrint(
-            'START já enviado recentemente (${diff.inMilliseconds}ms) — pulando reenvio.',
-          );
           // completa o completor caso exista (pois já enviou antes)
           if (_connectCompleter != null && !_connectCompleter!.isCompleted) {
             _connectCompleter!.complete();
@@ -399,13 +327,9 @@ class BluetoothManager {
         await _writeStartToCharacteristic();
         _hasSentStart = true;
         _lastStartSentAt = DateTime.now();
-        debugPrint('START enviado com sucesso.');
 
         // Chama callback após conexão estabelecida com sucesso
         if (onConnectionEstablished != null) {
-          debugPrint(
-            '[BT_MANAGER] 🔔 Chamando onConnectionEstablished callback...',
-          );
           onConnectionEstablished!();
         }
 
@@ -425,17 +349,8 @@ class BluetoothManager {
       if (_connectCompleter != null && !_connectCompleter!.isCompleted) {
         _connectCompleter!.complete();
       }
-
-      debugPrint(
-        '[BT_MANAGER] ✅ _handleConnected completado com sucesso! '
-        'Características descobertas: '
-        'char=${_characteristic != null}, '
-        'deviceInfo=${_deviceInfoCharacteristic != null}, '
-        'deviceName=${_deviceNameCharacteristic != null}, '
-        'conversations=${_conversationsCharacteristic != null}',
-      );
     } catch (e) {
-      debugPrint('_handleConnected erro: $e');
+      debugPrint('[BT_MANAGER] _handleConnected erro: $e');
       if (_connectCompleter != null && !_connectCompleter!.isCompleted) {
         _connectCompleter!.completeError(e);
       }
@@ -451,11 +366,6 @@ class BluetoothManager {
 
     final bytes = utf8.encode('START');
     final props = _characteristic!.properties;
-
-    // Para debugging — registra as propriedades
-    debugPrint(
-      'Characteristic props: write=${props.write}, writeWithoutResponse=${props.writeWithoutResponse}, notify=${props.notify}, indicate=${props.indicate}',
-    );
 
     // Decide métod preferido:
     // preferWithResponse se available, caso contrário prefer withoutResponse.
@@ -480,33 +390,25 @@ class BluetoothManager {
       try {
         if (tryWithResponseFirst) {
           if (canWriteWithResponse) {
-            debugPrint('Tentando write withResponse attempt $attempt');
             await _characteristic!.write(bytes, withoutResponse: false);
             return; // sucesso
           } else if (canWriteWithoutResponse) {
-            debugPrint(
-              'Fallback: tentando write withoutResponse attempt $attempt',
-            );
             await _characteristic!.write(bytes, withoutResponse: true);
             return;
           }
         } else {
           // tenta withoutResponse primeiro
           if (canWriteWithoutResponse) {
-            debugPrint('Tentando write withoutResponse attempt $attempt');
             await _characteristic!.write(bytes, withoutResponse: true);
             return;
           } else if (canWriteWithResponse) {
-            debugPrint(
-              'Fallback: tentando write withResponse attempt $attempt',
-            );
             await _characteristic!.write(bytes, withoutResponse: false);
             return;
           }
         }
       } catch (e) {
         lastError = e is Exception ? e : Exception(e.toString());
-        debugPrint('write attempt $attempt falhou: $e');
+        debugPrint('[BT_MANAGER] write attempt $attempt falhou: $e');
         // se for ultima tentativa, rethrow abaixo
         if (attempt < maxAttempts) {
           // backoff simples
@@ -581,7 +483,7 @@ class BluetoothManager {
         try {
           await _device!.disconnect();
         } catch (e) {
-          debugPrint('disconnect erro: $e');
+          debugPrint('[BT_MANAGER] disconnect erro: $e');
         }
       }
     } finally {
@@ -604,13 +506,8 @@ class BluetoothManager {
     try {
       final uid = FirebaseAuth.instance.currentUser?.uid;
       if (uid == null) {
-        debugPrint(
-          '[BT_MANAGER] ⚠️ Usuário não autenticado - pulando envio de settings',
-        );
         return;
       }
-
-      debugPrint('[BT_MANAGER] 📥 Carregando settings do Firebase...');
 
       final configDoc = FirebaseFirestore.instance
           .collection('Usuario')
@@ -622,9 +519,6 @@ class BluetoothManager {
       final data = snap.data();
 
       if (data == null || data.isEmpty) {
-        debugPrint(
-          '[BT_MANAGER] ℹ️ Nenhuma configuração de legenda encontrada no Firebase',
-        );
         return;
       }
 
@@ -638,16 +532,9 @@ class BluetoothManager {
       // Envia com prefixo SETTINGS:
       final message = 'SETTINGS:$jsonStr';
 
-      debugPrint(
-        '[BT_MANAGER] 📤 Enviando settings via BLE (${message.length} chars)',
-      );
-      debugPrint('[BT_MANAGER] 📦 Payload: $message');
-
       await writeString(message);
-
-      debugPrint('[BT_MANAGER] ✅ Settings enviados com sucesso!');
     } catch (e) {
-      debugPrint('[BT_MANAGER] ❌ Erro ao enviar caption settings: $e');
+      debugPrint('[BT_MANAGER] Erro ao enviar caption settings: $e');
       // Não propaga o erro - envio é best-effort
     }
   }
@@ -655,16 +542,12 @@ class BluetoothManager {
   /// Requisita lista de conversas do dispositivo
   Future<void> requestConversations() async {
     try {
-      debugPrint('[BT_MANAGER] 📋 Requisitando conversas do dispositivo...');
-
       if (_characteristic == null) {
         throw Exception('Characteristic não configurada');
       }
 
       // Envia comando LIST para requisitar conversas
       await writeString('LIST');
-
-      debugPrint('[BT_MANAGER] ✅ Comando LIST enviado');
 
       // Aguarda mais tempo para garantir que resposta esteja pronta
       await Future.delayed(const Duration(milliseconds: 2000));
@@ -675,9 +558,6 @@ class BluetoothManager {
         // Processa manualmente sem callback automático
         if (bytes.isNotEmpty) {
           final jsonString = utf8.decode(bytes);
-          debugPrint(
-            '[BT_MANAGER] 📥 Lista de conversas recebida (${bytes.length} bytes)',
-          );
 
           final dynamic decodedJson = jsonDecode(jsonString);
           List<Map<String, dynamic>> conversations = [];
@@ -688,10 +568,6 @@ class BluetoothManager {
             conversations = [decodedJson.cast<String, dynamic>()];
           }
 
-          debugPrint(
-            '[BT_MANAGER] 📊 Total de conversas disponíveis: ${conversations.length}',
-          );
-
           // Chama callback apenas uma vez
           if (onConversationsReceived != null) {
             onConversationsReceived!(conversations);
@@ -699,13 +575,13 @@ class BluetoothManager {
         }
       }
     } catch (e) {
-      debugPrint('[BT_MANAGER] ❌ Erro ao requisitar conversas: $e');
+      debugPrint('[BT_MANAGER] Erro ao requisitar conversas: $e');
     }
   }
 
   /// Processa dados de conversas recebidos via BLE
   void _handleConversationsData(List<int> bytes) {
-    // Este método agora é apenas um placeholder
+    // Apenas um placeholder
     // Não fazemos nada aqui para evitar callbacks automáticos
     // As leituras são feitas manualmente pelas funções request*
   }
@@ -716,8 +592,6 @@ class BluetoothManager {
     String conversationId,
   ) async {
     try {
-      debugPrint('[BT_MANAGER] 📄 Requisitando metadados: $conversationId');
-
       if (_characteristic == null) {
         throw Exception('Characteristic não configurada');
       }
@@ -737,7 +611,7 @@ class BluetoothManager {
           final trimmed = jsonString.trim();
           if (!trimmed.endsWith(']') && !trimmed.endsWith('}')) {
             debugPrint(
-              '[BT_MANAGER] ⚠️ JSON truncado detectado para conversa $conversationId',
+              '[BT_MANAGER] JSON truncado detectado para conversa $conversationId',
             );
             return null;
           }
@@ -746,13 +620,10 @@ class BluetoothManager {
 
           // Verifica se é uma lista (erro) ou mapa (correto)
           if (decoded is List) {
-            debugPrint('[BT_MANAGER] ⚠️ Resposta é uma lista, esperava objeto');
+            debugPrint('[BT_MANAGER] Resposta é uma lista, esperava objeto');
             return null;
           }
 
-          debugPrint(
-            '[BT_MANAGER] ✅ Metadados recebidos: ${decoded['total_lines']} linhas, ${decoded['total_chunks']} chunks',
-          );
           return decoded as Map<String, dynamic>;
         }
       }
@@ -760,7 +631,7 @@ class BluetoothManager {
       return null;
     } catch (e) {
       debugPrint(
-        '[BT_MANAGER] ❌ Erro ao requisitar metadados $conversationId: $e',
+        '[BT_MANAGER] Erro ao requisitar metadados $conversationId: $e',
       );
       return null;
     }
@@ -772,17 +643,12 @@ class BluetoothManager {
     int chunkIndex,
   ) async {
     try {
-      debugPrint(
-        '[BT_MANAGER] 📦 Requisitando chunk $chunkIndex de: $conversationId',
-      );
-
       if (_characteristic == null) {
         throw Exception('Characteristic não configurada');
       }
 
       // Envia comando CHUNK:id:index
       final command = 'CHUNK:$conversationId:$chunkIndex';
-      debugPrint('[BT_MANAGER] 📤 Enviando comando: $command');
       await writeString(command);
 
       // Aguarda resposta - aumentado para dar tempo do device processar
@@ -793,14 +659,10 @@ class BluetoothManager {
         if (bytes.isNotEmpty) {
           final jsonString = utf8.decode(bytes);
 
-          debugPrint(
-            '[BT_MANAGER] 📥 JSON recebido para chunk $chunkIndex (${bytes.length} bytes): ${jsonString.substring(0, jsonString.length > 100 ? 100 : jsonString.length)}...',
-          );
-
           // Verifica se o JSON está truncado
           final trimmed = jsonString.trim();
           if (!trimmed.endsWith(']') && !trimmed.endsWith('}')) {
-            debugPrint('[BT_MANAGER] ⚠️ Chunk $chunkIndex truncado');
+            debugPrint('[BT_MANAGER] Chunk $chunkIndex truncado');
             return null;
           }
 
@@ -808,25 +670,20 @@ class BluetoothManager {
 
           if (decoded is! Map<String, dynamic>) {
             debugPrint(
-              '[BT_MANAGER] ⚠️ Formato de chunk inválido - recebido ${decoded.runtimeType}',
+              '[BT_MANAGER] Formato de chunk inválido - recebido ${decoded.runtimeType}',
             );
-            debugPrint('[BT_MANAGER] Dados: $decoded');
             return null;
           }
 
-          final lines = decoded['lines'] as List?;
-          debugPrint(
-            '[BT_MANAGER] ✅ Chunk $chunkIndex recebido com ${lines?.length ?? 0} linhas',
-          );
           return decoded;
         } else {
-          debugPrint('[BT_MANAGER] ⚠️ Resposta vazia para chunk $chunkIndex');
+          debugPrint('[BT_MANAGER] Resposta vazia para chunk $chunkIndex');
         }
       }
 
       return null;
     } catch (e) {
-      debugPrint('[BT_MANAGER] ❌ Erro ao requisitar chunk $chunkIndex: $e');
+      debugPrint('[BT_MANAGER] Erro ao requisitar chunk $chunkIndex: $e');
       return null;
     }
   }
@@ -834,10 +691,6 @@ class BluetoothManager {
   /// Deleta uma conversa do dispositivo
   Future<bool> deleteConversationFromDevice(String conversationId) async {
     try {
-      debugPrint(
-        '[BT_MANAGER] 🗑️ Deletando conversa do dispositivo: $conversationId',
-      );
-
       if (_characteristic == null) {
         throw Exception('Characteristic não configurada');
       }
@@ -845,10 +698,9 @@ class BluetoothManager {
       // Envia comando DEL:id
       await writeString('DEL:$conversationId');
 
-      debugPrint('[BT_MANAGER] ✅ Comando DEL enviado para $conversationId');
       return true;
     } catch (e) {
-      debugPrint('[BT_MANAGER] ❌ Erro ao deletar conversa: $e');
+      debugPrint('[BT_MANAGER] Erro ao deletar conversa: $e');
       return false;
     }
   }
@@ -856,52 +708,30 @@ class BluetoothManager {
   /// Requisita informações do dispositivo (nome, tempo ativo, conversas)
   Future<Map<String, dynamic>?> requestDeviceInfo() async {
     try {
-      debugPrint('[BT_MANAGER] 📱 Requisitando informações do dispositivo...');
-
       if (_device == null) {
-        debugPrint('[BT_MANAGER] ⚠️ Nenhum dispositivo conectado');
+        debugPrint('[BT_MANAGER] Nenhum dispositivo conectado');
         return null;
       }
 
       if (_deviceInfoCharacteristic == null) {
-        debugPrint('[BT_MANAGER] ⚠️ Device info characteristic não disponível');
-        debugPrint(
-          '[BT_MANAGER] ℹ️ Características disponíveis: '
-          'char=${_characteristic != null}, '
-          'deviceName=${_deviceNameCharacteristic != null}, '
-          'conversations=${_conversationsCharacteristic != null}',
-        );
+        debugPrint('[BT_MANAGER] Device info characteristic não disponível');
         return null;
       }
-
-      debugPrint(
-        '[BT_MANAGER] 🔍 Lendo device info characteristic (${_deviceInfoCharacteristic!.uuid})...',
-      );
 
       // Lê a characteristic de device info
       final bytes = await _deviceInfoCharacteristic!.read();
 
-      debugPrint('[BT_MANAGER] 📦 Bytes recebidos: ${bytes.length} bytes');
-
       if (bytes.isEmpty) {
-        debugPrint('[BT_MANAGER] ⚠️ Resposta vazia do dispositivo');
+        debugPrint('[BT_MANAGER] Resposta vazia do dispositivo');
         return null;
       }
 
       final jsonString = utf8.decode(bytes);
-      debugPrint('[BT_MANAGER] 📥 Device info JSON: $jsonString');
-
       final decoded = jsonDecode(jsonString) as Map<String, dynamic>;
-
-      debugPrint(
-        '[BT_MANAGER] ✅ Device info: nome="${decoded['device_name']}", '
-        'tempo=${decoded['total_active_time']}s, '
-        'conversas=${decoded['total_conversations']}',
-      );
 
       return decoded;
     } catch (e, stackTrace) {
-      debugPrint('[BT_MANAGER] ❌ Erro ao requisitar device info: $e');
+      debugPrint('[BT_MANAGER] Erro ao requisitar device info: $e');
       debugPrint('[BT_MANAGER] Stack trace: $stackTrace');
       return null;
     }
@@ -910,12 +740,8 @@ class BluetoothManager {
   /// Atualiza o nome do dispositivo via BLE
   Future<bool> updateDeviceName(String newName) async {
     try {
-      debugPrint(
-        '[BT_MANAGER] ✏️ Atualizando nome do dispositivo para: $newName',
-      );
-
       if (_deviceNameCharacteristic == null) {
-        debugPrint('[BT_MANAGER] ⚠️ Device name characteristic não disponível');
+        debugPrint('[BT_MANAGER] Device name characteristic não disponível');
         return false;
       }
 
@@ -926,10 +752,9 @@ class BluetoothManager {
       // Notifica todas as telas que o nome foi atualizado
       _deviceNameController.add(newName);
 
-      debugPrint('[BT_MANAGER] ✅ Nome do dispositivo atualizado com sucesso');
       return true;
     } catch (e) {
-      debugPrint('[BT_MANAGER] ❌ Erro ao atualizar nome do dispositivo: $e');
+      debugPrint('[BT_MANAGER] Erro ao atualizar nome do dispositivo: $e');
       return false;
     }
   }

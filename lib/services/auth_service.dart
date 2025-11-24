@@ -14,12 +14,10 @@ class AuthService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   // Configurações do Cloudinary carregadas do arquivo .env
-  // IMPORTANTE: Use um upload preset UNSIGNED configurado no painel do Cloudinary
   static String get _cloudinaryCloudName =>
       dotenv.env['CLOUDINARY_CLOUD_NAME'] ?? '';
   static String get _cloudinaryUploadPreset =>
       dotenv.env['CLOUDINARY_UPLOAD_PRESET'] ?? '';
-  // ATENÇÃO: API_KEY e API_SECRET são confidenciais!
   // Em produção, use Cloud Functions para operações que requerem API Secret
   static String get _cloudinaryApiKey => dotenv.env['CLOUDINARY_API_KEY'] ?? '';
   static String get _cloudinaryApiSecret =>
@@ -85,20 +83,13 @@ class AuthService {
   // Atualiza a foto de perfil do usuário no Cloudinary e salva a URL no Firestore
   // Retorna a URL segura (https) da imagem
   Future<String> updateProfilePhoto(File photo) async {
-    debugPrint('[AuthService] 🔵 updateProfilePhoto INICIADO');
-    debugPrint('[AuthService] 🔵 Arquivo: ${photo.path}');
-    debugPrint('[AuthService] 🔵 Arquivo existe: ${await photo.exists()}');
-
     final user = _auth.currentUser;
     if (user == null) {
-      debugPrint('[AuthService] ❌ Usuário não autenticado');
       throw FirebaseAuthException(
         code: 'not-authenticated',
         message: 'Usuário não autenticado.',
       );
     }
-
-    debugPrint('[AuthService] 🔵 UID do usuário: ${user.uid}');
 
     // Busca a URL antiga para deletar a imagem do Cloudinary
     try {
@@ -107,19 +98,14 @@ class AuthService {
       final oldPhotoUrl = docSnapshot.data()?['Foto_url'] as String?;
 
       if (oldPhotoUrl != null && oldPhotoUrl.isNotEmpty) {
-        debugPrint('[AuthService] 🗑️ Deletando foto antiga: $oldPhotoUrl');
         final oldPublicId = _extractPublicIdFromUrl(oldPhotoUrl, 'user_photos');
         if (oldPublicId != null) {
           await _deleteFromCloudinary(oldPublicId);
         }
       }
     } catch (e) {
-      debugPrint(
-        '[AuthService] ⚠️ Erro ao deletar foto antiga: $e (continuando...)',
-      );
+      debugPrint('Erro ao deletar foto antiga: $e (continuando...)');
     }
-
-    debugPrint('[AuthService] 🔵 Iniciando upload para Cloudinary...');
 
     final cloudinary = CloudinaryPublic(
       _cloudinaryCloudName,
@@ -127,15 +113,9 @@ class AuthService {
       cache: false,
     );
 
-    debugPrint(
-      '[AuthService] 🔵 CloudinaryPublic criado - cloudName: $_cloudinaryCloudName, preset: $_cloudinaryUploadPreset',
-    );
-
     // Adiciona timestamp ao publicId para garantir URL única
     final timestamp = DateTime.now().millisecondsSinceEpoch;
     final publicIdWithTimestamp = '${user.uid}_$timestamp';
-
-    debugPrint('[AuthService] 🔵 PublicId: $publicIdWithTimestamp');
 
     final response = await cloudinary.uploadFile(
       CloudinaryFile.fromFile(
@@ -146,21 +126,11 @@ class AuthService {
       ),
     );
 
-    debugPrint('[AuthService] ✅ Upload para Cloudinary concluído!');
-    debugPrint('[AuthService] 📦 Response secureUrl: ${response.secureUrl}');
-
     final photoUrl = response.secureUrl;
 
-    debugPrint('[AuthService] 🔵 Atualizando Firestore...');
     await _firestore.collection('Usuario').doc(user.uid).update({
       'Foto_url': photoUrl,
     });
-
-    // Log para depuração: confirma que o Firestore foi atualizado
-    // (o listener nas screens deve receber essa mudança)
-    debugPrint(
-      '[AuthService] ✅ updateProfilePhoto: saved Foto_url=$photoUrl for uid=${user.uid}',
-    );
 
     return photoUrl;
   }
@@ -182,7 +152,6 @@ class AuthService {
       final oldBannerUrl = docSnapshot.data()?['banner_url'] as String?;
 
       if (oldBannerUrl != null && oldBannerUrl.isNotEmpty) {
-        debugPrint('[AuthService] 🗑️ Deletando banner antigo: $oldBannerUrl');
         final oldPublicId = _extractPublicIdFromUrl(
           oldBannerUrl,
           'user_banners',
@@ -192,9 +161,7 @@ class AuthService {
         }
       }
     } catch (e) {
-      debugPrint(
-        '[AuthService] ⚠️ Erro ao deletar banner antigo: $e (continuando...)',
-      );
+      debugPrint('Erro ao deletar banner antigo: $e (continuando...)');
     }
 
     final cloudinary = CloudinaryPublic(
@@ -222,16 +189,10 @@ class AuthService {
       'banner_url': bannerUrl,
     });
 
-    debugPrint(
-      '[AuthService] updateBannerPhoto: saved banner_url=$bannerUrl for uid=${user.uid}',
-    );
-
     return bannerUrl;
   }
 
   // Extrai o publicId de uma URL do Cloudinary
-  // Exemplo: https://res.cloudinary.com/cloud/image/upload/v123/user_photos/uid_123.jpg
-  // Retorna: user_photos/uid_123
   String? _extractPublicIdFromUrl(String url, String folder) {
     try {
       // Remove query params (?v=...)
@@ -245,10 +206,9 @@ class AuthService {
       final afterFolder = cleanUrl.substring(folderIndex + 1);
       final withoutExtension = afterFolder.split('.').first;
 
-      debugPrint('[AuthService] 🔍 Extracted publicId: $withoutExtension');
       return withoutExtension;
     } catch (e) {
-      debugPrint('[AuthService] ❌ Erro ao extrair publicId: $e');
+      debugPrint('Erro ao extrair publicId: $e');
       return null;
     }
   }
@@ -258,12 +218,7 @@ class AuthService {
     try {
       // Verifica se as credenciais foram configuradas
       if (_cloudinaryApiKey.isEmpty || _cloudinaryApiSecret.isEmpty) {
-        debugPrint(
-          '[AuthService] ⚠️ API Key/Secret não configurados - skip delete',
-        );
-        debugPrint(
-          '[AuthService] ℹ️ Para deletar imagens antigas, configure as credenciais no arquivo .env',
-        );
+        debugPrint('API Key/Secret não configurados - skip delete');
         return;
       }
 
@@ -295,11 +250,11 @@ class AuthService {
         debugPrint('[AuthService] ✅ Imagem deletada: ${result['result']}');
       } else {
         debugPrint(
-          '[AuthService] ❌ Erro ao deletar: ${response.statusCode} - ${response.body}',
+          'Erro ao deletar: ${response.statusCode} - ${response.body}',
         );
       }
     } catch (e) {
-      debugPrint('[AuthService] ❌ Exceção ao deletar do Cloudinary: $e');
+      debugPrint('Exceção ao deletar do Cloudinary: $e');
     }
   }
 }

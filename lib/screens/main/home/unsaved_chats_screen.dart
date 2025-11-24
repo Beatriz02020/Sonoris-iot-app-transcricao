@@ -322,10 +322,7 @@ class _UnsavedChatsScreenState extends State<UnsavedChatsScreen> {
                   margin: const EdgeInsets.all(15),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                      color: AppColors.blue500,
-                      width: 1,
-                    ),
+                    border: Border.all(color: AppColors.blue500, width: 1),
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,

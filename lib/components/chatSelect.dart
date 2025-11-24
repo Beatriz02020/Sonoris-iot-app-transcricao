@@ -47,7 +47,6 @@ class ChatSelect extends StatelessWidget {
             ).pushNamed(salvas != false ? '/chat' : '/unsavedchats/chat');
           },
 
-      // respostas rápidas
       child: Container(
         // borda
         padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),

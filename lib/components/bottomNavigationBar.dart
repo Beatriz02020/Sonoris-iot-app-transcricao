@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:sonoris/components/customBottomNav.dart';
+import 'package:sonoris/components/customSnackBar.dart';
 import 'package:sonoris/screens/main/device_tab_navigator.dart';
 import 'package:sonoris/screens/main/home_tab_navigator.dart';
 import 'package:sonoris/screens/main/saved_chats_tab_navigator.dart';
 import 'package:sonoris/screens/main/user_tab_navigator.dart';
+import 'package:sonoris/theme/colors.dart';
 
 class BottomNav extends StatefulWidget {
   const BottomNav({super.key});
 
-  // Adicione esta linha para permitir acesso ao state de fora
   static _BottomNavState? of(BuildContext context) =>
       context.findAncestorStateOfType<_BottomNavState>();
 
@@ -19,6 +21,7 @@ class BottomNav extends StatefulWidget {
 class _BottomNavState extends State<BottomNav> {
   int _selectedIndex = 0;
   bool _showBottomNav = true;
+  DateTime? _lastPressedAt;
 
   final List<GlobalKey<NavigatorState>> _navigatorKeys = [
     GlobalKey<NavigatorState>(),
@@ -32,7 +35,6 @@ class _BottomNavState extends State<BottomNav> {
   @override
   void initState() {
     super.initState();
-    // Cria os navegadores de cada aba uma única vez para manter o histórico
     _tabs = [
       HomeTabNavigator(
         key: UniqueKey(),
@@ -84,14 +86,10 @@ class _BottomNavState extends State<BottomNav> {
 
   @override
   Widget build(BuildContext context) {
-    final currentNavigator = _navigatorKeys[_selectedIndex].currentState;
-    final bool canCurrentTabPop = currentNavigator?.canPop() ?? false;
-    final bool allowSystemPop = _selectedIndex == 0 && !canCurrentTabPop;
-
     return PopScope(
-      canPop: allowSystemPop,
+      canPop: false,
       onPopInvokedWithResult: (didPop, result) async {
-        if (didPop) return; // o sistema já processou o pop (vai sair do app)
+        if (didPop) return;
 
         final nav = _navigatorKeys[_selectedIndex].currentState;
         // Tenta voltar dentro da pilha da aba atual
@@ -108,8 +106,26 @@ class _BottomNavState extends State<BottomNav> {
           });
           return;
         }
-        // Caso contrário (primeira aba na raiz), allowSystemPop == true
-        // e o sistema fará o pop (fechar app) em uma próxima tentativa.
+
+        // Verificação de duplo toque para sair do app (quando estiver na primeira aba)
+        final now = DateTime.now();
+        if (_lastPressedAt == null ||
+            now.difference(_lastPressedAt!) > const Duration(seconds: 2)) {
+          _lastPressedAt = now;
+          ScaffoldMessenger.of(context).showSnackBar(
+            CustomSnackBar.show(
+              message: 'Pressione novamente para sair do aplicativo',
+              backgroundColor: AppColors.gray200,
+              textColor: AppColors.gray900,
+              duration: const Duration(seconds: 2),
+            ),
+          );
+          return;
+        }
+
+        // Se chegou aqui, foi pressionado duas vezes em menos de 2 segundos
+        // Permite sair do aplicativo
+        SystemNavigator.pop();
       },
       child: Scaffold(
         body: IndexedStack(index: _selectedIndex, children: _tabs),
