@@ -1,35 +1,26 @@
 <div align=center>
   
-![Logo](assets/images/Banner.png)
+![Logo](logo.png)
 
 </div>
 
-<br>
+<b>Sonoris</b> é um projeto, constituido por um aplicativo e um dispositivo, desenvolvido ao longo de 2025 em parceria com uma empresa, como parte do Trabalho de Conclusão de Curso (TCC) do curso de **Desenvolvimento de Sistemas AMS da Etec da Zona Leste**. **[Landing Page da Sonoris](https://sonoris.vercel.app/)**
 
-### 🤔 Sobre o projeto
+## 🌟 Sobre a Sonoris
 
-Sonoris é um aplicativo e dispositivo inovador, desenvolvido ao longo de 2025 em parceria com uma empresa, como parte do Trabalho de Conclusão de Curso (TCC) do curso de Desenvolvimento de Sistemas AMS da Etec da Zona Leste.
+O projeto tem como propósito facilitar a comunicação e promover a inclusão de **pessoas com deficiência auditiva**, principalmente em contextos profissionais e acadêmicos, utilizando transcrição de voz e opções de customização.
 
-<b> Dispositivo: </b> https://github.com/Chrb09/Sonoris-RaspberryPi <br>
-<b> Documentação: </b> https://github.com/Amanda093/PORTIFOLIO-2025-3DS
+<div align=center>
 
-### 💻 Tecnologias
+</div>
 
-![dart](https://img.shields.io/badge/dart-0175C2?style=for-the-badge&logo=dart&logoColor=white)
+## 📁 Outros repositórios
 
-![flutter](https://img.shields.io/badge/flutter-02569B?style=for-the-badge&logo=flutter&logoColor=white)
+- <b> [Dispositivo](https://github.com/Chrb09/Sonoris-Raspberry-Pi) </b><br>
+- <b> [Aplicativo](https://github.com/Beatriz02020/Sonoris-iot-app-transcricao) </b><br>
+- <b> [Landing Page](https://github.com/Amanda093/Sonoris) </b><br>
 
-### 🚀 Como rodar o projeto
-
-```sh
-git clone https://github.com/Beatriz02020/Sonoris-app.git
-
-cd sonoris-app
-
-flutter pub get
-```
-
-### 😀 Contribuidores
+## 😀 Contribuidores
 
 <div align=center>
 <table>
@@ -63,5 +54,3 @@ flutter pub get
 </table>
 </div>
 <br>
-
-> Feito com ❤️ usando Flutter.
